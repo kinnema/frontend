@@ -2,12 +2,18 @@ import { create } from "zustand";
 
 interface IStore {
   theme: "dark" | "light";
+  searchMode: boolean;
   setTheme: (theme: "dark" | "light") => void;
   initTheme: () => void;
+  setSearchMode: (mode: boolean) => void;
 }
 
 export const useAppStore = create<IStore>((set, get) => ({
   theme: "light",
+  searchMode: false,
+  setSearchMode(mode) {
+    set({ searchMode: mode });
+  },
   setTheme(theme) {
     const oldTheme =
       get().theme ?? window.matchMedia("(prefers-color-scheme: dark)").matches

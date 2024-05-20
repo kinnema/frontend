@@ -1,4 +1,10 @@
+"use client";
+
+import { useAppStore } from "../stores/app.store";
+
 export function RightSidebar() {
+  const setSearchMode = useAppStore((state) => state.setSearchMode);
+
   return (
     <aside className=" w-1/5 py-10 px-10  min-w-min  border-l border-gray-300 dark:border-zinc-700 hidden lg:block ">
       <div className="relative items-center content-center flex">
@@ -18,10 +24,9 @@ export function RightSidebar() {
             ></path>
           </svg>
         </span>
-        <input
-          type="text"
-          className="text-xs ring-1 bg-transparent ring-gray-200 dark:ring-zinc-600 focus:ring-red-300 pl-10 pr-5 text-gray-600 dark:text-white  py-3 rounded-full w-full outline-none focus:ring-1"
-          placeholder="Search ..."
+        <div
+          className="text-xs ring-1 bg-transparent ring-gray-200 dark:ring-zinc-600 focus:ring-red-300 pl-10 pr-5 text-gray-600 dark:text-white  py-3 rounded-full w-full outline-none focus:ring-1 p-10 cursor-pointer"
+          onClick={() => setSearchMode(true)}
         />
       </div>
 

@@ -55,17 +55,21 @@ export default function SeriePage({ params }: { params: { slug: string } }) {
           />
         </div>
         <div className="w-full">
-          <h2 className="text-4xl font-extrabold lg:text-5xl">
+          <h2 className="text-4xl font-extrabold lg:text-5xl dark:text-white">
             {tmdbData.data.name}
           </h2>
           <div className="font-medium flex flex-col gap-5 my-4 lg:flex-row lg:items-center">
             <div className="flex items-center gap-2 text-xs font-bold">
-              <span className="bg-white px-2.5 py-1 text-black">Full</span>
-              <span className="border-2 border-white px-2.5 py-0.5">HD</span>
+              <span className="bg-white px-2.5 py-1 text-black dark:text-white dark:bg-black">
+                Full
+              </span>
+              <span className="border-2 border-white px-2.5 py-0.5 dark:text-white dark:border-gray-400">
+                HD
+              </span>
             </div>
           </div>
           <div className="flex items-center gap-5">
-            <div className="text-sm max-h-80 overflow-auto movie-content">
+            <div className="text-sm max-h-80 overflow-auto movie-content dark:text-white">
               {tmdbData.data.overview}
             </div>
           </div>
