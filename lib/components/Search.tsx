@@ -1,22 +1,23 @@
+"use client";
+
+import { slugify } from "@/lib/helpers";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useQuery } from "@tanstack/react-query";
 import classNames from "classnames";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { FiX } from "react-icons/fi";
-import slugify from "slugify";
 import { searchSerieOnTMDB } from "../services/series.service";
-import { useAppStore } from "../stores/app.store";
 import { ITmdbSearchResults } from "../types/tmdb";
 import { Loading } from "./Loading";
 
-export function Search({ isSearchMode }: { isSearchMode: boolean }) {
+export function Search() {
   const [search, setSearch] = useState<string>("");
-  const setSearchMode = useAppStore((state) => state.setSearchMode);
   const pathname = usePathname();
   const [animationParent] = useAutoAnimate();
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   const { data, isPending, isError } = useQuery<ITmdbSearchResults>({
     enabled: search.length > 0,
@@ -25,28 +26,24 @@ export function Search({ isSearchMode }: { isSearchMode: boolean }) {
   });
 
   useEffect(() => {
-    if (isSearchMode) {
-      setTimeout(() => {
-        searchInputRef.current?.focus();
-      }, 210);
-    }
-  }, [isSearchMode]);
+    setTimeout(() => {
+      searchInputRef.current?.focus();
+    }, 210);
+  }, []);
 
-  useEffect(() => {
-    setSearchMode(false);
-  }, [pathname]);
+  if (!pathname.includes("search")) {
+    return null;
+  }
 
   return (
     <div
       className={classNames(
-        "fixed top-0 left-0 flex flex-col  justify-center items-center w-full h-full z-10 bg-black/60 p-10  transition-all delay-200",
-        { "visible opacity-100": isSearchMode },
-        { "invisible opacity-0": !isSearchMode }
+        "fixed top-0 left-0 flex flex-col  justify-center items-center w-full h-full z-10 bg-black/60 p-10  transition-all delay-200 visible opacity-100"
       )}
     >
       <div
         className="absolute top-10 right-10 cursor-pointer"
-        onClick={() => setSearchMode(false)}
+        onClick={() => router.back()}
       >
         <FiX size={20} color="white" />
       </div>
@@ -99,9 +96,7 @@ export function Search({ isSearchMode }: { isSearchMode: boolean }) {
           id="results"
           ref={animationParent}
           className={classNames(
-            "bg-white p-5 flex flex-col gap-7 mt-10 rounded-md transition-all  delay-500 max-h-96 overflow-scroll overflow-x-hidden",
-            { "visible opacity-100": isSearchMode },
-            { "invisible opacity-0": !isSearchMode },
+            "bg-white p-5 flex flex-col gap-7 mt-10 rounded-md transition-all  delay-500 max-h-96 overflow-scroll overflow-x-hidden visible opacity-100",
             { "invisible opacity-0": search.length === 0 },
             { "visible opacity-100": search.length > 0 }
           )}
@@ -114,7 +109,8 @@ export function Search({ isSearchMode }: { isSearchMode: boolean }) {
               return (
                 <li id="result">
                   <Link
-                    href={`/dizi/${slugify(serie.name)}`}
+                    replace
+                    href={`/dizi/${slugify(serie.original_name)}`}
                     className="flex items-center gap-5"
                   >
                     <img
@@ -123,7 +119,7 @@ export function Search({ isSearchMode }: { isSearchMode: boolean }) {
                     />
                     <div className="flex flex-col ">
                       <span className="text-lg font-semibold">
-                        {serie.name}
+                        {serie.original_name}
                       </span>
                       <span>{serie.overview}</span>
                     </div>

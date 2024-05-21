@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.modal-backdrop {
+  @apply absolute top-0 left-0 bg-black w-full h-full;
+}
+
+.close-button {
+  @apply absolute top-5 right-5;
+}

@@ -1,38 +1,25 @@
 "use client";
 
-import { useAppStore } from "../stores/app.store";
+import Link from "next/link";
+import { FiSearch } from "react-icons/fi";
 
 export function RightSidebar() {
-  const setSearchMode = useAppStore((state) => state.setSearchMode);
-
   return (
     <aside className=" w-1/5 py-10 px-10  min-w-min  border-l border-gray-300 dark:border-zinc-700 hidden lg:block ">
-      <div className="relative items-center content-center flex">
-        <span className="text-gray-400 absolute left-4 cursor-pointer">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            ></path>
-          </svg>
-        </span>
-        <div
-          className="text-xs ring-1 bg-transparent ring-gray-200 dark:ring-zinc-600 focus:ring-red-300 pl-10 pr-5 text-gray-600 dark:text-white  py-3 rounded-full w-full outline-none focus:ring-1 p-10 cursor-pointer"
-          onClick={() => setSearchMode(true)}
-        />
-      </div>
+      <Link href="/search">
+        <div className="relative items-center content-center flex">
+          <span className="text-gray-400 absolute left-4 cursor-pointer">
+            <FiSearch />
+          </span>
+          <div className="text-xs ring-1 bg-transparent ring-gray-200 dark:ring-zinc-600 focus:ring-red-300 pl-10 pr-5 text-gray-600 dark:text-white  py-3 rounded-full w-full outline-none focus:ring-1 p-10 cursor-pointer">
+            Ara..
+          </div>
+        </div>
+      </Link>
 
       <div className="mt-10">
         <span className="font-semibold text-gray-700 dark:text-white">
-          Popular Movies
+          Popüler Filmler
         </span>
         <ul className="mt-4 text-gray-400 text-xs space-y-3">
           <li className="flex space-y-3 space-x-3 ">
@@ -164,14 +151,14 @@ export function RightSidebar() {
               href="#"
               className="px-5 py-2.5 bg-red-600  hover:bg-red-700 rounded-lg text-center font-medium block text-white"
             >
-              See More
+              Daha fazla
             </a>
           </li>
         </ul>
       </div>
       <div className="mt-10">
         <span className="font-semibold text-gray-700 dark:text-white">
-          Favorites
+          Favoriler
         </span>
         <ul className="mt-4 text-gray-400 text-xs space-y-3">
           <li className="flex space-x-3 ">
@@ -303,7 +290,7 @@ export function RightSidebar() {
               href="#"
               className="px-5 py-2.5 bg-red-600 hover:bg-red-700 rounded-lg text-center font-medium block text-white"
             >
-              See More
+              Daha fazla
             </a>
           </li>
         </ul>

@@ -34,7 +34,7 @@ export interface ITmdbSerieDetails {
   in_production: boolean;
   languages: string[];
   last_air_date: Date;
-  last_episode_to_air: LastEpisodeToAir;
+  last_episode_to_air: Episode;
   name: string;
   next_episode_to_air: null;
   networks: Network[];
@@ -55,6 +55,8 @@ export interface ITmdbSerieDetails {
   type: string;
   vote_average: number;
   vote_count: number;
+
+  [key: string]: unknown;
 }
 
 export interface CreatedBy {
@@ -71,7 +73,7 @@ export interface Genre {
   name: string;
 }
 
-export interface LastEpisodeToAir {
+export interface Episode {
   id: number;
   overview: string;
   name: string;
@@ -85,6 +87,9 @@ export interface LastEpisodeToAir {
   season_number: number;
   show_id: number;
   still_path: string;
+
+  crew?: Crew[];
+  guest_stars?: Crew[];
 }
 
 export interface Network {
@@ -100,18 +105,36 @@ export interface ProductionCountry {
 }
 
 export interface Season {
+  _id?: string;
   air_date: Date;
-  episode_count: number;
-  id: number;
+  episodes?: Episode[];
   name: string;
   overview: string;
   poster_path: string;
   season_number: number;
   vote_average: number;
+  episode_count?: number;
+  id?: number;
 }
 
 export interface SpokenLanguage {
   english_name: string;
   iso_639_1: string;
   name: string;
+}
+
+export interface Crew {
+  job?: string;
+  department?: string;
+  credit_id: string;
+  adult: boolean;
+  gender: number;
+  id: number;
+  known_for_department: string;
+  name: string;
+  original_name: string;
+  popularity: number;
+  profile_path: null | string;
+  character?: string;
+  order?: number;
 }

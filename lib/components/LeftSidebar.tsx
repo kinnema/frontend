@@ -15,6 +15,18 @@ const navLinks = [
     name: "Gain",
     href: "/collection/gain",
   },
+  {
+    name: "BluTV",
+    href: "/collection/gain",
+  },
+  {
+    name: "Exxen",
+    href: "/collection/gain",
+  },
+  {
+    name: "Netflix",
+    href: "/collection/gain",
+  },
 ];
 
 export function LeftSidebar() {

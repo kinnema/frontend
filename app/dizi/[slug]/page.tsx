@@ -1,17 +1,21 @@
 "use client";
 
 import { Loading } from "@/lib/components/Loading";
-import { ISeriePage } from "@/lib/models";
+import { slugify } from "@/lib/helpers";
 import {
+  fetchSerieDetailsWithSeasonsFromTmdb,
   fetchSerieFromTMDB,
-  fetchSeriePage,
   searchSerieOnTMDB,
 } from "@/lib/services/series.service";
-import { ITmdbSearchResults, ITmdbSerieDetails } from "@/lib/types/tmdb";
+import {
+  ITmdbSearchResults,
+  ITmdbSerieDetails,
+  Season,
+} from "@/lib/types/tmdb";
 import { useQuery } from "@tanstack/react-query";
 import classNames from "classnames";
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 export default function SeriePage({ params }: { params: { slug: string } }) {
   const tmdbSearch = useQuery<ITmdbSearchResults>({
@@ -25,28 +29,74 @@ export default function SeriePage({ params }: { params: { slug: string } }) {
     queryFn: () => fetchSerieFromTMDB(tmdbSearch.data!.results[0].id),
   });
 
+  const tmdbDetailsData = useQuery<ITmdbSerieDetails>({
+    enabled: tmdbData.isSuccess,
+    queryKey: ["tmdb-details-with-season", params.slug],
+    queryFn: () => {
+      const seasons = tmdbData.data!.number_of_seasons;
+      return fetchSerieDetailsWithSeasonsFromTmdb(tmdbData.data!.id, seasons);
+    },
+  });
+
+  const numberOfSeasons = useMemo<number[] | undefined>(() => {
+    if (!tmdbData.isSuccess) return;
+
+    const _seasons = [];
+    for (let i = 1; i < tmdbData.data!.number_of_seasons + 1; i++) {
+      const seasonQuery = i;
+
+      _seasons.push(seasonQuery);
+    }
+
+    return _seasons;
+  }, [tmdbData]);
+
   if (tmdbSearch.isSuccess && tmdbSearch.data.total_results < 1) {
     return <div className="text-red-500">Dizi bulunamadı</div>;
   }
 
-  const { data, isPending, isError } = useQuery<ISeriePage>({
-    enabled: tmdbData.isSuccess,
-    queryKey: ["dizi", params.slug],
-    queryFn: () => fetchSeriePage(params.slug),
-  });
   const [activeTab, setActiveTab] = useState<number>(1);
 
-  if (tmdbData.isError) return <div>Error</div>;
+  const renderSeasonTab = useCallback(() => {
+    if (!tmdbDetailsData.isSuccess) return;
 
-  if (tmdbData.isPending) return <Loading fullscreen />;
+    const seasonKey = `season/${activeTab}`;
+    const data = tmdbDetailsData.data[seasonKey] as Season;
+
+    return data.episodes?.map((episode) => (
+      <Link
+        href={`/dizi/${slugify(
+          tmdbDetailsData.data!.original_name
+        )}/sezon-${activeTab}/bolum-${episode.episode_number}`}
+      >
+        <div
+          key={episode.id}
+          className="flex items-center justify-between p-4 mb-2 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
+        >
+          <div className="flex items-center space-x-4">
+            <div>
+              <div className="text-sm font-medium">
+                {episode.season_number}:{episode.episode_number} -{" "}
+                {episode.name}
+              </div>
+            </div>
+          </div>
+        </div>
+      </Link>
+    ));
+  }, [activeTab, tmdbDetailsData]);
+
+  if (tmdbDetailsData.isError) return <div>Error</div>;
+
+  if (tmdbDetailsData.isPending) return <Loading fullscreen />;
 
   return (
     <>
       <div className="w-full max-w-7xl mx-auto flex flex-col items-center gap-8 md:flex-row">
         <div className="bg-stone-900 overflow-hidden animate-none aspect-[2/3] rounded w-full max-w-[300px]">
           <img
-            src={`https://image.tmdb.org/t/p/original/${tmdbData.data?.poster_path}`}
-            alt="Mèo Điên"
+            src={`https://image.tmdb.org/t/p/original/${tmdbDetailsData.data?.poster_path}`}
+            alt={tmdbDetailsData.data?.original_name}
             className="duration-300 object-cover h-full w-full opacity-100 blur-none "
             width={300}
             height={450}
@@ -56,7 +106,7 @@ export default function SeriePage({ params }: { params: { slug: string } }) {
         </div>
         <div className="w-full">
           <h2 className="text-4xl font-extrabold lg:text-5xl dark:text-white">
-            {tmdbData.data.name}
+            {tmdbDetailsData.data.original_name}
           </h2>
           <div className="font-medium flex flex-col gap-5 my-4 lg:flex-row lg:items-center">
             <div className="flex items-center gap-2 text-xs font-bold">
@@ -70,59 +120,40 @@ export default function SeriePage({ params }: { params: { slug: string } }) {
           </div>
           <div className="flex items-center gap-5">
             <div className="text-sm max-h-80 overflow-auto movie-content dark:text-white">
-              {tmdbData.data.overview}
+              {tmdbDetailsData.data.overview}
             </div>
           </div>
         </div>
       </div>
 
-      {isPending ? (
-        <Loading />
-      ) : (
-        <div id="container" className="mt-10">
-          <div className="md:flex">
-            <ul className="flex-column space-y space-y-4 text-sm font-medium text-gray-500 dark:text-gray-400 md:me-4 mb-4 md:mb-0">
-              {Object.keys(data!.episodes.episodes).map((season) => (
-                <li
-                  className="cursor-pointer"
-                  key={season}
-                  onClick={() => setActiveTab(parseInt(season))}
+      <div id="container" className="mt-10">
+        <div className="md:flex">
+          <ul className="flex-column space-y space-y-4 text-sm font-medium text-gray-500 dark:text-gray-400 md:me-4 mb-4 md:mb-0">
+            {numberOfSeasons?.map((season) => (
+              <li
+                className="cursor-pointer"
+                key={season}
+                onClick={() => setActiveTab(season)}
+              >
+                <a
+                  className={classNames(
+                    activeTab === season
+                      ? "bg-red-600  dark:bg-red-600"
+                      : "bg-gray-300 dark:bg-gray-800",
+                    "inline-flex items-center px-4 py-3 text-white  rounded-lg active w-full"
+                  )}
+                  aria-current="page"
                 >
-                  <a
-                    className={classNames(
-                      activeTab === parseInt(season)
-                        ? "bg-red-600  dark:bg-red-600"
-                        : "bg-gray-300 dark:bg-gray-300",
-                      "inline-flex items-center px-4 py-3 text-white  rounded-lg active w-full"
-                    )}
-                    aria-current="page"
-                  >
-                    {season + ". Sezon"}
-                  </a>
-                </li>
-              ))}
-            </ul>
-            <div className=" bg-gray-50 text-medium text-gray-500 dark:text-gray-400 dark:bg-gray-800 rounded-lg w-full">
-              {data?.episodes.episodes[activeTab.toString()]?.map((episode) => (
-                <Link href={episode.href}>
-                  <div
-                    key={episode.href}
-                    className="flex items-center justify-between p-4 mb-2 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div>
-                        <div className="text-sm font-medium">
-                          {episode.name}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
+                  {season + ". Sezon"}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <div className="text-medium text-gray-500 dark:text-gray-400 rounded-lg w-full max-h-96 overflow-scroll overflow-x-hidden px-5">
+            {renderSeasonTab()}
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 }

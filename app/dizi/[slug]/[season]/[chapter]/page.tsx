@@ -3,13 +3,13 @@
 import { Loading } from "@/lib/components/Loading";
 import { IWatchResult } from "@/lib/models";
 import {
+  fetchSerieDetailsWithSeasonsFromTmdb,
   fetchSerieFromTMDB,
   fetchSerieWatchLink,
   searchSerieOnTMDB,
 } from "@/lib/services/series.service";
 import { ITmdbSearchResults, ITmdbSerieDetails } from "@/lib/types/tmdb";
 import { useQuery } from "@tanstack/react-query";
-import ReactPlayer from "react-player";
 
 interface IProps {
   params: {
@@ -24,13 +24,25 @@ export default function ChapterPage({ params }: IProps) {
   const chapter = parseInt(params.chapter.replace("bolum-", ""));
   const tmdbSearch = useQuery<ITmdbSearchResults>({
     queryKey: ["tmdb-search", params.slug],
+    networkMode: "offlineFirst",
     queryFn: () => searchSerieOnTMDB(params.slug),
   });
 
   const tmdbData = useQuery<ITmdbSerieDetails>({
     enabled: tmdbSearch.isSuccess && tmdbSearch.data.total_results > 0,
     queryKey: ["tmdb-details", params.slug],
+    networkMode: "offlineFirst",
     queryFn: () => fetchSerieFromTMDB(tmdbSearch.data!.results[0].id),
+  });
+
+  const tmdbDetailsData = useQuery<ITmdbSerieDetails>({
+    enabled: tmdbData.isSuccess,
+    queryKey: ["tmdb-details-with-season", params.slug],
+    networkMode: "offlineFirst",
+    queryFn: () => {
+      const seasons = tmdbData.data!.number_of_seasons;
+      return fetchSerieDetailsWithSeasonsFromTmdb(tmdbData.data!.id, seasons);
+    },
   });
 
   if (tmdbSearch.isSuccess && tmdbSearch.data.total_results < 1) {
@@ -53,15 +65,6 @@ export default function ChapterPage({ params }: IProps) {
     return <Loading fullscreen />;
   }
 
-  return (
-    <div>
-      {tmdbData?.data.name}
-
-      {serieWatchLink.isPending ? (
-        <Loading />
-      ) : (
-        <ReactPlayer url={serieWatchLink.data?.url} controls playing />
-      )}
-    </div>
-  );
+  // https://developer.themoviedb.org/reference/tv-episode-details
+  return <div>{tmdbData?.data.name}</div>;
 }
