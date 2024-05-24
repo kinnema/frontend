@@ -16,6 +16,7 @@
     "axios": "^1.6.8",
     "classnames": "^2.5.1",
     "framer-motion": "^11.2.6",
+    "lodash": "^4.17.21",
     "next": "14.2.3",
     "next-themes": "^0.3.0",
     "react": "^18",
@@ -28,6 +29,7 @@
     "zustand": "^4.5.2"
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.4",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

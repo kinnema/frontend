@@ -4,6 +4,7 @@ import { slugify, tmdbPoster } from "@/lib/helpers";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useQuery } from "@tanstack/react-query";
 import classNames from "classnames";
+import truncate from "lodash/truncate";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -96,7 +97,7 @@ export function Search() {
           id="results"
           ref={animationParent}
           className={classNames(
-            "bg-white p-5 flex flex-col gap-7 mt-10 rounded-md transition-all  delay-500 max-h-96 overflow-scroll overflow-x-hidden visible opacity-100",
+            "bg-white dark:bg-gray-800 text-white dark:text-gray-400 p-5 flex flex-col gap-7 mt-10 rounded-md transition-all  delay-500 max-h-96 overflow-scroll overflow-x-hidden visible opacity-100",
             { "invisible opacity-0": search.length === 0 },
             { "visible opacity-100": search.length > 0 }
           )}
@@ -107,7 +108,7 @@ export function Search() {
           {data?.results.map((serie) => {
             if (serie.poster_path) {
               return (
-                <li id="result">
+                <li id="result" className="">
                   <Link
                     replace
                     href={`/dizi/${slugify(serie.original_name)}`}
@@ -121,7 +122,7 @@ export function Search() {
                       <span className="text-lg font-semibold">
                         {serie.original_name}
                       </span>
-                      <span>{serie.overview}</span>
+                      <span>{truncate(serie.overview, { length: 120 })}</span>
                     </div>
                   </Link>
                 </li>
