@@ -63,27 +63,34 @@ export default function SeriePage({ params }: { params: { slug: string } }) {
     const seasonKey = `season/${activeTab}`;
     const data = tmdbDetailsData.data[seasonKey] as Season;
 
-    return data.episodes?.map((episode) => (
-      <Link
-        href={`/dizi/${slugify(
-          tmdbDetailsData.data!.original_name
-        )}/sezon-${activeTab}/bolum-${episode.episode_number}`}
-      >
-        <div
-          key={episode.id}
-          className="flex items-center justify-between p-4 mb-2 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
-        >
-          <div className="flex items-center space-x-4">
-            <div>
-              <div className="text-sm font-medium">
-                {episode.season_number}:{episode.episode_number} -{" "}
-                {episode.name}
+    return data.episodes?.map((episode) => {
+      if (episode.runtime !== null) {
+        return (
+          <Link
+            key={episode.id}
+            href={`/dizi/${slugify(
+              tmdbDetailsData.data!.original_name
+            )}/sezon-${activeTab}/bolum-${episode.episode_number}`}
+          >
+            <div className="flex items-center justify-between p-4 mb-2  bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800">
+              <div className="flex items-center space-x-4">
+                <div>
+                  <div className="flex gap-3 flex-col text-sm font-medium text-gray-800">
+                    {episode.season_number}:{episode.episode_number} -{" "}
+                    {episode.name}
+                    <span className="text-xs text-gray-500">
+                      {episode.overview}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </Link>
-    ));
+          </Link>
+        );
+      }
+
+      return null;
+    });
   }, [activeTab, tmdbDetailsData]);
 
   if (tmdbDetailsData.isError) return <div>Error</div>;
