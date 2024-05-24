@@ -4,6 +4,7 @@ import {
   fetchNetworkSeries,
 } from "@/lib/services/series.service";
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
+import { redirect } from "next/navigation";
 import { CollectionSeries } from "./series";
 
 interface IProps {
@@ -14,8 +15,14 @@ interface IProps {
 
 export default async function Page({ params }: IProps) {
   const queryClient = getQueryClient();
-  const network =
-    TmdbNetworks[params.network.toUpperCase() as keyof typeof TmdbNetworks];
+  const networkAsTmdbKey =
+    params.network.toUpperCase() as keyof typeof TmdbNetworks;
+
+  if (!Object.values(TmdbNetworks).includes(networkAsTmdbKey)) {
+    return redirect("/");
+  }
+
+  const network = TmdbNetworks[networkAsTmdbKey];
 
   await queryClient.prefetchQuery({
     queryKey: ["network-series", network],
