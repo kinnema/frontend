@@ -17,15 +17,15 @@ const navLinks = [
   },
   {
     name: "BluTV",
-    href: "/collection/gain",
+    href: "/collection/blutv",
   },
   {
     name: "Exxen",
-    href: "/collection/gain",
+    href: "/collection/exxen",
   },
   {
     name: "Netflix",
-    href: "/collection/gain",
+    href: "/collection/netflix",
   },
 ];
 

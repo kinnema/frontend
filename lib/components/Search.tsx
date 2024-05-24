@@ -1,6 +1,6 @@
 "use client";
 
-import { slugify } from "@/lib/helpers";
+import { slugify, tmdbPoster } from "@/lib/helpers";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useQuery } from "@tanstack/react-query";
 import classNames from "classnames";
@@ -114,7 +114,7 @@ export function Search() {
                     className="flex items-center gap-5"
                   >
                     <img
-                      src={`https://image.tmdb.org/t/p/original/${serie.poster_path}`}
+                      src={tmdbPoster(serie.poster_path)}
                       className="w-14 h-14 rounded-full object-cover aspect-square"
                     />
                     <div className="flex flex-col ">

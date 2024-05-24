@@ -1,27 +1,29 @@
-"use client";
-import { HomeMovieCategory } from "@/lib/components/Home/HomeMovieCategory";
-import { IHomeResults } from "@/lib/models";
+import getQueryClient from "@/lib/getQueryClient";
 import { fetchHomeData } from "@/lib/services/series.service";
-import { useQuery } from "@tanstack/react-query";
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
+import { HomeAiringToday } from "../lib/components/Home/airing_today";
+import { HomePopularSeries } from "../lib/components/Home/popular_series";
+import { HomeTrendingSeries } from "../lib/components/Home/trending_series";
 
-export default function Home() {
-  const { data, isPending, isError } = useQuery<IHomeResults>({
-    queryKey: ["trends"],
+export default async function Home() {
+  const queryClient = getQueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ["home-data"],
     queryFn: () => fetchHomeData(),
   });
 
-  if (isError) return <div>Error</div>;
-
-  if (isPending) return <div>Loading...</div>;
-
   return (
-    <>
-      <HomeMovieCategory categoryName="Trendler" data={data.trends} />
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <HomePopularSeries />
+      <HomeAiringToday />
+      <HomeTrendingSeries />
+      {/* <HomeMovieCategory categoryName="Trendler"  />
       <HomeMovieCategory categoryName="Yeni Diziler" data={data.new_series} />
       <HomeMovieCategory
         categoryName="Son Bölümler"
         data={data.last_episodes}
-      />
-    </>
+      /> */}
+    </HydrationBoundary>
   );
 }

@@ -88,7 +88,7 @@ export default function SeriePage({ params }: { params: { slug: string } }) {
 
   if (tmdbDetailsData.isError) return <div>Error</div>;
 
-  if (tmdbDetailsData.isPending) return <Loading fullscreen />;
+  if (tmdbDetailsData.isPending) return <Loading />;
 
   return (
     <>

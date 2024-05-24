@@ -1,7 +1,9 @@
+import { ITmdbSearchResults } from "./types/tmdb";
+
 export interface IHomeResults {
-  trends: ISerie[];
-  new_series: ISerie[];
-  last_episodes: ISerie[];
+  trending: ITmdbSearchResults;
+  popular: ITmdbSearchResults;
+  airToday: ITmdbSearchResults;
 }
 
 export interface IResult<T> {

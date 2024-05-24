@@ -8,3 +8,7 @@ export function slugify(text: string) {
     trim: true,
   });
 }
+
+export function tmdbPoster(url: string) {
+  return `https://image.tmdb.org/t/p/original/${url}`;
+}
