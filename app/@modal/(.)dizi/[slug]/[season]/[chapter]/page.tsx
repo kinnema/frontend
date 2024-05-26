@@ -10,6 +10,7 @@ import {
 } from "@/lib/services/series.service";
 import { Episode, ITmdbSearchResults } from "@/lib/types/tmdb";
 import { useQuery } from "@tanstack/react-query";
+import { usePathname } from "next/navigation";
 import { toast } from "react-hot-toast";
 import ReactPlayer from "react-player";
 
@@ -21,7 +22,10 @@ interface IProps {
   };
 }
 
+const pathNameRegex = "/dizi/(.*)/sezon-([0-9])/bolum-([0-9])";
+
 export default function ChapterPage({ params }: IProps) {
+  const pathName = usePathname();
   const season = parseInt(params.season.replace("sezon-", ""));
   const chapter = parseInt(params.chapter.replace("bolum-", ""));
   const tmdbSearch = useQuery<ITmdbSearchResults>({
@@ -63,7 +67,10 @@ export default function ChapterPage({ params }: IProps) {
   }
 
   return (
-    <Modal bgColor="black">
+    <Modal
+      isOpen={pathName.match(pathNameRegex) ? true : false}
+      bgColor="black"
+    >
       <div id="header">
         <div id="details" className="flex flex-col">
           <h1 className="text-white text-3xl">
