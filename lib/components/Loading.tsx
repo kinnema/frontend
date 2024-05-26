@@ -1,4 +1,12 @@
-export function Loading({ fullscreen }: { fullscreen?: boolean }) {
+import classNames from "classnames";
+
+export function Loading({
+  fullscreen,
+  sizeClass,
+}: {
+  fullscreen?: boolean;
+  sizeClass?: string;
+}) {
   if (fullscreen) {
     return (
       <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black/60 z-10">
@@ -29,7 +37,13 @@ export function Loading({ fullscreen }: { fullscreen?: boolean }) {
     <div role="status" className="flex justify-center items-center">
       <svg
         aria-hidden="true"
-        className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+        className={classNames(
+          "text-gray-200 animate-spin dark:text-gray-600 fill-blue-600",
+          {
+            "w-8 h-8": !sizeClass,
+            [sizeClass ?? ""]: sizeClass !== undefined,
+          }
+        )}
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
