@@ -26,7 +26,7 @@ export function HomeTrendingSeries() {
         {isPending ? (
           <Loading />
         ) : (
-          data.airToday.results
+          data.trending.results
             .slice(0, 5)
             .map((serie) => <SerieCard key={serie.id} serie={serie} />)
         )}
