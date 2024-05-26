@@ -2,8 +2,8 @@
 
 import classNames from "classnames";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FiMenu, FiSearch, FiX } from "react-icons/fi";
 import { NAV_LINKS } from "../constants";
 import { useAuthStore } from "../stores/auth.store";
@@ -13,10 +13,26 @@ export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const router = useRouter();
+  const pathName = usePathname();
+  const oldPathname = useRef<string>();
+
+  useEffect(() => {
+    if (oldPathname.current !== pathName) {
+      setMenuOpen(false);
+    } else {
+      setMenuOpen(true);
+    }
+  }, [pathName]);
+
+  useEffect(() => {
+    if (!menuOpen) {
+      oldPathname.current = undefined;
+    }
+  }, [menuOpen]);
 
   const toggleMenu = useCallback(() => {
     setMenuOpen((state) => !state);
-  }, []);
+  }, [pathName]);
 
   const onClickSearch = useCallback(() => {
     setMenuOpen(false);
