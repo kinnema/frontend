@@ -75,7 +75,7 @@ export default function SeriePage({ params }: { params: { slug: string } }) {
             <div className="flex items-center justify-between p-4 mb-2  bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800">
               <div className="flex items-center space-x-4">
                 <div>
-                  <div className="flex gap-3 flex-col text-sm font-medium text-gray-800">
+                  <div className="flex gap-3 flex-col text-sm font-medium text-gray-800 dark:text-gray-400">
                     {episode.season_number}:{episode.episode_number} -{" "}
                     {episode.name}
                     <span className="text-xs text-gray-500">

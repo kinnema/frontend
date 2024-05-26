@@ -8,7 +8,6 @@ import truncate from "lodash/truncate";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { FiX } from "react-icons/fi";
 import { searchSerieOnTMDB } from "../services/series.service";
 import { ITmdbSearchResults } from "../types/tmdb";
 import { Loading } from "./Loading";
@@ -39,16 +38,9 @@ export function Search() {
   return (
     <div
       className={classNames(
-        "fixed top-0 left-0 flex flex-col  justify-center items-center w-full h-full z-10 bg-black/60 p-10  transition-all delay-200 visible opacity-100"
+        "flex flex-col justify-center items-center w-full h-full z-10 p-10  transition-all delay-200 visible opacity-100"
       )}
     >
-      <div
-        className="absolute top-10 right-10 cursor-pointer"
-        onClick={() => router.back()}
-      >
-        <FiX size={20} color="white" />
-      </div>
-
       <form className="md:w-full w-96 ">
         <label
           htmlFor="default-search"

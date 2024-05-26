@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+#modal-root {
+  @apply absolute z-50;
+}
+
 .modal-backdrop {
   @apply absolute top-0 left-0 bg-black w-full h-full;
 }

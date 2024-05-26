@@ -1,6 +1,7 @@
 "use client";
 
 import { Loading } from "@/lib/components/Loading";
+import { Modal } from "@/lib/components/Modal";
 import { IWatchResult } from "@/lib/models";
 import {
   fetchEpisodeDetails,
@@ -11,7 +12,6 @@ import { Episode, ITmdbSearchResults } from "@/lib/types/tmdb";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import ReactPlayer from "react-player";
-import { Modal } from "./modal";
 
 interface IProps {
   params: {
@@ -63,7 +63,7 @@ export default function ChapterPage({ params }: IProps) {
   }
 
   return (
-    <Modal>
+    <Modal bgColor="black">
       <div id="header">
         <div id="details" className="flex flex-col">
           <h1 className="text-white text-3xl">
