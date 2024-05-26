@@ -5,8 +5,8 @@ import { FiSearch } from "react-icons/fi";
 
 export function RightSidebar() {
   return (
-    <aside className="w-1/5  min-w-min  border-l border-gray-300 dark:border-zinc-700 hidden lg:block overflow-y-scrol ">
-      <div id="wrapper" className="fixed  py-10 px-10 min-w-min h-full">
+    <aside className="w-1/5  min-w-min  border-l border-gray-300 dark:border-zinc-700 hidden lg:block overflow-hidden ">
+      <div id="wrapper" className="fixed w-1/6 py-10 px-10 min-w-min h-full ">
         <Link href="/search">
           <div className="relative items-center content-center flex">
             <span className="text-gray-400 absolute left-4 cursor-pointer">

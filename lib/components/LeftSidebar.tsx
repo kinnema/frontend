@@ -37,7 +37,10 @@ export function LeftSidebar() {
   const logOut = useAuthStore((state) => state.logOut);
   return (
     <aside className="w-1/6 border-r border-gray-300 dark:border-zinc-700  hidden md:block overflow-hidden ">
-      <div id="wrapper" className="fixed p-10 max-w-min  min-w-min h-full">
+      <div
+        id="wrapper"
+        className="fixed p-10 max-w-min  min-w-min h-full overflow-hidden w-2/6"
+      >
         <Link href="/">
           <div className=" font-bold text-lg flex items-center gap-x-3">
             <svg
