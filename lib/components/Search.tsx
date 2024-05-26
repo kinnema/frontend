@@ -38,7 +38,7 @@ export function Search() {
   return (
     <div
       className={classNames(
-        "flex flex-col justify-center items-center w-full h-full z-10 p-10  transition-all delay-200 visible opacity-100"
+        "flex flex-col justify-center items-center w-full h-full z-10 p-10"
       )}
     >
       <form className="md:w-full w-96 ">

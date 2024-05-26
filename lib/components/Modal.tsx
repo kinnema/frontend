@@ -1,5 +1,6 @@
 "use client";
 
+import classNames from "classnames";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { FiX } from "react-icons/fi";
@@ -10,9 +11,13 @@ _Modal.setAppElement("#modal-root");
 export function Modal({
   children,
   bgColor,
+  center,
+  shouldCloseOnOverlayClick = false,
 }: {
   children: React.ReactNode;
   bgColor?: string;
+  center?: boolean;
+  shouldCloseOnOverlayClick?: boolean;
 }) {
   const router = useRouter();
 
@@ -34,7 +39,7 @@ export function Modal({
         isOpen
         onRequestClose={onDismiss}
         shouldCloseOnEsc
-        shouldCloseOnOverlayClick={false}
+        shouldCloseOnOverlayClick={shouldCloseOnOverlayClick}
         preventScroll={true}
         // @ts-ignore
         parentSelector={() => document.querySelector("#modal-root")}
@@ -49,10 +54,12 @@ export function Modal({
           },
         }}
       >
-        {children}
-        <button onClick={onDismiss} className="close-button z-10">
-          <FiX size={20} color="white" />
-        </button>
+        <div className={classNames("h-full", { "mx-auto": center })}>
+          <div className="h-full">{children}</div>
+          <button onClick={onDismiss} className="close-button z-10">
+            <FiX size={20} color="white" />
+          </button>
+        </div>
       </_Modal>
     </>
   );

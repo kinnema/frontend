@@ -2,7 +2,9 @@
 import classNames from "classnames";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { FiLogOut, FiUser } from "react-icons/fi";
 import { useAppStore } from "../stores/app.store";
+import { useAuthStore } from "../stores/auth.store";
 
 const navLinks = [
   {
@@ -31,9 +33,11 @@ export function LeftSidebar() {
   const pathName = usePathname();
   const setTheme = useAppStore((state) => state.setTheme);
   const theme = useAppStore((state) => state.theme);
+  const user = useAuthStore((state) => state.user);
+  const logOut = useAuthStore((state) => state.logOut);
   return (
     <aside className="w-1/6 border-r border-gray-300 dark:border-zinc-700  hidden md:block overflow-hidden ">
-      <div id="wrapper" className="fixed py-10 pl-10  min-w-min h-full">
+      <div id="wrapper" className="fixed p-10 max-w-min  min-w-min h-full">
         <Link href="/">
           <div className=" font-bold text-lg flex items-center gap-x-3">
             <svg
@@ -73,7 +77,7 @@ export function LeftSidebar() {
           </div>
 
           <div id="bottom">
-            <a className=" flex items-center space-x-2 py-1 mt-4" href="#">
+            <a className="flex items-center space-x-2 py-1 mt-4" href="#">
               <label className="inline-flex items-center mb-5 cursor-pointer">
                 <input
                   type="checkbox"
@@ -89,7 +93,51 @@ export function LeftSidebar() {
               </label>
             </a>
 
-            <div id="user">user</div>
+            <div
+              id="user"
+              className="flex gap-5 group select-none cursor-pointer relative "
+            >
+              <div className="group-hover:opacity-100 w-full group-hover:visible invisible -top-20 opacity-0 absolute  text-white bg-gray-800 rounded-md p-5 transition-all  delay-100">
+                <ul>
+                  {!user ? (
+                    <>
+                      <li>
+                        <Link href="/login">Giris Yap</Link>
+                      </li>
+                    </>
+                  ) : (
+                    <>
+                      <li
+                        className="cursor-pointer flex gap-3"
+                        onClick={() => logOut()}
+                      >
+                        <FiLogOut size={20} /> Cikis yap
+                      </li>
+                    </>
+                  )}
+                </ul>
+              </div>
+
+              {user ? (
+                <>
+                  <FiUser size={30} className="text-gray-800 dark:text-white" />
+
+                  <div id="name" className="text-gray-800 dark:text-white">
+                    Muhammed Kaplan
+                  </div>
+                </>
+              ) : (
+                <>
+                  <span className="text-gray-800 dark:text-white flex items-center gap-3 text-sm">
+                    <FiUser
+                      size={30}
+                      className="text-gray-800 dark:text-white"
+                    />
+                    Kullanici hesabi
+                  </span>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>

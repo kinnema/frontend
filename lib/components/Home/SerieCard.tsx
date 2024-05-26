@@ -1,6 +1,7 @@
 import { slugify, tmdbPoster } from "@/lib/helpers";
 import { IFavorite, IMutationAddFavorite } from "@/lib/models";
 import { addToFavorites } from "@/lib/services/user.service";
+import { useAuthStore } from "@/lib/stores/auth.store";
 import { Result } from "@/lib/types/tmdb";
 import { useMutation } from "@tanstack/react-query";
 import classNames from "classnames";
@@ -16,6 +17,7 @@ interface IProps {
 }
 
 export function SerieCard({ serie }: IProps) {
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const { mutateAsync, isPending } = useMutation<
     IFavorite,
     void,
@@ -50,9 +52,11 @@ export function SerieCard({ serie }: IProps) {
       >
         <div className="absolute inset-0 bg-black/60 none flex-col gap-4 text-sm   font-bold opacity-0 group-hover:opacity-100 duration-300 text-center hidden md:flex">
           <div id="header" className="m-5 flex self-end">
-            <Button rounded onClick={(e) => onClickFavorite(e, serie)}>
-              {isPending ? <Loading sizeClass="w-3 h-3" /> : <FiHeart />}
-            </Button>
+            {isLoggedIn && (
+              <Button rounded onClick={(e) => onClickFavorite(e, serie)}>
+                {isPending ? <Loading sizeClass="w-3 h-3" /> : <FiHeart />}
+              </Button>
+            )}
           </div>
 
           <span className="self-center capitalize text-white font-medium drop-shadow-md">

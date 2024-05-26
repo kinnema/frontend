@@ -66,3 +66,12 @@ export interface IMutationAddFavorite extends IBaseFavorite {}
 export interface IFavorite extends IBaseFavorite {
   user: IUser;
 }
+
+export interface IMutationLogin {
+  data: FormData;
+}
+
+export interface ILoginResponse {
+  access_token: string;
+  user: IUser;
+}
