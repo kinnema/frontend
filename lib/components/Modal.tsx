@@ -13,8 +13,10 @@ export function Modal({
   bgColor,
   center,
   shouldCloseOnOverlayClick = false,
+  isOpen,
 }: {
   children: React.ReactNode;
+  isOpen: boolean;
   bgColor?: string;
   center?: boolean;
   shouldCloseOnOverlayClick?: boolean;
@@ -36,7 +38,7 @@ export function Modal({
   return (
     <>
       <_Modal
-        isOpen
+        isOpen={isOpen}
         onRequestClose={onDismiss}
         shouldCloseOnEsc
         shouldCloseOnOverlayClick={shouldCloseOnOverlayClick}

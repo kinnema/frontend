@@ -8,14 +8,20 @@ interface IProps extends I {
   secondary?: boolean;
 }
 
-export default function Button({ children, rounded, ...rest }: IProps) {
+export default function Button({
+  children,
+  rounded,
+  secondary,
+  ...rest
+}: IProps) {
   return (
     <button
       className={classNames(
-        "px-5 py-2.5 bg-red-600  hover:bg-red-700 rounded-lg text-center font-medium block text-white",
+        "px-5 py-2.5 rounded-lg text-center font-medium block ",
         {
           "rounded-full": rounded,
-          "bg-red-100 hover:bg-red-100 text-red-800": rest.secondary,
+          "bg-red-100 hover:bg-red-100 text-red-800": secondary,
+          "bg-red-600  hover:bg-red-700 text-white": !secondary,
         }
       )}
       {...rest}
