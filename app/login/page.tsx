@@ -1,10 +1,5 @@
-import { Modal } from "@/lib/components/Modal";
-import LoginModule from "@/lib/features/auth/login";
+"use server";
 
-export default function Page() {
-  return (
-    <Modal>
-      <LoginModule />
-    </Modal>
-  );
-}
+import { redirect } from "next/navigation";
+
+export default async () => redirect("/");
