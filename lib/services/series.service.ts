@@ -24,7 +24,7 @@ export async function fetchHomeData(): Promise<IHomeResults> {
 }
 
 async function fetchHomePopular() {
-  const url = "https://api.themoviedb.org/3/tv/popular";
+  const url = `https://api.themoviedb.org/3/trending/tv/day?language=tr-TR`;
 
   const response = await axiosClient.get(url);
 
@@ -32,7 +32,7 @@ async function fetchHomePopular() {
 }
 
 async function fetchHomeTrending() {
-  const url = "https://api.themoviedb.org/3/tv/top_rated";
+  const url = "https://api.themoviedb.org/3/trending/tv/week?language=tr-TR";
 
   const response = await axiosClient.get(url);
 
@@ -49,7 +49,7 @@ export async function fetchSeriesByNetwork(network: number) {
 }
 
 async function fetchAiringToday() {
-  const url = "https://api.themoviedb.org/3/tv/on_the_air";
+  const url = `https://api.themoviedb.org/3/tv/airing_today?language=tr-TR`;
 
   const response = await axiosClient.get(url);
 
@@ -76,9 +76,19 @@ export async function fetchFromVidsrc(
     `${process.env.NEXT_PUBLIC_VIDSRC_API}/vidsrc/${tmdbId}?s=${season}&e=${episode}`
   );
 
-  console.log(response.data);
+  const sources = response.data.sources;
 
-  return { url: response.data.sources[0].data.stream };
+  for (const source of sources) {
+    const response = await axios.get(source.data.stream);
+    if (response.status === 200) {
+      console.log("ok");
+      return { url: source.data.stream };
+    } else {
+      console.log("not ok");
+    }
+  }
+
+  return { url: "" };
 }
 
 export async function searchSerieOnTMDB(query: string) {

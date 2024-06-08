@@ -56,13 +56,16 @@ export default function ChapterPage({ params }: IProps) {
     enabled: tmdbData.isSuccess,
     networkMode: "offlineFirst",
     queryKey: ["dizi-watch", params.slug, season, chapter],
-    queryFn: () => {
+    queryFn: async () => {
       if (!isTurkishProvider) {
-        return fetchFromVidsrc(
+        const s = await fetchFromVidsrc(
           tmdbSearch.data?.results[0].id!,
           season,
           chapter
         );
+
+        console.log(s);
+        return s;
       } else {
         return fetchSerieWatchLink(params.slug, season, chapter);
       }
