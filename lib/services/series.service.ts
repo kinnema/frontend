@@ -78,7 +78,7 @@ export async function fetchFromVidsrc(
 
   console.log(response.data);
 
-  return { url: response.data.sources[1].data.stream };
+  return { url: response.data.sources[0].data.stream };
 }
 
 export async function searchSerieOnTMDB(query: string) {
