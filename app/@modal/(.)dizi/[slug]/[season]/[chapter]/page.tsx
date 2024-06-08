@@ -53,7 +53,7 @@ export default function ChapterPage({ params }: IProps) {
   }, []);
 
   const serieWatchLink = useQuery<IWatchResult>({
-    enabled: tmdbData.isSuccess,
+    enabled: tmdbData.isSuccess && isTurkishProvider,
     networkMode: "offlineFirst",
     queryKey: ["dizi-watch", params.slug, season, chapter],
     queryFn: async () => {
@@ -85,7 +85,7 @@ export default function ChapterPage({ params }: IProps) {
     return <Loading fullscreen />;
   }
 
-  if (serieWatchLink.isError) {
+  if (!serieWatchLink.isStale && serieWatchLink.isError) {
     toast.error("Yükleme hatasi, tekrar deneniyor..");
   }
 
@@ -105,7 +105,12 @@ export default function ChapterPage({ params }: IProps) {
         <div className="opacity-0 group-hover:opacity-100">test</div>
       </div>
 
-      {serieWatchLink.isPending ? (
+      {!isTurkishProvider ? (
+        <iframe
+          className="w-full h-full"
+          src={`https://vidsrc.to/embed/tv/${tmdbSearch.data?.results[0].id}/${season}/${chapter}`}
+        />
+      ) : serieWatchLink.isPending ? (
         <Loading />
       ) : (
         <ReactPlayer
@@ -125,6 +130,8 @@ export default function ChapterPage({ params }: IProps) {
           controls
         />
       )}
+
+      {}
     </Modal>
   );
 }
