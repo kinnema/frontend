@@ -5,29 +5,9 @@ import { usePathname } from "next/navigation";
 import { FiLogOut, FiUser } from "react-icons/fi";
 import { useAppStore } from "../stores/app.store";
 import { useAuthStore } from "../stores/auth.store";
+import { NAV_LINKS } from "../constants";
 
-const navLinks = [
-  {
-    name: "Ana Sayfa",
-    href: "/",
-  },
-  {
-    name: "Gain",
-    href: "/collection/gain",
-  },
-  {
-    name: "BluTV",
-    href: "/collection/blutv",
-  },
-  {
-    name: "Exxen",
-    href: "/collection/exxen",
-  },
-  {
-    name: "Netflix",
-    href: "/collection/netflix",
-  },
-];
+
 
 export function LeftSidebar() {
   const pathName = usePathname();
@@ -62,7 +42,7 @@ export function LeftSidebar() {
           >
             <div className="text-gray-400/70 font-medium uppercase">Menu</div>
 
-            {navLinks.map((link) => (
+            {NAV_LINKS.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
