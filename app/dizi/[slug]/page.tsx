@@ -7,6 +7,7 @@ import {
   fetchSerieFromTMDB,
   searchSerieOnTMDB,
 } from "@/lib/services/series.service";
+import { TurkishProviderIds } from "@/lib/types/networks";
 import {
   ITmdbSearchResults,
   ITmdbSerieDetails,
@@ -38,6 +39,20 @@ export default function SeriePage({ params }: { params: { slug: string } }) {
     },
   });
 
+  const serieNetwork = useMemo(() => {
+    if (!tmdbDetailsData.isSuccess) return;
+
+    return tmdbDetailsData.data?.networks.map((n) => n.id);
+  }, [tmdbDetailsData]);
+
+  const isTurkishProvider = useMemo(() => {
+    let containsAll = serieNetwork?.every((value) =>
+      TurkishProviderIds?.includes(value)
+    );
+
+    return containsAll;
+  }, [serieNetwork]);
+
   const numberOfSeasons = useMemo<number[] | undefined>(() => {
     if (!tmdbData.isSuccess) return;
 
@@ -65,13 +80,15 @@ export default function SeriePage({ params }: { params: { slug: string } }) {
 
     return data.episodes?.map((episode) => {
       if (episode.runtime !== null) {
+        let episodeHref = `/dizi/${slugify(
+          tmdbDetailsData.data!.original_name
+        )}/sezon-${activeTab}/bolum-${episode.episode_number}`;
+
+        if (isTurkishProvider) {
+          episodeHref += `?network=${serieNetwork?.at(0)}`;
+        }
         return (
-          <Link
-            key={episode.id}
-            href={`/dizi/${slugify(
-              tmdbDetailsData.data!.original_name
-            )}/sezon-${activeTab}/bolum-${episode.episode_number}`}
-          >
+          <Link key={episode.id} href={episodeHref}>
             <div className="flex items-center justify-between p-4 mb-2  bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800">
               <div className="flex items-center space-x-4">
                 <div>

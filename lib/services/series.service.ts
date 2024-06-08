@@ -1,13 +1,9 @@
+import axios from "axios";
 import { axiosClient } from ".";
-import { IHomeResults, ISeriePage, IWatchResult } from "../models";
+import { IHomeResults, IWatchResult } from "../models";
+import { TmdbNetworks } from "../types/networks";
 import { Episode, ITmdbSearchResults, ITmdbSerieDetails } from "../types/tmdb";
-
-export enum TmdbNetworks {
-  GAIN = 4409,
-  NETFLIX = 213,
-  BLUTV = 1747,
-  EXXEN = 4405,
-}
+import { IVidSrcResponse } from "../types/vidsrc";
 
 export async function fetchNetworkSeries(
   network: TmdbNetworks
@@ -71,10 +67,18 @@ export async function fetchSerieWatchLink(
   return response.data;
 }
 
-export async function fetchSeriePage(serie: string) {
-  const response = await axiosClient.get<ISeriePage>("/serie/" + serie);
+export async function fetchFromVidsrc(
+  tmdbId: number,
+  season: number,
+  episode: number
+): Promise<IWatchResult> {
+  const response = await axios.get<IVidSrcResponse>(
+    `${process.env.NEXT_PUBLIC_VIDSRC_API}/vidsrc/${tmdbId}?s=${season}&e=${episode}`
+  );
 
-  return response.data;
+  console.log(response.data);
+
+  return { url: response.data.sources[1].data.stream };
 }
 
 export async function searchSerieOnTMDB(query: string) {

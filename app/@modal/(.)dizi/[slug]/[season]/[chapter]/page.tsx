@@ -5,11 +5,15 @@ import { Modal } from "@/lib/components/Modal";
 import { IWatchResult } from "@/lib/models";
 import {
   fetchEpisodeDetails,
+  fetchFromVidsrc,
   fetchSerieWatchLink,
   searchSerieOnTMDB,
 } from "@/lib/services/series.service";
+import { TurkishProviderIds } from "@/lib/types/networks";
 import { Episode, ITmdbSearchResults } from "@/lib/types/tmdb";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
+import { useMemo } from "react";
 import { toast } from "react-hot-toast";
 import ReactPlayer from "react-player";
 
@@ -24,6 +28,7 @@ interface IProps {
 export default function ChapterPage({ params }: IProps) {
   const season = parseInt(params.season.replace("sezon-", ""));
   const chapter = parseInt(params.chapter.replace("bolum-", ""));
+  const searchParams = useSearchParams();
   const tmdbSearch = useQuery<ITmdbSearchResults>({
     queryKey: ["tmdb-search", params.slug],
     networkMode: "offlineFirst",
@@ -38,11 +43,27 @@ export default function ChapterPage({ params }: IProps) {
       fetchEpisodeDetails(tmdbSearch.data!.results[0].id, season, chapter),
   });
 
+  const isTurkishProvider = useMemo(() => {
+    const network = searchParams.get("network");
+
+    return TurkishProviderIds.includes(parseInt(network!));
+  }, []);
+
   const serieWatchLink = useQuery<IWatchResult>({
     enabled: tmdbData.isSuccess,
     networkMode: "offlineFirst",
     queryKey: ["dizi-watch", params.slug, season, chapter],
-    queryFn: () => fetchSerieWatchLink(params.slug, season, chapter),
+    queryFn: () => {
+      if (!isTurkishProvider) {
+        return fetchFromVidsrc(
+          tmdbSearch.data?.results[0].id!,
+          season,
+          chapter
+        );
+      } else {
+        return fetchSerieWatchLink(params.slug, season, chapter);
+      }
+    },
     retry: 3,
   });
 

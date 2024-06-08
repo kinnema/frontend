@@ -2,10 +2,8 @@
 
 import { Loading } from "@/lib/components/Loading";
 import { slugify, tmdbPoster } from "@/lib/helpers";
-import {
-  TmdbNetworks,
-  fetchNetworkSeries,
-} from "@/lib/services/series.service";
+import { fetchNetworkSeries } from "@/lib/services/series.service";
+import { TmdbNetworks } from "@/lib/types/networks";
 import { useQuery } from "@tanstack/react-query";
 import classNames from "classnames";
 import Link from "next/link";
