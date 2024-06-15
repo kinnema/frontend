@@ -57,16 +57,12 @@ export function Header() {
         </Link>
 
         <button onClick={toggleMenu}>
-          {menuOpen ? (
-            <FiX size={25} />
-          ) : (
-            <FiMenu size={25} className="dark:text-white" />
-          )}
+          {menuOpen ? <FiX size={25} /> : <FiMenu size={25} />}
         </button>
       </div>
       <div
         className={classNames(
-          "fixed left-0 dark:bg-zinc-900 bg-white w-full h-full z-10 flex flex-col p-8 transition-all delay-300",
+          "fixed  left-0 dark:bg-zinc-900 bg-white w-full h-full z-10 flex flex-col p-8 transition-all delay-300",
           {
             "opacity-100 visible top-24": menuOpen,
             "opacity-0 invisible top-0": !menuOpen,
@@ -81,14 +77,14 @@ export function Header() {
             <span className="text-gray-400 absolute left-4 cursor-pointer">
               <FiSearch />
             </span>
-            <div className="text-xs ring-1 bg-gray-200 dark:bg-zinc-600 ring-gray-200 dark:ring-zinc-600 focus:ring-red-300 pl-10 pr-5 text-gray-600 dark:text-white  py-3 rounded-full w-full outline-none focus:ring-1 p-10 cursor-pointer">
+            <div className="text-xs ring-1 bg-gray-200 ring-gray-200 dark:ring-zinc-600 focus:ring-red-300 pl-10 pr-5 text-gray-600 dark:text-white  py-3 rounded-full w-full outline-none focus:ring-1 p-10 cursor-pointer">
               Ara..
             </div>
           </div>
 
           <ul className="flex flex-col justify-center items-center mt-10">
             {NAV_LINKS.map((link) => (
-              <li className="p-3 text-center" key={link.href}>
+              <li className="p-3 text-center">
                 <Link
                   key={link.name}
                   href={link.href}
