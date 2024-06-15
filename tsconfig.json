@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": ["dom", "dom.iterable", "esnext", "WebWorker"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -19,8 +19,9 @@
     ],
     "paths": {
       "@/*": ["./*"]
-    }
+    },
+    "types": ["@serwist/next/typings"],
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/dizi/[slug]/[season]/[chapter]/layout.tsx.bak"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
 }
