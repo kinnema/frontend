@@ -2,6 +2,7 @@
 
 import { Loading } from "@/lib/components/Loading";
 import { slugify } from "@/lib/helpers";
+import { warmUpService } from "@/lib/services/app.service";
 import {
   fetchSerieDetailsWithSeasonsFromTmdb,
   fetchSerieFromTMDB,
@@ -22,6 +23,17 @@ export default function SeriePage({ params }: { params: { slug: string } }) {
   const tmdbSearch = useQuery<ITmdbSearchResults>({
     queryKey: ["tmdb-search", params.slug],
     queryFn: () => searchSerieOnTMDB(params.slug),
+  });
+
+  useQuery({
+    queryKey: ["warmup"],
+    queryFn: warmUpService,
+    networkMode: "offlineFirst",
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchInterval: false,
+    refetchIntervalInBackground: false,
   });
 
   const tmdbData = useQuery<ITmdbSerieDetails>({
