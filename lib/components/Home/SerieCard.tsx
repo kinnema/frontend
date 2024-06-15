@@ -43,7 +43,7 @@ export function SerieCard({ serie }: IProps) {
   );
 
   return (
-    <Link href={`/dizi/${slugify(serie.original_name)}`} key={serie.id}>
+    <Link href={`/dizi/${slugify(serie.original_name)}`}>
       <div
         className={classNames(
           "flex flex-col rounded-xl overflow-hidden cursor-pointer group select-none relative",
