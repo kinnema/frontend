@@ -1,11 +1,8 @@
 "use client";
 
 import { Loading } from "@/lib/components/Loading";
-import { warmUpService } from "@/lib/services/app.service";
-import {
-  fetchSerieDetailsWithSeasonsFromTmdb,
-  searchSerieOnTMDB,
-} from "@/lib/services/series.service";
+import AppService from "@/lib/services/app.service";
+import TmdbService from "@/lib/services/tmdb.service";
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { ITmdbSerieDetails } from "@/lib/types/tmdb";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -15,16 +12,14 @@ import SeasonEpisodes from "./components/SeasonEpisodes";
 
 export default function SeriePage({ params }: { params: { slug: string } }) {
   const sendWarmUpPing = useMutation({
-    mutationFn: warmUpService,
+    mutationFn: () => AppService.warmUpService(),
   });
 
   const tmdbDetailsData = useQuery<ITmdbSerieDetails>({
     queryKey: ["tmdb-details-with-season", params.slug],
     queryFn: async () => {
-      const tmdbSearch = await searchSerieOnTMDB(params.slug);
-      const tmdbData = fetchSerieDetailsWithSeasonsFromTmdb(
-        tmdbSearch.results[0].id
-      );
+      const tmdbSearch = await TmdbService.searchSeries(params.slug);
+      const tmdbData = TmdbService.fetchSerie(tmdbSearch.results[0].id);
 
       return tmdbData;
     },

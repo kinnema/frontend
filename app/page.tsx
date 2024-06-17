@@ -1,5 +1,5 @@
 import getQueryClient from "@/lib/getQueryClient";
-import { fetchHomeData } from "@/lib/services/series.service";
+import TmdbService from "@/lib/services/tmdb.service";
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { HomeAiringToday } from "../lib/components/Home/airing_today";
 import { HomePopularSeries } from "../lib/components/Home/popular_series";
@@ -10,7 +10,7 @@ export default async function Home() {
 
   await queryClient.prefetchQuery({
     queryKey: ["home-data"],
-    queryFn: () => fetchHomeData(),
+    queryFn: () => TmdbService.fetchHomeData(),
   });
 
   return (

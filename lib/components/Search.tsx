@@ -9,7 +9,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { FiSearch } from "react-icons/fi";
-import { searchSerieOnTMDB } from "../services/series.service";
+import TmdbService from "../services/tmdb.service";
 import { ITmdbSearchResults } from "../types/tmdb";
 import { Loading } from "./Loading";
 
@@ -23,7 +23,7 @@ export function Search() {
   const { data, isPending, isError } = useQuery<ITmdbSearchResults>({
     enabled: search.length > 0,
     queryKey: ["search", search],
-    queryFn: () => searchSerieOnTMDB(search),
+    queryFn: () => TmdbService.searchSeries(search),
   });
 
   useEffect(() => {

@@ -1,14 +1,14 @@
 "use client";
 
 import { Loading } from "@/lib/components/Loading";
-import { fetchHomeData } from "@/lib/services/series.service";
+import TmdbService from "@/lib/services/tmdb.service";
 import { useQuery } from "@tanstack/react-query";
 import { SerieCard } from "./SerieCard";
 
 export function HomeAiringToday() {
   const { data, isPending, isError } = useQuery({
     queryKey: ["home-data"],
-    queryFn: () => fetchHomeData(),
+    queryFn: () => TmdbService.fetchHomeData(),
   });
 
   if (isError) return <div>Error</div>;

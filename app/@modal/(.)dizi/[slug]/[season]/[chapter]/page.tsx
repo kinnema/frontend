@@ -3,14 +3,11 @@
 import { Loading } from "@/lib/components/Loading";
 import { Modal } from "@/lib/components/Modal";
 import { IWatchResult } from "@/lib/models";
-import {
-  fetchEpisodeDetails,
-  fetchFromVidsrc,
-  fetchSerieWatchLink,
-  searchSerieOnTMDB,
-} from "@/lib/services/series.service";
+import AppService from "@/lib/services/app.service";
+import TmdbService from "@/lib/services/tmdb.service";
+
 import { TurkishProviderIds } from "@/lib/types/networks";
-import { Episode, ITmdbSearchResults } from "@/lib/types/tmdb";
+import { ITmdbSerieDetails } from "@/lib/types/tmdb";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useMemo } from "react";
@@ -32,18 +29,15 @@ export default function ChapterPage({ params }: IProps) {
   const season = parseInt(params.season.replace("sezon-", ""));
   const chapter = parseInt(params.chapter.replace("bolum-", ""));
   const searchParams = useSearchParams();
-  const tmdbSearch = useQuery<ITmdbSearchResults>({
-    queryKey: ["tmdb-search", params.slug],
-    networkMode: "offlineFirst",
-    queryFn: () => searchSerieOnTMDB(params.slug),
-  });
 
-  const tmdbData = useQuery<Episode>({
-    enabled: tmdbSearch.isSuccess && tmdbSearch.data.total_results > 0,
-    queryKey: ["tmdb-episode-details", params.slug, season, chapter],
-    networkMode: "offlineFirst",
-    queryFn: () =>
-      fetchEpisodeDetails(tmdbSearch.data!.results[0].id, season, chapter),
+  const tmdbData = useQuery<ITmdbSerieDetails>({
+    queryKey: ["tmdb-details-with-season", params.slug],
+    queryFn: async () => {
+      const tmdbSearch = await TmdbService.searchSeries(params.slug);
+      const tmdbData = await TmdbService.fetchSerie(tmdbSearch.results[0].id);
+
+      return tmdbData;
+    },
   });
 
   const isTurkishProvider = useMemo(() => {
@@ -57,25 +51,10 @@ export default function ChapterPage({ params }: IProps) {
     networkMode: "offlineFirst",
     queryKey: ["dizi-watch", params.slug, season, chapter],
     queryFn: async () => {
-      if (!isTurkishProvider) {
-        const s = await fetchFromVidsrc(
-          tmdbSearch.data?.results[0].id!,
-          season,
-          chapter
-        );
-
-        console.log(s);
-        return s;
-      } else {
-        return fetchSerieWatchLink(params.slug, season, chapter);
-      }
+      return AppService.fetchSeries(params.slug, season, chapter);
     },
     retry: 3,
   });
-
-  if (tmdbSearch.isSuccess && tmdbSearch.data.total_results < 1) {
-    return <div className="text-red-500">Dizi bulunamadı</div>;
-  }
 
   if (tmdbData.isError) {
     return <div className="text-red-500">Dizi bulunamadı</div>;
@@ -96,9 +75,7 @@ export default function ChapterPage({ params }: IProps) {
     >
       <div id="header">
         <div id="details" className="flex flex-col">
-          <h1 className="text-white text-3xl">
-            {tmdbSearch.data!.results[0].original_name}
-          </h1>
+          <h1 className="text-white text-3xl">{tmdbData.data.original_name}</h1>
           <span className="text-white text-lg">{tmdbData.data!.name}</span>
         </div>
 
@@ -108,7 +85,7 @@ export default function ChapterPage({ params }: IProps) {
       {!isTurkishProvider ? (
         <iframe
           className="w-full h-full"
-          src={`https://vidsrc.to/embed/tv/${tmdbSearch.data?.results[0].id}/${season}/${chapter}`}
+          src={`https://vidsrc.to/embed/tv/${tmdbData.data.id}/${season}/${chapter}`}
         />
       ) : serieWatchLink.isPending ? (
         <Loading />
@@ -124,9 +101,7 @@ export default function ChapterPage({ params }: IProps) {
             width: "100%",
             height: "100%",
           }}
-          light={`https://image.tmdb.org/t/p/original/${
-            tmdbSearch.data!.results[0].poster_path
-          }`}
+          light={`https://image.tmdb.org/t/p/original/${tmdbData.data.poster_path}`}
           controls
         />
       )}
