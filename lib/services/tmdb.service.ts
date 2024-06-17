@@ -1,6 +1,7 @@
 import axios from "axios";
 import { TMDB_API_KEY } from "../constants";
 import { IHomeResults } from "../models";
+import { TmdbNetworks } from "../types/networks";
 import {
   Episode,
   ISeasonEpisodes,
@@ -64,7 +65,13 @@ class TmdbService {
     return { popular, trending, airToday };
   };
 
-  static fetchSeriesByNetwork = async (network: number) => {
+  static fetchNetworkSeries = (
+    network: TmdbNetworks
+  ): Promise<ITmdbSearchResults> => {
+    return this.fetchSeriesByNetwork(network);
+  };
+
+  private static fetchSeriesByNetwork = async (network: TmdbNetworks) => {
     const url = "/discover/tv?with_networks=" + network;
 
     const response = await axiosClient.get<ITmdbSearchResults>(url);

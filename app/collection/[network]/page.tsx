@@ -1,5 +1,5 @@
 import getQueryClient from "@/lib/getQueryClient";
-import { fetchNetworkSeries } from "@/lib/services/series.service";
+import TmdbService from "@/lib/services/tmdb.service";
 import { TmdbNetworks } from "@/lib/types/networks";
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { redirect } from "next/navigation";
@@ -24,7 +24,7 @@ export default async function Page({ params }: IProps) {
 
   await queryClient.prefetchQuery({
     queryKey: ["network-series", network],
-    queryFn: () => fetchNetworkSeries(network),
+    queryFn: () => TmdbService.fetchNetworkSeries(network),
   });
 
   return (
