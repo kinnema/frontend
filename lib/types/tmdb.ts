@@ -138,3 +138,15 @@ export interface Crew {
   character?: string;
   order?: number;
 }
+
+export interface ISeasonEpisodes {
+  _id: string;
+  air_date: Date;
+  episodes: Episode[];
+  name: string;
+  overview: string;
+  id: number;
+  poster_path: string;
+  season_number: number;
+  vote_average: number;
+}

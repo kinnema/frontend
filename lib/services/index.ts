@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosInstance } from "axios";
 import { BASE_URL, TMDB_API_KEY } from "../constants";
 import { useAuthStore } from "../stores/auth.store";
 
@@ -19,3 +19,7 @@ axiosClient.interceptors.request.use(
   },
   function (error) {}
 );
+
+export class BaseService {
+  protected client: AxiosInstance = axiosClient;
+}
