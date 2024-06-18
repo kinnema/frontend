@@ -1,3 +1,4 @@
+import { HomeLastWatched } from "@/lib/components/Home/last_watched";
 import getQueryClient from "@/lib/getQueryClient";
 import TmdbService from "@/lib/services/tmdb.service";
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
@@ -15,6 +16,8 @@ export default async function Home() {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
+      <HomeLastWatched />
+
       <HomePopularSeries />
       <HomeAiringToday />
       <HomeTrendingSeries />

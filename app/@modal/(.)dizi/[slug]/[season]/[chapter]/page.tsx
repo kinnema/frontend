@@ -2,15 +2,16 @@
 
 import { Loading } from "@/lib/components/Loading";
 import { Modal } from "@/lib/components/Modal";
-import { IWatchResult } from "@/lib/models";
+import { ILastWatched, ILastWatchedMutation, IWatchResult } from "@/lib/models";
 import AppService from "@/lib/services/app.service";
 import TmdbService from "@/lib/services/tmdb.service";
+import UserService from "@/lib/services/user.service";
 
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { ITmdbSerieDetails } from "@/lib/types/tmdb";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { toast } from "react-hot-toast";
 import ReactPlayer from "react-player";
 
@@ -29,6 +30,7 @@ export default function ChapterPage({ params }: IProps) {
   const season = parseInt(params.season.replace("sezon-", ""));
   const chapter = parseInt(params.chapter.replace("bolum-", ""));
   const searchParams = useSearchParams();
+  const videoPlayerRef = useRef<ReactPlayer>(null);
 
   const tmdbData = useQuery<ITmdbSerieDetails>({
     queryKey: ["tmdb-details-with-season", params.slug],
@@ -37,6 +39,16 @@ export default function ChapterPage({ params }: IProps) {
       const tmdbData = await TmdbService.fetchSerie(tmdbSearch.results[0].id);
 
       return tmdbData;
+    },
+  });
+
+  const addToLastWatched = useMutation<
+    ILastWatched,
+    void,
+    ILastWatchedMutation
+  >({
+    mutationFn: async (data: ILastWatchedMutation) => {
+      return UserService.addLastWatch(data);
     },
   });
 
@@ -55,6 +67,26 @@ export default function ChapterPage({ params }: IProps) {
     },
     retry: 3,
   });
+
+  useEffect(() => {
+    if (!tmdbData.data) {
+      return;
+    }
+
+    setTimeout(async () => {
+      await addToLastWatched.mutateAsync({
+        name: tmdbData.data.name,
+        poster_path: tmdbData.data.poster_path,
+        tmdb_id: tmdbData.data.id,
+        slug: params.slug,
+        season,
+        episode: chapter,
+        network: searchParams.get("network")
+          ? parseInt(searchParams.get("network")!)
+          : undefined,
+      });
+    }, 60_000);
+  }, []);
 
   if (tmdbData.isError) {
     return <div className="text-red-500">Dizi bulunamadı</div>;
@@ -95,6 +127,7 @@ export default function ChapterPage({ params }: IProps) {
           width={"100%"}
           height={"90%"}
           stopOnUnmount
+          ref={videoPlayerRef}
           playing
           style={{
             backgroundColor: "black",

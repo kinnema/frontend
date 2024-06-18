@@ -26,9 +26,16 @@ export function HomeTrendingSeries() {
         {isPending ? (
           <Loading />
         ) : (
-          data.trending.results
-            .slice(0, 5)
-            .map((serie) => <SerieCard key={serie.id} serie={serie} />)
+          data.trending.results.slice(0, 5).map((serie) => (
+            <SerieCard
+              key={serie.id}
+              serie={{
+                image: serie.poster_path!,
+                name: serie.original_name,
+                tmdb_id: serie.id,
+              }}
+            />
+          ))
         )}
       </div>
     </section>

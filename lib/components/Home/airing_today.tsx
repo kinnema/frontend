@@ -24,9 +24,16 @@ export function HomeAiringToday() {
         {isPending ? (
           <Loading />
         ) : (
-          data.airToday.results
-            .slice(0, 5)
-            .map((serie) => <SerieCard key={serie.id} serie={serie} />)
+          data.airToday.results.slice(0, 5).map((serie) => (
+            <SerieCard
+              key={serie.id}
+              serie={{
+                image: serie.poster_path!,
+                name: serie.original_name,
+                tmdb_id: serie.id,
+              }}
+            />
+          ))
         )}
       </div>
     </section>

@@ -1,8 +1,7 @@
 import { slugify, tmdbPoster } from "@/lib/helpers";
-import { IFavorite, IMutationAddFavorite } from "@/lib/models";
+import { IFavorite, IMutationAddFavorite, ISerie } from "@/lib/models";
 import UserService from "@/lib/services/user.service";
 import { useAuthStore } from "@/lib/stores/auth.store";
-import { Result } from "@/lib/types/tmdb";
 import { useMutation } from "@tanstack/react-query";
 import classNames from "classnames";
 import Link from "next/link";
@@ -13,7 +12,7 @@ import Button from "../Button";
 import { Loading } from "../Loading";
 
 interface IProps {
-  serie: Result;
+  serie: ISerie;
 }
 
 export function SerieCard({ serie }: IProps) {
@@ -29,21 +28,21 @@ export function SerieCard({ serie }: IProps) {
   });
 
   const onClickFavorite = useCallback(
-    async (e: React.MouseEvent<HTMLButtonElement>, serie: Result) => {
+    async (e: React.MouseEvent<HTMLButtonElement>, serie: ISerie) => {
       e.stopPropagation();
       e.preventDefault();
 
       await mutateAsync({
-        tmdb_id: serie.id,
-        name: serie.original_name,
-        poster_path: serie.poster_path ?? "",
+        tmdb_id: serie.tmdb_id,
+        name: serie.name,
+        poster_path: serie.href ?? "",
       });
     },
     []
   );
 
   return (
-    <Link href={`/dizi/${slugify(serie.original_name)}`}>
+    <Link href={serie.href ?? `/dizi/${slugify(serie.name)}`}>
       <div
         className={classNames(
           "flex flex-col rounded-xl overflow-hidden cursor-pointer group select-none relative",
@@ -60,20 +59,20 @@ export function SerieCard({ serie }: IProps) {
           </div>
 
           <span className="self-center capitalize text-white font-medium drop-shadow-md">
-            {serie.original_name}
+            {serie.name}
           </span>
         </div>
 
         <img
-          src={tmdbPoster(serie.poster_path ?? "")}
+          src={tmdbPoster(serie.image ?? "")}
           className="h-full w-full"
-          alt={serie.original_name}
+          alt={serie.name}
         />
 
-        {serie.original_name && (
+        {serie.name && (
           <div className="w-full bg-white dark:bg-zinc-800 dark:text-white px-3 flex py-5 items-center justify-between border-t-2 border-t-red-600">
             <span className="capitalize  font-medium truncate">
-              {serie.original_name}
+              {serie.name}
             </span>
           </div>
         )}

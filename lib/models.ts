@@ -14,14 +14,6 @@ export interface IWatchResult {
   url: string;
 }
 
-export interface ISerie {
-  name: string;
-  image: string;
-  href: string;
-  desc?: string;
-  video_url?: string;
-}
-
 export interface ISeriePageEpisode {
   episodes: {
     [season: string]: ISerie[];
@@ -74,4 +66,29 @@ export interface IMutationLogin {
 export interface ILoginResponse {
   access_token: string;
   user: IUser;
+}
+
+export interface ILastWatched {
+  id: number;
+  name: string;
+  slug: string;
+  poster_path: string;
+  season: number;
+  episode: number;
+  is_watched: boolean;
+  user: IUser;
+  tmdb_id: number;
+  network?: number;
+}
+
+export type ILastWatchedMutation = Omit<
+  ILastWatched,
+  "user" | "id" | "is_watched"
+>;
+
+export interface ISerie {
+  name: string;
+  image: string;
+  tmdb_id: number;
+  href?: string;
 }
