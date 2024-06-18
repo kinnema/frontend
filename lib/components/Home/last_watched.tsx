@@ -11,7 +11,7 @@ import { SerieCard } from "./SerieCard";
 export function HomeLastWatched() {
   const isAuthenticated = useAuthStore((state) => state.isLoggedIn);
 
-  const { data, isError } = useQuery({
+  const { data, isPending, isError } = useQuery({
     enabled: isAuthenticated,
     queryKey: ["last-watched"],
     queryFn: () => UserService.fetchLastWatched(),
@@ -20,6 +20,8 @@ export function HomeLastWatched() {
   if (!isAuthenticated) return null;
 
   if (isError) return <div>Error</div>;
+
+  if (isPending) return <Loading />;
 
   if (data && data.length < 1) return null;
 
