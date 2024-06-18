@@ -17,6 +17,8 @@ export function HomeLastWatched() {
     queryFn: () => UserService.fetchLastWatched(),
   });
 
+  if (!isAuthenticated) return null;
+
   if (isError) return <div>Error</div>;
 
   if (data && data.length < 1) return null;
