@@ -32,7 +32,7 @@ export default function SeriePage({ params }: { params: { slug: string } }) {
   }, [tmdbDetailsData]);
 
   const isTurkishProvider = useMemo(() => {
-    let containsAll = serieNetwork?.every((value) =>
+    let containsAll = serieNetwork?.some((value) =>
       TurkishProviderIds?.includes(value)
     );
 

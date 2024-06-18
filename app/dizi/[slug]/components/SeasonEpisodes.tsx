@@ -1,8 +1,10 @@
 import { Loading } from "@/lib/components/Loading";
 import { slugify } from "@/lib/helpers";
 import TmdbService from "@/lib/services/tmdb.service";
+import { TurkishProviderIds } from "@/lib/types/networks";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { useMemo } from "react";
 
 interface IProps {
   id: number;
@@ -28,6 +30,16 @@ export default function SeasonEpisodes({
     return <div>Error</div>;
   }
 
+  const network = useMemo(() => {
+    return serieNetwork.findIndex((n) => {
+      const s = TurkishProviderIds.findIndex((i) => n === i);
+
+      if (s !== -1) {
+        return s;
+      }
+    });
+  }, [serieNetwork]);
+
   if (isPending) {
     return <Loading />;
   }
@@ -41,8 +53,9 @@ export default function SeasonEpisodes({
           )}/sezon-${season}/bolum-${episode.episode_number}`;
 
           if (isTurkishProvider) {
-            episodeHref += `?network=${serieNetwork?.at(0)}`;
+            episodeHref += `?network=${serieNetwork?.at(network)}`;
           }
+
           return (
             <Link key={episode.id} href={episodeHref}>
               <div className="flex items-center justify-between p-4 mb-2  bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800">
