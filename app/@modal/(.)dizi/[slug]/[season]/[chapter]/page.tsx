@@ -6,6 +6,7 @@ import { ILastWatched, ILastWatchedMutation, IWatchResult } from "@/lib/models";
 import AppService from "@/lib/services/app.service";
 import TmdbService from "@/lib/services/tmdb.service";
 import UserService from "@/lib/services/user.service";
+import { useAuthStore } from "@/lib/stores/auth.store";
 
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { ITmdbSerieDetails } from "@/lib/types/tmdb";
@@ -29,6 +30,7 @@ export default function ChapterPage({ params }: IProps) {
   const pathName = usePathname();
   const season = parseInt(params.season.replace("sezon-", ""));
   const chapter = parseInt(params.chapter.replace("bolum-", ""));
+  const isAuthenticated = useAuthStore((state) => state.isLoggedIn);
   const searchParams = useSearchParams();
   const videoPlayerRef = useRef<ReactPlayer>(null);
 
@@ -69,6 +71,10 @@ export default function ChapterPage({ params }: IProps) {
   });
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+
     if (!tmdbData.data) {
       return;
     }
@@ -86,7 +92,7 @@ export default function ChapterPage({ params }: IProps) {
           : undefined,
       });
     }, 60_000);
-  }, []);
+  }, [isAuthenticated]);
 
   if (tmdbData.isError) {
     return <div className="text-red-500">Dizi bulunamadı</div>;
