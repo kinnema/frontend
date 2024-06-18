@@ -1,6 +1,6 @@
 import { slugify, tmdbPoster } from "@/lib/helpers";
 import { IFavorite, IMutationAddFavorite } from "@/lib/models";
-import { addToFavorites } from "@/lib/services/user.service";
+import UserService from "@/lib/services/user.service";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { Result } from "@/lib/types/tmdb";
 import { useMutation } from "@tanstack/react-query";
@@ -23,7 +23,7 @@ export function SerieCard({ serie }: IProps) {
     void,
     IMutationAddFavorite
   >({
-    mutationFn: (data) => addToFavorites(data),
+    mutationFn: (data) => UserService.addToFavorites(data),
     onSuccess: (e) => toast.success("Favorilere eklendi"),
     onError: (e) => toast.error("Favorilere eklenemedi"),
   });
