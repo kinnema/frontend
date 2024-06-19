@@ -1,15 +1,12 @@
-import { Button as NextUIButton } from "@nextui-org/button";
+import { ButtonProps, Button as NextUIButton } from "@nextui-org/button";
 import classNames from "classnames";
-import { PropsWithChildren } from "react";
-type I = PropsWithChildren & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
-interface IProps extends I {
+interface IProps extends ButtonProps {
   rounded?: boolean;
   secondary?: boolean;
-  onClick?: () => void;
+  onClick?: (e: any) => void;
   href?: string;
   className?: string;
-  isLoading?: boolean;
   icon?: React.ReactNode;
 }
 
@@ -19,15 +16,14 @@ export default function Button({
   children,
   secondary,
   className,
-  isLoading,
   icon,
+  ...rest
 }: IProps) {
   return (
     <NextUIButton
       type="button"
       href={href}
-      isLoading={isLoading}
-      onClick={onClick}
+      onClick={(e) => onClick && onClick(e)}
       startContent={icon}
       className={classNames(
         {
@@ -36,6 +32,7 @@ export default function Button({
         },
         className
       )}
+      {...rest}
     >
       {children}
     </NextUIButton>

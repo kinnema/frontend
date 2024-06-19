@@ -115,8 +115,9 @@ export default function ChapterPage({ params }: IProps) {
     >
       <div id="header">
         <div id="details" className="flex flex-col">
-          <h1 className="text-white text-3xl">{tmdbData.data.original_name}</h1>
-          <span className="text-white text-lg">{tmdbData.data!.name}</span>
+          <span className="text-white text-lg">
+            {season}. Sezon - {chapter}. Bölüm
+          </span>
         </div>
 
         <div className="opacity-0 group-hover:opacity-100">test</div>

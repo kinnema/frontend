@@ -9,7 +9,6 @@ import React, { useCallback } from "react";
 import toast from "react-hot-toast";
 import { FiHeart } from "react-icons/fi";
 import Button from "../Button";
-import { Loading } from "../Loading";
 
 interface IProps {
   serie: ISerie;
@@ -52,8 +51,13 @@ export function SerieCard({ serie }: IProps) {
         <div className="absolute inset-0 bg-black/60 none flex-col gap-4 text-sm   font-bold opacity-0 group-hover:opacity-100 duration-300 text-center hidden md:flex">
           <div id="header" className="m-5 flex self-end">
             {isLoggedIn && (
-              <Button rounded onClick={(e) => onClickFavorite(e, serie)}>
-                {isPending ? <Loading sizeClass="w-3 h-3" /> : <FiHeart />}
+              <Button
+                rounded
+                onClick={(e) => onClickFavorite(e, serie)}
+                isLoading={isPending}
+                isIconOnly
+              >
+                <FiHeart />
               </Button>
             )}
           </div>
