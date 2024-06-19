@@ -9,6 +9,8 @@ interface IProps extends I {
   onClick?: () => void;
   href?: string;
   className?: string;
+  isLoading?: boolean;
+  icon?: React.ReactNode;
 }
 
 export default function Button({
@@ -17,12 +19,16 @@ export default function Button({
   children,
   secondary,
   className,
+  isLoading,
+  icon,
 }: IProps) {
   return (
     <NextUIButton
       type="button"
       href={href}
+      isLoading={isLoading}
       onClick={onClick}
+      startContent={icon}
       className={classNames(
         {
           "bg-red-100 hover:bg-red-100 text-red-800": secondary,

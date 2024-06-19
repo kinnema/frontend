@@ -1,7 +1,6 @@
 "use client";
 
 import Button from "@/lib/components/Button";
-import { Loading } from "@/lib/components/Loading";
 import { ILoginResponse, IMutationLogin } from "@/lib/models";
 import { login } from "@/lib/services/auth.service";
 import { useAuthStore } from "@/lib/stores/auth.store";
@@ -10,6 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
+import { FiLogIn } from "react-icons/fi";
 export default function LoginModule() {
   const router = useRouter();
   const setUser = useAuthStore((state) => state.setUser);
@@ -82,8 +82,12 @@ export default function LoginModule() {
           Kapat
         </Button>
 
-        <Button onClick={onLogin}>
-          {loginMutation.isPending ? <Loading /> : "Giris yap"}
+        <Button
+          onClick={onLogin}
+          isLoading={loginMutation.isPending}
+          icon={<FiLogIn />}
+        >
+          Giris yap
         </Button>
       </div>
     </form>

@@ -3,6 +3,7 @@ import { Switch } from "@nextui-org/switch";
 import classNames from "classnames";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { FiLogIn } from "react-icons/fi";
 import { NAV_LINKS } from "../constants";
 import { useAppStore } from "../stores/app.store";
 import { useAuthStore } from "../stores/auth.store";
@@ -75,7 +76,9 @@ export function LeftSidebar() {
                 <AccountDropdown />
               ) : (
                 <Link href="/login" passHref legacyBehavior>
-                  <Button className="w-10/12">Giris Yap</Button>
+                  <Button className="w-10/12" icon={<FiLogIn />}>
+                    Giris Yap
+                  </Button>
                 </Link>
               )}
             </div>
