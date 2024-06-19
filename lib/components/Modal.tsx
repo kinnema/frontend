@@ -1,26 +1,39 @@
 "use client";
 
-import classNames from "classnames";
+import {
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  Modal as _Modal,
+} from "@nextui-org/modal";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { FiX } from "react-icons/fi";
-import _Modal from "react-modal";
 
-_Modal.setAppElement("#modal-root");
-
-export function Modal({
-  children,
-  bgColor,
-  center,
-  shouldCloseOnOverlayClick = false,
-  isOpen,
-}: {
+interface IProps {
   children: React.ReactNode;
   isOpen: boolean;
-  bgColor?: string;
-  center?: boolean;
-  shouldCloseOnOverlayClick?: boolean;
-}) {
+  title: string;
+  size?:
+    | "md"
+    | "xs"
+    | "sm"
+    | "lg"
+    | "xl"
+    | "2xl"
+    | "3xl"
+    | "4xl"
+    | "5xl"
+    | "full";
+  backdrop?: "transparent" | "opaque" | "blur";
+}
+
+export function Modal({
+  isOpen,
+  children,
+  title,
+  size = "md",
+  backdrop = "opaque",
+}: IProps) {
   const router = useRouter();
 
   useEffect(() => {
@@ -43,29 +56,25 @@ export function Modal({
     <>
       <_Modal
         isOpen={isOpen}
-        onRequestClose={onDismiss}
-        shouldCloseOnEsc
-        shouldCloseOnOverlayClick={shouldCloseOnOverlayClick}
-        preventScroll={true}
-        // @ts-ignore
-        parentSelector={() => document.querySelector("#modal-root")}
-        style={{
-          content: {
-            inset: 10,
-            background: "transparent",
-            border: 0,
-          },
-          overlay: {
-            backgroundColor: bgColor ?? "rgba(0, 0, 0, 0.55)",
-          },
-        }}
+        onClose={onDismiss}
+        size={size}
+        backdrop={backdrop}
+        placement="center"
       >
-        <div className={classNames("h-full", { "mx-auto": center })}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
+              <ModalBody>{children}</ModalBody>
+            </>
+          )}
+          {/* <div className={classNames("h-full", { "mx-auto": center })}>
           <div className="h-full">{children}</div>
           <button onClick={onDismiss} className="close-button z-10">
             <FiX size={20} color="white" />
           </button>
-        </div>
+        </div> */}
+        </ModalContent>
       </_Modal>
     </>
   );

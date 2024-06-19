@@ -2,15 +2,14 @@
 
 import Button from "@/lib/components/Button";
 import { Loading } from "@/lib/components/Loading";
-import ModalContent from "@/lib/components/ModalContent";
 import { ILoginResponse, IMutationLogin } from "@/lib/models";
 import { login } from "@/lib/services/auth.service";
 import { useAuthStore } from "@/lib/stores/auth.store";
+import { Input } from "@nextui-org/input";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
-
 export default function LoginModule() {
   const router = useRouter();
   const setUser = useAuthStore((state) => state.setUser);
@@ -47,50 +46,46 @@ export default function LoginModule() {
   }, [email, password]);
 
   return (
-    <ModalContent
-      actions={[
+    <form className="flex flex-col gap-5">
+      <div id="group">
+        <label
+          htmlFor="email"
+          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >
+          E-mail
+        </label>
+        <Input
+          type="email"
+          id="email"
+          placeholder="selman@kinnema.com"
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+      </div>
+      <div id="group">
+        <label
+          htmlFor="password"
+          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >
+          Sifreniz
+        </label>
+        <Input
+          type="password"
+          id="password"
+          placeholder="******"
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </div>
+      <div className="flex flex-row gap-5 self-end">
         <Button secondary onClick={() => router.back()}>
           Kapat
-        </Button>,
+        </Button>
+
         <Button onClick={onLogin}>
           {loginMutation.isPending ? <Loading /> : "Giris yap"}
-        </Button>,
-      ]}
-    >
-      <form className="flex flex-col gap-5">
-        <div id="group">
-          <label
-            htmlFor="email"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >
-            E-mail
-          </label>
-          <input
-            type="email"
-            id="email"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="selman@kinnema.com"
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div id="group">
-          <label
-            htmlFor="password"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >
-            Sifreniz
-          </label>
-          <input
-            type="password"
-            id="password"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="******"
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-      </form>
-    </ModalContent>
+        </Button>
+      </div>
+    </form>
   );
 }

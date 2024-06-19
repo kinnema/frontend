@@ -8,7 +8,12 @@ export default function test() {
   const pathname = usePathname();
 
   return (
-    <Modal isOpen={pathname.includes("/search")}>
+    <Modal
+      title="Dizi Ara"
+      isOpen={pathname.includes("/search")}
+      size="3xl"
+      backdrop="blur"
+    >
       <Search />
     </Modal>
   );

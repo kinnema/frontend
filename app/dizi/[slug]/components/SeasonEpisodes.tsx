@@ -58,7 +58,7 @@ export default function SeasonEpisodes({
 
           return (
             <Link key={episode.id} href={episodeHref}>
-              <div className="flex items-center justify-between p-4 mb-2  bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800">
+              <div className="flex items-center justify-between p-4 mb-2  bg-white rounded-lg shadow-lg dark:text-gray-400 dark:bg-zinc-800">
                 <div className="flex items-center space-x-4">
                   <div>
                     <div className="flex gap-3 flex-col text-sm font-medium text-gray-800 dark:text-gray-400">

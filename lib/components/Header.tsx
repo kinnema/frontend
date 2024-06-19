@@ -8,6 +8,7 @@ import { FiMenu, FiSearch, FiX } from "react-icons/fi";
 import { NAV_LINKS } from "../constants";
 import { useAuthStore } from "../stores/auth.store";
 import Button from "./Button";
+import AccountDropdown from "./Sidebar/AccountDropdown";
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -66,7 +67,7 @@ export function Header() {
       </div>
       <div
         className={classNames(
-          "fixed left-0 dark:bg-zinc-900 bg-white w-full h-full z-10 flex flex-col p-8 transition-all delay-300",
+          "fixed left-0 dark:bg-zinc-900 bg-white w-full h-full z-10 flex flex-col p-8 transition-all duration-300",
           {
             "opacity-100 visible top-24": menuOpen,
             "opacity-0 invisible top-0": !menuOpen,
@@ -105,10 +106,12 @@ export function Header() {
           </ul>
 
           <div className="m-auto">
-            {!isLoggedIn && (
-              <Link href="/login">
+            {!isLoggedIn ? (
+              <Link href="/login" passHref legacyBehavior>
                 <Button>Giris yap</Button>
               </Link>
+            ) : (
+              <AccountDropdown />
             )}
           </div>
         </div>

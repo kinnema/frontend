@@ -1,18 +1,20 @@
 "use client";
+import { Switch } from "@nextui-org/switch";
 import classNames from "classnames";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FiLogOut, FiUser } from "react-icons/fi";
 import { NAV_LINKS } from "../constants";
 import { useAppStore } from "../stores/app.store";
 import { useAuthStore } from "../stores/auth.store";
+import Button from "./Button";
+import AccountDropdown from "./Sidebar/AccountDropdown";
 
 export function LeftSidebar() {
   const pathName = usePathname();
   const setTheme = useAppStore((state) => state.setTheme);
   const theme = useAppStore((state) => state.theme);
-  const user = useAuthStore((state) => state.user);
-  const logOut = useAuthStore((state) => state.logOut);
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+
   return (
     <aside className="w-1/6 border-r border-gray-300 dark:border-zinc-700  hidden md:block overflow-hidden ">
       <div
@@ -57,66 +59,24 @@ export function LeftSidebar() {
             ))}
           </div>
 
-          <div id="bottom">
-            <a className="flex items-center space-x-2 py-1 mt-4" href="#">
-              <label className="inline-flex items-center mb-5 cursor-pointer">
-                <input
-                  type="checkbox"
-                  value=""
-                  className="sr-only peer"
-                  checked={theme === "dark"}
-                  onChange={() => setTheme(theme === "dark" ? "light" : "dark")}
-                />
-                <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-                  Karanlik mod
-                </span>
-              </label>
-            </a>
+          <div id="bottom" className="flex flex-col gap-5">
+            <span className="flex items-center space-x-2 py-1 mt-4">
+              <Switch
+                onChange={() => setTheme(theme === "light" ? "dark" : "light")}
+                isSelected={theme === "dark"}
+                aria-label="Dark mode"
+              >
+                <span className="text-sm">Karanlik mod</span>
+              </Switch>
+            </span>
 
-            <div
-              id="user"
-              className="flex gap-5 group select-none cursor-pointer relative "
-            >
-              <div className="group-hover:opacity-100 w-full group-hover:visible invisible -top-20 opacity-0 absolute  text-white bg-gray-800 rounded-md p-5 transition-all  delay-100">
-                <ul>
-                  {!user ? (
-                    <>
-                      <li>
-                        <Link href="/login">Giris Yap</Link>
-                      </li>
-                    </>
-                  ) : (
-                    <>
-                      <li
-                        className="cursor-pointer flex gap-3"
-                        onClick={() => logOut()}
-                      >
-                        <FiLogOut size={20} /> Cikis yap
-                      </li>
-                    </>
-                  )}
-                </ul>
-              </div>
-
-              {user ? (
-                <>
-                  <FiUser size={30} className="text-gray-800 dark:text-white" />
-
-                  <div id="name" className="text-gray-800 dark:text-white">
-                    Muhammed Kaplan
-                  </div>
-                </>
+            <div>
+              {isLoggedIn ? (
+                <AccountDropdown />
               ) : (
-                <>
-                  <span className="text-gray-800 dark:text-white flex items-center gap-3 text-sm">
-                    <FiUser
-                      size={30}
-                      className="text-gray-800 dark:text-white"
-                    />
-                    Kullanici hesabi
-                  </span>
-                </>
+                <Link href="/login" passHref legacyBehavior>
+                  <Button className="w-10/12">Giris Yap</Button>
+                </Link>
               )}
             </div>
           </div>

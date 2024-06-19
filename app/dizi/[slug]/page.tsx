@@ -5,12 +5,14 @@ import AppService from "@/lib/services/app.service";
 import TmdbService from "@/lib/services/tmdb.service";
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { ITmdbSerieDetails } from "@/lib/types/tmdb";
+import { Tab, Tabs } from "@nextui-org/tabs";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import classNames from "classnames";
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import SeasonEpisodes from "./components/SeasonEpisodes";
 
 export default function SeriePage({ params }: { params: { slug: string } }) {
+  const pathname = usePathname();
   const sendWarmUpPing = useMutation({
     mutationFn: () => AppService.warmUpService(),
   });
@@ -43,14 +45,14 @@ export default function SeriePage({ params }: { params: { slug: string } }) {
     if (isTurkishProvider) sendWarmUpPing.mutate();
   }, [isTurkishProvider]);
 
-  const [activeTab, setActiveTab] = useState<number>(1);
+  const [activeTab, setActiveTab] = useState<any>();
 
   const renderSeasonTab = useCallback(() => {
     if (!tmdbDetailsData.isSuccess) return;
 
     return (
       <SeasonEpisodes
-        season={activeTab}
+        season={parseInt(activeTab!)}
         id={tmdbDetailsData.data.id}
         isTurkishProvider={isTurkishProvider!}
         serieNetwork={serieNetwork!}
@@ -66,7 +68,7 @@ export default function SeriePage({ params }: { params: { slug: string } }) {
   return (
     <>
       <div className="w-full max-w-7xl mx-auto flex flex-col items-center gap-8 md:flex-row">
-        <div className="bg-stone-900 overflow-hidden animate-none aspect-[2/3] rounded w-full max-w-[300px]">
+        <div className="bg-zinc-900 overflow-hidden animate-none aspect-[2/3] rounded w-full max-w-[300px]">
           <img
             src={`https://image.tmdb.org/t/p/original/${tmdbDetailsData.data?.poster_path}`}
             alt={tmdbDetailsData.data?.original_name}
@@ -101,36 +103,28 @@ export default function SeriePage({ params }: { params: { slug: string } }) {
 
       <div id="container" className="mt-10">
         <div className="md:flex">
-          <ul className="flex-column space-y space-y-4 text-sm font-medium text-gray-500 dark:text-gray-400 md:me-4 mb-4 md:mb-0">
+          <Tabs
+            aria-label="Options"
+            placement="start"
+            selectedKey={activeTab}
+            onSelectionChange={(e) => setActiveTab(e)}
+          >
             {tmdbDetailsData.data.seasons?.map((_season) => {
               const season = _season.season_number;
 
               if (season === 0) return null;
 
               return (
-                <li
+                <Tab
                   className="cursor-pointer"
                   key={season}
-                  onClick={() => setActiveTab(season)}
+                  title={season + ". Sezon"}
                 >
-                  <a
-                    className={classNames(
-                      activeTab === season
-                        ? "bg-red-600  dark:bg-red-600"
-                        : "bg-gray-300 dark:bg-gray-800",
-                      "inline-flex items-center px-4 py-3 text-white  rounded-lg active w-full"
-                    )}
-                    aria-current="page"
-                  >
-                    {season + ". Sezon"}
-                  </a>
-                </li>
+                  {renderSeasonTab()}
+                </Tab>
               );
             })}
-          </ul>
-          <div className="text-medium text-gray-500 dark:text-gray-400 rounded-lg w-full max-h-96 overflow-scroll overflow-x-hidden px-5">
-            {renderSeasonTab()}
-          </div>
+          </Tabs>
         </div>
       </div>
     </>

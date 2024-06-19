@@ -8,7 +8,7 @@ export default function Page() {
   const pathName = usePathname();
 
   return (
-    <Modal isOpen={pathName.includes("/login")} shouldCloseOnOverlayClick>
+    <Modal isOpen={pathName.includes("/login")} title="Giris Yap">
       <LoginModule />
     </Modal>
   );

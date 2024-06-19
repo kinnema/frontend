@@ -34,18 +34,17 @@ export default function RootLayout({
           "text-sm bg-white dark:bg-zinc-900"
         )}
       >
-        <div id="modal-root" />
-        <div className="flex min-h-screen  2xl:max-w-screen-2xl 2xl:mx-auto 2xl:border-x-2 2xl:border-gray-200 dark:2xl:border-zinc-700">
-          <LeftSidebar />
-          <main className="flex-1 py-10  px-5 sm:px-10">
-            <Header />
-            <Providers>
+        <Providers>
+          <div className="flex min-h-screen  2xl:max-w-screen-2xl 2xl:mx-auto 2xl:border-x-2 2xl:border-gray-200 dark:2xl:border-zinc-700">
+            <LeftSidebar />
+            <main className="flex-1 py-10  px-5 sm:px-10">
+              <Header />
               {children}
               {modal}
-            </Providers>
-          </main>
-          <RightSidebar />
-        </div>
+            </main>
+            <RightSidebar />
+          </div>
+        </Providers>
       </body>
     </html>
   );
