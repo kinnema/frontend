@@ -1,6 +1,7 @@
 "use client";
 
 import Button from "@/lib/components/Button";
+import { Loading } from "@/lib/components/Loading";
 import ModalContent from "@/lib/components/ModalContent";
 import { ILoginResponse, IMutationLogin } from "@/lib/models";
 import { login } from "@/lib/services/auth.service";
@@ -51,7 +52,9 @@ export default function LoginModule() {
         <Button secondary onClick={() => router.back()}>
           Kapat
         </Button>,
-        <Button onClick={onLogin}>Giris yap</Button>,
+        <Button onClick={onLogin}>
+          {loginMutation.isPending ? <Loading /> : "Giris yap"}
+        </Button>,
       ]}
     >
       <form className="flex flex-col gap-5">
