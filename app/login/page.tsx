@@ -1,5 +1,7 @@
 "use server";
 
-import { redirect } from "next/navigation";
+import LoginModule from "@/lib/features/auth/login";
 
-export default async () => redirect("/");
+export default async () => {
+  return <LoginModule />;
+};

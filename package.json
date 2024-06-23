@@ -11,6 +11,7 @@
   "dependencies": {
     "@formkit/auto-animate": "^0.8.2",
     "@heroicons/react": "^2.1.3",
+    "@hookform/resolvers": "^3.6.0",
     "@nextui-org/button": "^2.0.34",
     "@nextui-org/dropdown": "^2.1.26",
     "@nextui-org/input": "^2.2.2",
@@ -26,11 +27,13 @@
     "axios": "^1.6.8",
     "classnames": "^2.5.1",
     "framer-motion": "^11.2.6",
+    "i18next": "^23.11.5",
     "lodash": "^4.17.21",
     "next": "14.2.3",
     "next-themes": "^0.3.0",
     "react": "^18",
     "react-dom": "^18",
+    "react-hook-form": "^7.52.0",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^5.2.1",
     "react-modal": "^3.16.1",
@@ -38,6 +41,8 @@
     "serwist": "^9.0.3",
     "slugify": "^1.6.6",
     "swiper": "^11.1.3",
+    "zod": "^3.23.8",
+    "zod-i18n-map": "^2.27.0",
     "zustand": "^4.5.2"
   },
   "devDependencies": {

@@ -2,10 +2,11 @@
 
 import Button from "@/lib/components/Button";
 import { ILoginResponse, IMutationLogin } from "@/lib/models";
-import { login } from "@/lib/services/auth.service";
+import { AuthService } from "@/lib/services/auth.service";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { Input } from "@nextui-org/input";
 import { useMutation } from "@tanstack/react-query";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
@@ -14,7 +15,7 @@ export default function LoginModule() {
   const router = useRouter();
   const setUser = useAuthStore((state) => state.setUser);
   const loginMutation = useMutation<ILoginResponse, void, IMutationLogin>({
-    mutationFn: (data) => login(data.data),
+    mutationFn: (data) => AuthService.login(data.data),
     onSuccess(data) {
       setUser(data);
       toast.success("Giris yapildi");
@@ -48,30 +49,20 @@ export default function LoginModule() {
   return (
     <form className="flex flex-col gap-5">
       <div id="group">
-        <label
-          htmlFor="email"
-          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-        >
-          E-mail
-        </label>
         <Input
           type="email"
           id="email"
+          label="Email"
           placeholder="selman@kinnema.com"
           onChange={(e) => setEmail(e.target.value)}
           required
         />
       </div>
       <div id="group">
-        <label
-          htmlFor="password"
-          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-        >
-          Sifreniz
-        </label>
         <Input
           type="password"
           id="password"
+          label="Sifreniz"
           placeholder="******"
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -90,6 +81,12 @@ export default function LoginModule() {
           Giris yap
         </Button>
       </div>
+
+      <hr />
+      <span className="text-center">veya...</span>
+      <Link href="/register" passHref legacyBehavior>
+        <Button className="mb-5">Kayit olun</Button>
+      </Link>
     </form>
   );
 }

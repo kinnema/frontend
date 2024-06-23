@@ -23,7 +23,7 @@ export default function Button({
     <NextUIButton
       type="button"
       href={href}
-      onClick={(e) => onClick && onClick(e)}
+      onClick={onClick}
       startContent={icon}
       className={classNames(
         {

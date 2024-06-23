@@ -68,6 +68,8 @@ export interface ILoginResponse {
   user: IUser;
 }
 
+export type IRegisterResponse = ILoginResponse;
+
 export interface ILastWatched {
   id: number;
   name: string;
