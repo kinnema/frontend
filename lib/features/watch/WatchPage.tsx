@@ -92,7 +92,7 @@ export default function ChapterPage({ params }: IProps) {
           : undefined,
       });
     }, 60_000);
-  }, [isAuthenticated]);
+  }, [isAuthenticated, tmdbData]);
 
   if (tmdbData.isError) {
     return <div className="text-red-500">Dizi bulunamadı</div>;
