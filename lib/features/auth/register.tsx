@@ -34,7 +34,7 @@ export default function RegisterModule() {
       toast.success("Kayit basarili");
 
       setTimeout(() => {
-        router.back();
+        router.push("/");
       }, 200);
     },
     onError() {
