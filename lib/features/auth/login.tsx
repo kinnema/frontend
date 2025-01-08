@@ -66,7 +66,7 @@ export default function LoginModule() {
   );
 
   return (
-    <form className="flex flex-col gap-5 ">
+    <form className="flex flex-col gap-5" onSubmit={onLogin}>
       <div id="group">
         <Input
           type="email"
@@ -90,7 +90,7 @@ export default function LoginModule() {
           Kapat
         </Button>
 
-        <Button onClick={onLogin} disabled={loginMutation.isPending}>
+        <Button type="submit" disabled={loginMutation.isPending}>
           {loginMutation.isPending && <Loader2 className="animate-spin" />}
           Giris yap
         </Button>

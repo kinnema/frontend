@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const navItems = [
+export const navItems = [
   { label: "BluTV", href: "/collection/blutv" },
   { label: "Gain", href: "/collection/gain" },
   { label: "Exxen", href: "/collection/exxen" },
