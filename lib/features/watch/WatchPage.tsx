@@ -130,11 +130,7 @@ export default function ChapterPage({ params }: IProps) {
       <DialogContent className="max-w-6xl p-0 h-[90vh] bg-black/95 text-white border-zinc-800">
         <div className="fixed inset-0 bg-black/95 z-50">
           <div className="relative h-screen">
-            <div
-              onMouseEnter={() => onPause()}
-              onMouseLeave={() => onPlay()}
-              className="w-full h-full"
-            >
+            <div className="w-full h-full">
               {!isTurkishProvider ? (
                 <iframe
                   className="w-full h-full"
