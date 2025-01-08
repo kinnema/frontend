@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Loading } from "@/lib/components/Loading";
 import { ILastWatched, ILastWatchedMutation, IWatchResult } from "@/lib/models";
@@ -12,7 +12,7 @@ import { useAuthStore } from "@/lib/stores/auth.store";
 
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { ITmdbSerieDetails } from "@/lib/types/tmdb";
-import { DialogContent } from "@radix-ui/react-dialog";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Volume2, VolumeX, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -128,6 +128,9 @@ export default function ChapterPage({ params }: IProps) {
   return (
     <Dialog open modal>
       <DialogContent className="max-w-6xl p-0 h-[90vh] bg-black/95 text-white border-zinc-800">
+        <VisuallyHidden.VisuallyHidden>
+          <DialogTitle>{tmdbData.data.name}</DialogTitle>
+        </VisuallyHidden.VisuallyHidden>
         <div className="fixed inset-0 bg-black/95 z-50">
           <div className="relative h-screen">
             <div className="w-full h-full">
@@ -144,6 +147,7 @@ export default function ChapterPage({ params }: IProps) {
                   width={"100%"}
                   height={"100%"}
                   stopOnUnmount
+                  playing
                   ref={videoPlayerRef}
                   muted={isMuted}
                   style={{
@@ -189,7 +193,7 @@ export default function ChapterPage({ params }: IProps) {
             >
               <span className="text-emerald-400 text-sm mb-2 gap-1 flex ">
                 {tmdbData.data.networks.map((network) => (
-                  <p>{network.name}</p>
+                  <p key={network.name}>{network.name}</p>
                 ))}
                 orijinal dizisi
               </span>
@@ -200,10 +204,10 @@ export default function ChapterPage({ params }: IProps) {
                 {tmdbData.data.genres.map((genre, index) => {
                   if (index !== tmdbData.data.genres.length) {
                     return (
-                      <>
+                      <div key={genre.name}>
                         <span>{genre.name}</span>
                         <span>•</span>
-                      </>
+                      </div>
                     );
                   }
 

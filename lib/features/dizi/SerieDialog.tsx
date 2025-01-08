@@ -10,6 +10,8 @@ import AppService from "@/lib/services/app.service";
 import TmdbService from "@/lib/services/tmdb.service";
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { ITmdbSerieDetails } from "@/lib/types/tmdb";
+import { DialogTitle } from "@radix-ui/react-dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { X } from "lucide-react";
 import Image from "next/image";
@@ -82,6 +84,10 @@ export function SerieDialogFeature({ params }: { params: { slug: string } }) {
   return (
     <Dialog open={true}>
       <DialogContent className="max-w-6xl p-0 h-[90vh] bg-black/95 text-white border-zinc-800">
+        <VisuallyHidden>
+          <DialogTitle>{tmdbDetailsData.data.name}</DialogTitle>
+        </VisuallyHidden>
+
         <div className="relative h-[50vh] bg-black">
           <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10" />
           <Image
@@ -115,10 +121,10 @@ export function SerieDialogFeature({ params }: { params: { slug: string } }) {
               {tmdbDetailsData.data.genres.map((genre, index) => {
                 if (index !== tmdbDetailsData.data.genres.length) {
                   return (
-                    <>
+                    <div key={genre.name}>
                       <span>{genre.name}</span>
                       <span>•</span>
-                    </>
+                    </div>
                   );
                 }
 
