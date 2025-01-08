@@ -1,4 +1,3 @@
-import toast from "react-hot-toast";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { ILoginResponse, IUser } from "../models";
@@ -25,7 +24,6 @@ export const useAuthStore = create(
         });
       },
       logOut() {
-        toast.success("Cikis yapildi");
         set({ access_token: undefined, user: undefined, isLoggedIn: false });
       },
     }),

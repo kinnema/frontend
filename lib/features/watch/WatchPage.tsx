@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
 import { Loading } from "@/lib/components/Loading";
 import { ILastWatched, ILastWatchedMutation, IWatchResult } from "@/lib/models";
 import AppService from "@/lib/services/app.service";
@@ -16,7 +17,6 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Volume2, VolumeX, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { toast } from "react-hot-toast";
 import ReactPlayer from "react-player";
 
 interface IProps {
@@ -36,6 +36,7 @@ export default function ChapterPage({ params }: IProps) {
   const videoPlayerRef = useRef<ReactPlayer>(null);
   const [isMuted, setIsMuted] = useState(false);
   const router = useRouter();
+  const toast = useToast();
 
   const tmdbData = useQuery<ITmdbSerieDetails>({
     queryKey: ["tmdb-details-with-season", params.slug],
@@ -106,7 +107,10 @@ export default function ChapterPage({ params }: IProps) {
   }
 
   if (!serieWatchLink.isStale && serieWatchLink.isError) {
-    toast.error("Yükleme hatasi, tekrar deneniyor..");
+    toast.toast({
+      title: "Yükleme hatasi, tekrar deneniyor..",
+      variant: "destructive",
+    });
   }
 
   function onClickClose(): void {

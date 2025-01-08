@@ -1,7 +1,7 @@
 "use client";
 
 import { ShowCard } from "@/components/show-card";
-import { Input } from "@nextui-org/input";
+import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { usePathname } from "next/navigation";

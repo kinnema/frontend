@@ -7,12 +7,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useToast } from "@/hooks/use-toast";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { LogOut, User } from "lucide-react";
 
 export function UserNav() {
   const user = useAuthStore((state) => state.user);
   const logOut = useAuthStore((state) => state.logOut);
+  const toast = useToast();
+
+  function onPressLogout(): void {
+    logOut();
+    toast.toast({
+      title: "Çıkış başarılı",
+    });
+  }
 
   return (
     <DropdownMenu>
@@ -33,7 +42,7 @@ export function UserNav() {
           <span>Ayarlar</span>
         </DropdownMenuItem> */}
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-red-600" onClick={logOut}>
+        <DropdownMenuItem className="text-red-600" onClick={onPressLogout}>
           <LogOut className="mr-2 h-4 w-4" />
           <span>Çıkış Yap</span>
         </DropdownMenuItem>
