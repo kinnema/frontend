@@ -39,7 +39,7 @@ export function FeaturedCarousel() {
       }}
     >
       {featuredItems.map((item) => (
-        <SwiperSlide>
+        <SwiperSlide key={item.id}>
           <section className="relative h-screen overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10" />
             <div className={`absolute inset-0`}>
