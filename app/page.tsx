@@ -52,6 +52,7 @@ export default function Home() {
             isLoading={bluTvShows.isPending}
           />
         )}
+
       <ShowCarousel
         title="BluTV"
         shows={bluTvShows.data?.results ?? []}

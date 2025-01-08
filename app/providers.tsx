@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { useAppStore } from "@/lib/stores/app.store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PropsWithChildren, useEffect } from "react";
+import "swiper/css";
 
 function makeQueryClient() {
   return new QueryClient({
