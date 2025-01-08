@@ -1,6 +1,5 @@
+import { Footer } from "@/components/footer";
 import { Header } from "@/lib/components/Header";
-import { LeftSidebar } from "@/lib/components/LeftSidebar";
-import { RightSidebar } from "@/lib/components/RightSidebar";
 import classNames from "classnames";
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
@@ -35,15 +34,12 @@ export default function RootLayout({
         )}
       >
         <Providers>
-          <div className="flex min-h-screen  2xl:max-w-screen-2xl 2xl:mx-auto 2xl:border-x-2 2xl:border-gray-200 dark:2xl:border-zinc-700">
-            <LeftSidebar />
-            <main className="flex-1 py-10  px-5 sm:px-10">
-              <Header />
-              {children}
-              {modal}
-            </main>
-            <RightSidebar />
+          <Header />
+          <div className="min-h-screen bg-black/95 text-white">
+            <main className="pt-16">{children}</main>
           </div>
+          {modal}
+          <Footer />
         </Providers>
       </body>
     </html>

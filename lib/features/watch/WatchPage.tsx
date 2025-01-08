@@ -1,7 +1,8 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
 import { Loading } from "@/lib/components/Loading";
-import { Modal } from "@/lib/components/Modal";
 import { ILastWatched, ILastWatchedMutation, IWatchResult } from "@/lib/models";
 import AppService from "@/lib/services/app.service";
 import TmdbService from "@/lib/services/tmdb.service";
@@ -10,9 +11,11 @@ import { useAuthStore } from "@/lib/stores/auth.store";
 
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { ITmdbSerieDetails } from "@/lib/types/tmdb";
+import { DialogContent } from "@radix-ui/react-dialog";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useRef } from "react";
+import { Volume2, VolumeX, X } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import ReactPlayer from "react-player";
 
@@ -24,15 +27,15 @@ interface IProps {
   };
 }
 
-const pathNameRegex = "/dizi/(.*)/sezon-([0-9])/bolum-([0-9])";
-
 export default function ChapterPage({ params }: IProps) {
-  const pathName = usePathname();
   const season = parseInt(params.season.replace("sezon-", ""));
   const chapter = parseInt(params.chapter.replace("bolum-", ""));
+  const [isPlaying, setIsPlaying] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isLoggedIn);
   const searchParams = useSearchParams();
   const videoPlayerRef = useRef<ReactPlayer>(null);
+  const [isMuted, setIsMuted] = useState(false);
+  const router = useRouter();
 
   const tmdbData = useQuery<ITmdbSerieDetails>({
     queryKey: ["tmdb-details-with-season", params.slug],
@@ -106,49 +109,99 @@ export default function ChapterPage({ params }: IProps) {
     toast.error("Yükleme hatasi, tekrar deneniyor..");
   }
 
+  function onClickClose(): void {
+    router.back();
+  }
+
+  function onPlay(): void {
+    setIsPlaying(true);
+  }
+
+  function onPause(): void {
+    setIsPlaying(false);
+  }
+
   return (
-    <Modal
-      isOpen={pathName.match(pathNameRegex) ? true : false}
-      title={tmdbData.data.original_name}
-      size="full"
-      backdrop="opaque"
-    >
-      <div id="header">
-        <div id="details" className="flex flex-col">
-          <span className="text-white text-lg">
-            {season}. Sezon - {chapter}. Bölüm
-          </span>
+    <Dialog open modal>
+      <DialogContent className="max-w-6xl p-0 h-[90vh] bg-black/95 text-white border-zinc-800">
+        <div className="fixed inset-0 bg-black/95 z-50">
+          <div className="relative h-screen">
+            <div
+              onMouseEnter={() => onPause()}
+              onMouseLeave={() => onPlay()}
+              className="w-full h-full"
+            >
+              {!isTurkishProvider ? (
+                <iframe
+                  className="w-full h-full"
+                  src={`https://vidsrc.to/embed/tv/${tmdbData.data.id}/${season}/${chapter}`}
+                />
+              ) : serieWatchLink.isPending ? (
+                <Loading />
+              ) : (
+                <ReactPlayer
+                  url={serieWatchLink.data?.url}
+                  width={"100%"}
+                  height={"100%"}
+                  stopOnUnmount
+                  ref={videoPlayerRef}
+                  muted={isMuted}
+                  style={{
+                    backgroundColor: "black",
+                    width: "100%",
+                    height: "100%",
+                  }}
+                  light={`https://image.tmdb.org/t/p/original/${tmdbData.data.poster_path}`}
+                  controls
+                  onPlay={onPlay}
+                  onPause={onPause}
+                />
+              )}
+            </div>
+            <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hover:bg-white/10 text-white"
+                onClick={() => setIsMuted(!isMuted)}
+              >
+                {isMuted ? (
+                  <VolumeX className="h-6 w-6" />
+                ) : (
+                  <Volume2 className="h-6 w-6" />
+                )}
+              </Button>
+              <Button
+                onClick={onClickClose}
+                variant="ghost"
+                size="icon"
+                className="hover:bg-white/10 text-white"
+              >
+                <X className="h-6 w-6" />
+              </Button>
+            </div>
+
+            <div
+              className="absolute bottom-0 left-0 p-10 z-20 bg-gradient-to-t from-black to-transparent w-full"
+              style={{
+                visibility: isPlaying ? "hidden" : "visible",
+              }}
+            >
+              <span className="text-emerald-400 text-sm mb-2 block">
+                tabii orijinal dizisi
+              </span>
+              <h1 className="text-2xl md:text-4xl font-bold mb-2">Ayasofya</h1>
+              <div className="flex items-center gap-2 text-xs md:text-sm text-gray-300">
+                <span>Aksiyon</span>
+                <span>•</span>
+                <span>Suç</span>
+                <span>•</span>
+                <span>Gerilim</span>
+              </div>
+            </div>
+          </div>
         </div>
-
-        <div className="opacity-0 group-hover:opacity-100">test</div>
-      </div>
-
-      {!isTurkishProvider ? (
-        <iframe
-          className="w-full h-full"
-          src={`https://vidsrc.to/embed/tv/${tmdbData.data.id}/${season}/${chapter}`}
-        />
-      ) : serieWatchLink.isPending ? (
-        <Loading />
-      ) : (
-        <ReactPlayer
-          url={serieWatchLink.data?.url}
-          width={"100%"}
-          height={"90%"}
-          stopOnUnmount
-          ref={videoPlayerRef}
-          playing
-          style={{
-            backgroundColor: "black",
-            width: "100%",
-            height: "100%",
-          }}
-          light={`https://image.tmdb.org/t/p/original/${tmdbData.data.poster_path}`}
-          controls
-        />
-      )}
-
-      {}
-    </Modal>
+      </DialogContent>
+    </Dialog>
   );
 }

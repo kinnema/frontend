@@ -23,19 +23,23 @@ export function CollectionSeries({ network }: IProps) {
   if (isError) return <div>Error</div>;
 
   return (
-    <section className="mt-9">
+    <section className="p-10">
       <div className="flex items-center justify-between">
-        <span className="font-semibold text-gray-700 text-base dark:text-white">
+        <span className="font-semibold text-2xl text-white">
           {TmdbNetworks[network].toLocaleUpperCase()}
         </span>
       </div>
-      <div className="mt-4 grid grid-cols-2 gap-y-5 sm:grid-cols-3 gap-x-5">
+      <div className="mt-4 flex flex-wrap gap-5">
         {data.results.map((serie) => (
-          <Link href={`/dizi/${slugify(serie.original_name)}`} key={serie.id}>
+          <Link
+            href={`/dizi/${slugify(serie.original_name)}`}
+            key={serie.id}
+            className="overflow-hidden"
+          >
             <div
               className={classNames(
-                "flex flex-col rounded-xl overflow-hidden cursor-pointer group select-none relative",
-                serie.original_name && "border dark:border-zinc-600"
+                "flex flex-col rounded-xl overflow-hidden cursor-pointer group select-none relative w-60 h-80 ",
+                serie.original_name && "border border-zinc-600"
               )}
             >
               <div className="absolute inset-0 bg-black/60 none flex-col items-center justify-center gap-4 text-sm font-bold opacity-0 group-hover:opacity-100 duration-300 text-center hidden md:flex  ">
@@ -51,14 +55,6 @@ export function CollectionSeries({ network }: IProps) {
                 className="h-full w-full"
                 alt={serie.original_name}
               />
-
-              {serie.original_name && (
-                <div className="w-full bg-white dark:bg-zinc-800 dark:text-white px-3 flex py-5 items-center justify-between border-t-2 border-t-red-600">
-                  <span className="capitalize  font-medium truncate">
-                    {serie.original_name}
-                  </span>
-                </div>
-              )}
             </div>
           </Link>
         ))}

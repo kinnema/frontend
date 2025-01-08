@@ -1,8 +1,9 @@
 import { Loading } from "@/lib/components/Loading";
-import { slugify } from "@/lib/helpers";
+import { slugify, tmdbPoster } from "@/lib/helpers";
 import TmdbService from "@/lib/services/tmdb.service";
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { useQuery } from "@tanstack/react-query";
+import Image from "next/image";
 import Link from "next/link";
 import { useMemo } from "react";
 
@@ -57,19 +58,29 @@ export default function SeasonEpisodes({
           }
 
           return (
-            <Link key={episode.id} href={episodeHref}>
-              <div className="flex items-center justify-between p-4 mb-2  bg-white rounded-lg shadow-lg dark:text-gray-400 dark:bg-zinc-800">
-                <div className="flex items-center space-x-4">
-                  <div>
-                    <div className="flex gap-3 flex-col text-sm font-medium text-gray-800 dark:text-gray-400">
-                      {episode.season_number}:{episode.episode_number} -{" "}
-                      {episode.name}
-                      <span className="text-xs text-gray-500">
-                        {episode.overview}
-                      </span>
-                    </div>
+            <Link
+              key={episode.id}
+              href={episodeHref}
+              className="flex w-full gap-4 p-4 hover:bg-white/5 rounded-lg transition-colors text-left"
+            >
+              <div className="relative w-40 aspect-video rounded-lg overflow-hidden">
+                <Image
+                  src={tmdbPoster(episode.still_path)}
+                  alt={episode.name}
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-full bg-black/50 flex items-center justify-center">
+                    <div className="w-0 h-0 border-t-8 border-t-transparent border-l-12 border-l-white border-b-8 border-b-transparent ml-1" />
                   </div>
                 </div>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold mb-2">{episode.name}</h3>
+                <p className="text-sm text-gray-400 line-clamp-2">
+                  {episode.overview}
+                </p>
               </div>
             </Link>
           );

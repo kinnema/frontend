@@ -16,6 +16,15 @@ const withSerwist = withSerwistInit({
 /** @type {import("next").NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  images: {
+    remotePatterns: [
+      {
+        hostname: "image.tmdb.org",
+        protocol: "https",
+      },
+    ]
+  }
 };
 
 export default withSerwist(nextConfig);
+// export default nextConfig;

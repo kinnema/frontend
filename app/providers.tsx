@@ -1,10 +1,8 @@
 "use client";
+import { Toaster } from "@/components/ui/toaster";
 import { useAppStore } from "@/lib/stores/app.store";
-import { NextUIProvider } from "@nextui-org/system";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { PropsWithChildren, useEffect } from "react";
-import { Toaster } from "react-hot-toast";
 
 function makeQueryClient() {
   return new QueryClient({
@@ -36,7 +34,6 @@ function getQueryClient() {
 export function Providers({ children }: PropsWithChildren) {
   const queryClient = getQueryClient();
   const initTheme = useAppStore((state) => state.initTheme);
-  const router = useRouter();
 
   useEffect(() => {
     initTheme();
@@ -44,7 +41,7 @@ export function Providers({ children }: PropsWithChildren) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <NextUIProvider navigate={router.push}>{children}</NextUIProvider>
+      {children}
       <div className="z-10">
         <Toaster />
       </div>

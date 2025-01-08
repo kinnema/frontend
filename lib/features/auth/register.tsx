@@ -1,6 +1,8 @@
 "use client";
 
-import Button from "@/lib/components/Button";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 import {
   REGISTER_FORM_INPUTS,
   REGISTER_FORM_VALIDATION,
@@ -9,11 +11,9 @@ import { IRegisterResponse } from "@/lib/models";
 import { AuthService } from "@/lib/services/auth.service";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@nextui-org/input";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 
 export default function RegisterModule() {
   const {
@@ -24,6 +24,7 @@ export default function RegisterModule() {
     resolver: zodResolver(REGISTER_FORM_VALIDATION),
     reValidateMode: "onChange",
   });
+  const toast = useToast();
   const setUser = useAuthStore((state) => state.setUser);
   const router = useRouter();
 
@@ -31,14 +32,21 @@ export default function RegisterModule() {
     mutationFn: (data) => AuthService.register(data),
     onSuccess(data) {
       setUser(data);
-      toast.success("Kayit basarili");
+      toast.toast({
+        title: "Kayıt başarılı",
+        description: "Yönlendiriliyorsunuz...",
+      });
 
       setTimeout(() => {
         router.push("/");
-      }, 200);
+      }, 2000);
     },
     onError() {
-      toast.error("Kayit   yapilamadi");
+      toast.toast({
+        title: "Kayıt başarısız",
+        description: "Lütfen tekrar deneyiniz",
+        variant: "destructive",
+      });
     },
   });
 
@@ -51,31 +59,24 @@ export default function RegisterModule() {
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
         {errors.username?.message}
         <Input
-          label="Kullanici adi"
-          placeholder="Ava.12"
+          placeholder="Kullanıcı adınız"
           required
-          isRequired
-          isInvalid={errors?.username ? true : false}
-          errorMessage={errors?.username && errors.username.message}
           {...register("username")}
         />
         <Input
-          label="Email"
-          placeholder="admin@admin.com"
+          placeholder="E-Posta adresiniz"
           required
-          isRequired
           {...register("email")}
         />
         <Input
-          label="Sifre"
-          placeholder="*****"
+          placeholder="Şifreniz"
+          type="password"
           required
-          isRequired
           {...register("password")}
         />
-        <Input label="Sifre(tekrar)" placeholder="******" required isRequired />
+        <Input placeholder="Şifreniz (tekrar)" type="password" required />
 
-        <Button type="submit">Kayit ol</Button>
+        <Button type="submit">Kayıt ol</Button>
       </form>
     </div>
   );

@@ -1,5 +1,9 @@
-"use server";
+import { SearchComponent } from "@/lib/components/Search";
 
-import { redirect } from "next/navigation";
-
-export default async () => redirect("/");
+export default function SearchPage() {
+  return (
+    <>
+      <SearchComponent />
+    </>
+  );
+}
