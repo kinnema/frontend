@@ -142,13 +142,15 @@ export default function ChapterPage({ params }: IProps) {
           ) : (
             <>
               {serieWatchLink.isError ? (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>Error</AlertTitle>
-                  <AlertDescription>
-                    Your session has expired. Please log in again.
-                  </AlertDescription>
-                </Alert>
+                <div className="flex justify-center">
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>
+                      Your session has expired. Please log in again.
+                    </AlertDescription>
+                  </Alert>
+                </div>
               ) : (
                 <ReactPlayer
                   url={serieWatchLink.data?.url}
