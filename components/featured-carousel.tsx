@@ -2,10 +2,11 @@
 
 import Loading from "@/app/loading";
 import { Button } from "@/components/ui/button";
-import { tmdbPoster } from "@/lib/helpers";
+import { slugify, tmdbPoster } from "@/lib/helpers";
 import TmdbService from "@/lib/services/tmdb.service";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
+import Link from "next/link";
 import { useMemo } from "react";
 import { Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -40,44 +41,46 @@ export function FeaturedCarousel() {
     >
       {featuredItems.map((item) => (
         <SwiperSlide key={item.id}>
-          <section className="relative h-screen overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10" />
-            <div className={`absolute inset-0`}>
-              <Image
-                src={tmdbPoster(item.poster_path!)}
-                alt={item.original_name}
-                width={1920}
-                height={1080}
-                className="object-cover w-full h-full"
-                priority
-              />
-            </div>
-            <div
-              className={`absolute inset-0 transition-transform duration-500 ease-in-out`}
-            >
-              <Image
-                src={tmdbPoster(item.poster_path!)}
-                alt={item.original_name}
-                width={1920}
-                height={1080}
-                className="object-cover w-full h-full"
-                priority
-              />
-            </div>
-            <div className="absolute inset-0 z-20 flex items-center">
-              <div className="container px-4 md:px-6 space-y-4 flex-col flex flex-wrap text-wrap">
-                <h1 className="text-6xl font-bold tracking-wider max-w-2xl">
-                  {item.name}
-                </h1>
-                <p className="max-w-2xl text-gray-300">{item.overview}</p>
-                <div className="min-w-10">
-                  <Button size="lg" className="mt-4">
-                    Oynat
-                  </Button>
+          <Link href={`/dizi/${slugify(item.name)}`} passHref>
+            <section className="relative h-screen overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10" />
+              <div className={`absolute inset-0`}>
+                <Image
+                  src={tmdbPoster(item.poster_path!)}
+                  alt={item.original_name}
+                  width={1920}
+                  height={1080}
+                  className="object-cover w-full h-full"
+                  priority
+                />
+              </div>
+              <div
+                className={`absolute inset-0 transition-transform duration-500 ease-in-out`}
+              >
+                <Image
+                  src={tmdbPoster(item.poster_path!)}
+                  alt={item.original_name}
+                  width={1920}
+                  height={1080}
+                  className="object-cover w-full h-full"
+                  priority
+                />
+              </div>
+              <div className="absolute inset-0 z-20 flex items-center">
+                <div className="container px-4 md:px-6 space-y-4 flex-col flex flex-wrap text-wrap">
+                  <h1 className="text-6xl font-bold tracking-wider max-w-2xl">
+                    {item.name}
+                  </h1>
+                  <p className="max-w-2xl text-gray-300">{item.overview}</p>
+                  <div className="min-w-10">
+                    <Button size="lg" className="mt-4">
+                      Oynat
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </section>
+            </section>
+          </Link>
         </SwiperSlide>
       ))}
     </Swiper>
