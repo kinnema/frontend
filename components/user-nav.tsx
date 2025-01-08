@@ -26,7 +26,7 @@ export function UserNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="hidden md:inline-flex">
+        <Button variant="ghost" className="md:inline-flex">
           {user?.username}
         </Button>
       </DropdownMenuTrigger>

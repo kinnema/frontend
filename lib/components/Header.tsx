@@ -72,6 +72,13 @@ export function Header() {
             <MainNav />
           </div>
           <div className="flex items-center gap-4">
+            {isLoggedIn ? (
+              <UserNav />
+            ) : (
+              <Link href="/login" passHref>
+                <Button>Giriş Yap</Button>
+              </Link>
+            )}
             <Link href="/search">
               <Button
                 variant="ghost"
@@ -81,13 +88,6 @@ export function Header() {
                 <Search className="w-5 h-5" />
               </Button>
             </Link>
-            {isLoggedIn ? (
-              <UserNav />
-            ) : (
-              <Link href="/login" passHref>
-                <Button>Giriş Yap</Button>
-              </Link>
-            )}
             <Button
               variant="ghost"
               size="icon"
