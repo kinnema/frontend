@@ -16,8 +16,6 @@ interface ShowCarouselProps {
 }
 
 export function ShowCarousel({ title, shows }: ShowCarouselProps) {
-  console.log(window.innerWidth);
-
   return (
     <section className="py-8">
       <div className=" md:px-6">
