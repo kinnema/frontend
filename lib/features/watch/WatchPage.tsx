@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Loading } from "@/lib/components/Loading";
 import { ILastWatched, ILastWatchedMutation, IWatchResult } from "@/lib/models";
@@ -12,7 +11,6 @@ import { useAuthStore } from "@/lib/stores/auth.store";
 
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { ITmdbSerieDetails } from "@/lib/types/tmdb";
-import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Volume2, VolumeX, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -126,98 +124,91 @@ export default function ChapterPage({ params }: IProps) {
   }
 
   return (
-    <Dialog open modal>
-      <DialogContent className="max-w-6xl p-0 h-[90vh] bg-black/95 text-white border-zinc-800">
-        <VisuallyHidden.VisuallyHidden>
-          <DialogTitle>{tmdbData.data.name}</DialogTitle>
-        </VisuallyHidden.VisuallyHidden>
-        <div className="fixed inset-0 bg-black/95 z-50">
-          <div className="relative h-screen">
-            <div className="w-full h-full">
-              {!isTurkishProvider ? (
-                <iframe
-                  className="w-full h-full"
-                  src={`https://vidsrc.to/embed/tv/${tmdbData.data.id}/${season}/${chapter}`}
-                />
-              ) : serieWatchLink.isPending ? (
-                <Loading />
-              ) : (
-                <ReactPlayer
-                  url={serieWatchLink.data?.url}
-                  width={"100%"}
-                  height={"100%"}
-                  stopOnUnmount
-                  playing
-                  ref={videoPlayerRef}
-                  muted={isMuted}
-                  style={{
-                    backgroundColor: "black",
-                    width: "100%",
-                    height: "100%",
-                  }}
-                  light={`https://image.tmdb.org/t/p/original/${tmdbData.data.poster_path}`}
-                  controls
-                  onPlay={onPlay}
-                  onPause={onPause}
-                />
-              )}
-            </div>
-            <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="hover:bg-white/10 text-white"
-                onClick={() => setIsMuted(!isMuted)}
-              >
-                {isMuted ? (
-                  <VolumeX className="h-6 w-6" />
-                ) : (
-                  <Volume2 className="h-6 w-6" />
-                )}
-              </Button>
-              <Button
-                onClick={onClickClose}
-                variant="ghost"
-                size="icon"
-                className="hover:bg-white/10 text-white"
-              >
-                <X className="h-6 w-6" />
-              </Button>
-            </div>
-
-            <div
-              className="absolute bottom-0 left-0 p-10 z-20 bg-gradient-to-t from-black to-transparent w-full"
+    <div className="fixed inset-0 bg-black/95 z-50">
+      <div className="relative h-screen">
+        <div className="w-full h-full">
+          {!isTurkishProvider ? (
+            <iframe
+              className="w-full h-full"
+              src={`https://vidsrc.to/embed/tv/${tmdbData.data.id}/${season}/${chapter}`}
+            />
+          ) : serieWatchLink.isPending ? (
+            <Loading />
+          ) : (
+            <ReactPlayer
+              url={serieWatchLink.data?.url}
+              width={"100%"}
+              height={"100%"}
+              stopOnUnmount
+              playing
+              ref={videoPlayerRef}
+              muted={isMuted}
               style={{
-                visibility: isPlaying ? "hidden" : "visible",
+                backgroundColor: "black",
+                width: "100%",
+                height: "100%",
               }}
-            >
-              <span className="text-emerald-400 text-sm mb-2 gap-1 flex ">
-                {tmdbData.data.networks.map((network) => (
-                  <p key={network.name}>{network.name}</p>
-                ))}
-                orijinal dizisi
-              </span>
-              <h1 className="text-2xl md:text-4xl font-bold mb-2">
-                {tmdbData.data.original_name}
-              </h1>
-              <div className="flex items-center gap-2 text-xs md:text-sm text-gray-300">
-                {tmdbData.data.genres.map((genre, index) => {
-                  if (index !== tmdbData.data.genres.length) {
-                    return (
-                      <div key={genre.name}>
-                        <span>{genre.name}</span>
-                        <span>•</span>
-                      </div>
-                    );
-                  }
+              light={`https://image.tmdb.org/t/p/original/${tmdbData.data.poster_path}`}
+              controls
+              onPlay={onPlay}
+              onPause={onPause}
+            />
+          )}
+        </div>
+        <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="hover:bg-white/10 text-white"
+            onClick={() => setIsMuted(!isMuted)}
+          >
+            {isMuted ? (
+              <VolumeX className="h-6 w-6" />
+            ) : (
+              <Volume2 className="h-6 w-6" />
+            )}
+          </Button>
+          <Button
+            onClick={onClickClose}
+            variant="ghost"
+            size="icon"
+            className="hover:bg-white/10 text-white"
+          >
+            <X className="h-6 w-6" />
+          </Button>
+        </div>
 
-                  return <span>{genre.name}</span>;
-                })}
-              </div>
-            </div>
+        <div
+          className="absolute bottom-0 left-0 p-10 z-20 bg-gradient-to-t from-black to-transparent w-full"
+          style={{
+            visibility: isPlaying ? "hidden" : "visible",
+          }}
+        >
+          <span className="text-emerald-400 text-sm mb-2 gap-1 flex ">
+            {tmdbData.data.networks.map((network) => (
+              <p key={network.name}>{network.name}</p>
+            ))}
+            orijinal dizisi
+          </span>
+          <h1 className="text-2xl md:text-4xl font-bold mb-2">
+            {tmdbData.data.original_name}
+          </h1>
+          <div className="flex items-center gap-2 text-xs md:text-sm text-gray-300">
+            {tmdbData.data.genres.map((genre, index) => {
+              if (index !== tmdbData.data.genres.length) {
+                return (
+                  <div key={genre.name}>
+                    <span>{genre.name}</span>
+                    <span>•</span>
+                  </div>
+                );
+              }
+
+              return <span>{genre.name}</span>;
+            })}
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 }
