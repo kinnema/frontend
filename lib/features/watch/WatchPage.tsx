@@ -191,16 +191,28 @@ export default function ChapterPage({ params }: IProps) {
                 visibility: isPlaying ? "hidden" : "visible",
               }}
             >
-              <span className="text-emerald-400 text-sm mb-2 block">
-                tabii orijinal dizisi
+              <span className="text-emerald-400 text-sm mb-2 gap-1 flex ">
+                {tmdbData.data.networks.map((network) => (
+                  <p>{network.name}</p>
+                ))}
+                orijinal dizisi
               </span>
-              <h1 className="text-2xl md:text-4xl font-bold mb-2">Ayasofya</h1>
+              <h1 className="text-2xl md:text-4xl font-bold mb-2">
+                {tmdbData.data.original_name}
+              </h1>
               <div className="flex items-center gap-2 text-xs md:text-sm text-gray-300">
-                <span>Aksiyon</span>
-                <span>•</span>
-                <span>Suç</span>
-                <span>•</span>
-                <span>Gerilim</span>
+                {tmdbData.data.genres.map((genre, index) => {
+                  if (index !== tmdbData.data.genres.length) {
+                    return (
+                      <>
+                        <span>{genre.name}</span>
+                        <span>•</span>
+                      </>
+                    );
+                  }
+
+                  return <span>{genre.name}</span>;
+                })}
               </div>
             </div>
           </div>
