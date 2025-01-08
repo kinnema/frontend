@@ -32,24 +32,26 @@ export default function Home() {
   return (
     <>
       <FeaturedCarousel />
-      {isAuthenticated && (
-        <ShowCarousel
-          title="Izlemeye devam et"
-          shows={
-            lastWatched.data?.map(
-              (s) =>
-                ({
-                  name: `${s.name}`,
-                  original_name: `${s.name} - ${s.season}:${s.episode}`,
-                  poster_path: s.poster_path,
-                } as Result)
-            ) ?? []
-          }
-          maxCards={5}
-          largeCards={true}
-          isLoading={bluTvShows.isPending}
-        />
-      )}
+      {isAuthenticated &&
+        lastWatched.isSuccess &&
+        lastWatched.data!.length > 0 && (
+          <ShowCarousel
+            title="Izlemeye devam et"
+            shows={
+              lastWatched.data?.map(
+                (s) =>
+                  ({
+                    name: `${s.name}`,
+                    original_name: `${s.name} - ${s.season}:${s.episode}`,
+                    poster_path: s.poster_path,
+                  } as Result)
+              ) ?? []
+            }
+            maxCards={5}
+            largeCards={true}
+            isLoading={bluTvShows.isPending}
+          />
+        )}
       <ShowCarousel
         title="BluTV"
         shows={bluTvShows.data?.results ?? []}
