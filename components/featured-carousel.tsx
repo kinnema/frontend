@@ -65,14 +65,16 @@ export function FeaturedCarousel() {
               />
             </div>
             <div className="absolute inset-0 z-20 flex items-center">
-              <div className="container px-4 md:px-6 space-y-4 flex flex-wrap  text-wrap">
+              <div className="container px-4 md:px-6 space-y-4 flex-col flex flex-wrap text-wrap">
                 <h1 className="text-6xl font-bold tracking-wider max-w-2xl">
                   {item.name}
                 </h1>
                 <p className="max-w-2xl text-gray-300">{item.overview}</p>
-                <Button size="lg" className="mt-4">
-                  Oynat
-                </Button>
+                <div className="min-w-10">
+                  <Button size="lg" className="mt-4">
+                    Oynat
+                  </Button>
+                </div>
               </div>
             </div>
           </section>
