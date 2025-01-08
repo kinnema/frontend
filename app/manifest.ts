@@ -4,12 +4,12 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Kinnema",
     short_name: "Kinnema",
-    description: "An example of how to use Serwist in Next.js",
+    description: "Film!",
     start_url: "/",
     display: "standalone",
     orientation: "portrait",
-    background_color: "#fff",
-    theme_color: "#dc2626",
+    background_color: "#070707",
+    theme_color: "#22c55e",
     icons: [
       {
         purpose: "maskable",
