@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Loading } from "@/lib/components/Loading";
@@ -12,7 +13,7 @@ import { useAuthStore } from "@/lib/stores/auth.store";
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { ITmdbSerieDetails } from "@/lib/types/tmdb";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Volume2, VolumeX, X } from "lucide-react";
+import { AlertCircle, Volume2, VolumeX, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ReactPlayer from "react-player";
@@ -69,7 +70,7 @@ export default function ChapterPage({ params }: IProps) {
     queryFn: async () => {
       return AppService.fetchSeries(params.slug, season, chapter);
     },
-    retry: 3,
+    retry: 2,
   });
 
   useEffect(() => {
@@ -96,19 +97,21 @@ export default function ChapterPage({ params }: IProps) {
     }, 60_000);
   }, [isAuthenticated, tmdbData]);
 
+  useEffect(() => {
+    if (!serieWatchLink.isStale && serieWatchLink.isError) {
+      toast.toast({
+        title: "Yükleme hatasi, tekrar deneniyor..",
+        variant: "destructive",
+      });
+    }
+  }, [serieWatchLink]);
+
   if (tmdbData.isError) {
     return <div className="text-red-500">Dizi bulunamadı</div>;
   }
 
   if (tmdbData.isPending) {
     return <Loading fullscreen />;
-  }
-
-  if (!serieWatchLink.isStale && serieWatchLink.isError) {
-    toast.toast({
-      title: "Yükleme hatasi, tekrar deneniyor..",
-      variant: "destructive",
-    });
   }
 
   function onClickClose(): void {
@@ -125,34 +128,48 @@ export default function ChapterPage({ params }: IProps) {
 
   return (
     <div className="fixed inset-0 bg-black/95 z-50">
-      <div className="relative h-screen">
-        <div className="w-full h-full">
+      <div className="relative h-full">
+        <div className="w-full h-full flex">
           {!isTurkishProvider ? (
             <iframe
               className="w-full h-full"
               src={`https://vidsrc.to/embed/tv/${tmdbData.data.id}/${season}/${chapter}`}
+              allowFullScreen
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             />
           ) : serieWatchLink.isPending ? (
             <Loading />
           ) : (
-            <ReactPlayer
-              url={serieWatchLink.data?.url}
-              width={"100%"}
-              height={"100%"}
-              stopOnUnmount
-              playing
-              ref={videoPlayerRef}
-              muted={isMuted}
-              style={{
-                backgroundColor: "black",
-                width: "100%",
-                height: "100%",
-              }}
-              light={`https://image.tmdb.org/t/p/original/${tmdbData.data.poster_path}`}
-              controls
-              onPlay={onPlay}
-              onPause={onPause}
-            />
+            <>
+              {serieWatchLink.isError ? (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Error</AlertTitle>
+                  <AlertDescription>
+                    Your session has expired. Please log in again.
+                  </AlertDescription>
+                </Alert>
+              ) : (
+                <ReactPlayer
+                  url={serieWatchLink.data?.url}
+                  width={"100%"}
+                  height={"100%"}
+                  stopOnUnmount
+                  playing
+                  ref={videoPlayerRef}
+                  muted={isMuted}
+                  style={{
+                    backgroundColor: "black",
+                    width: "100%",
+                    height: "100%",
+                  }}
+                  light={`https://image.tmdb.org/t/p/original/${tmdbData.data.poster_path}`}
+                  controls
+                  onPlay={onPlay}
+                  onPause={onPause}
+                />
+              )}
+            </>
           )}
         </div>
         <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
