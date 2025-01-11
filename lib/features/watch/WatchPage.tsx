@@ -14,7 +14,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Volume2, VolumeX, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import ReactPlayer from "react-player";
+import { default as ReactHlsPlayer } from "react-hls-player";
 
 interface IProps {
   params: {
@@ -32,7 +32,7 @@ export default function ChapterPage({ params }: IProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isLoggedIn);
   const searchParams = useSearchParams();
-  const videoPlayerRef = useRef<ReactPlayer>(null);
+  const videoPlayerRef = useRef(null);
   const [isMuted, setIsMuted] = useState(false);
   const router = useRouter();
   const toast = useToast();
@@ -160,22 +160,19 @@ export default function ChapterPage({ params }: IProps) {
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             />
           ) : (
-            <ReactPlayer
-              url={
+            <ReactHlsPlayer
+              playerRef={videoPlayerRef}
+              src={
                 "https://cehennemstream.click/cdn/hls/44d3ed4e79ae9c3cdea6bdfa7c965966/master.txt"
               }
               width={"100%"}
               height={"100%"}
-              stopOnUnmount
-              playing
-              ref={videoPlayerRef}
               muted={isMuted}
               style={{
                 backgroundColor: "black",
                 width: "100%",
                 height: "100%",
               }}
-              light={`https://image.tmdb.org/t/p/original/${tmdbData.data.poster_path}`}
               controls
               onPlay={onPlay}
               onPause={onPause}
