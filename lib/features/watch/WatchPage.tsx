@@ -1,11 +1,10 @@
 "use client";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Loading } from "@/lib/components/Loading";
-import { ILastWatched, ILastWatchedMutation, IWatchResult } from "@/lib/models";
-import AppService from "@/lib/services/app.service";
+import { BASE_URL } from "@/lib/constants";
+import { ILastWatched, ILastWatchedMutation } from "@/lib/models";
 import TmdbService from "@/lib/services/tmdb.service";
 import UserService from "@/lib/services/user.service";
 import { useAuthStore } from "@/lib/stores/auth.store";
@@ -13,7 +12,7 @@ import { useAuthStore } from "@/lib/stores/auth.store";
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { ITmdbSerieDetails } from "@/lib/types/tmdb";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { AlertCircle, Volume2, VolumeX, X } from "lucide-react";
+import { Volume2, VolumeX, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ReactPlayer from "react-player";
@@ -27,6 +26,8 @@ interface IProps {
 }
 
 export default function ChapterPage({ params }: IProps) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [videoSource, setVideoSource] = useState();
   const season = parseInt(params.season.replace("sezon-", ""));
   const chapter = parseInt(params.chapter.replace("bolum-", ""));
   const [isPlaying, setIsPlaying] = useState(false);
@@ -63,15 +64,35 @@ export default function ChapterPage({ params }: IProps) {
     return TurkishProviderIds.includes(parseInt(network!));
   }, []);
 
-  const serieWatchLink = useQuery<IWatchResult>({
-    enabled: tmdbData.isSuccess && isTurkishProvider,
-    networkMode: "offlineFirst",
-    queryKey: ["dizi-watch", params.slug, season, chapter],
-    queryFn: async () => {
-      return AppService.fetchSeries(params.slug, season, chapter);
-    },
-    retry: 2,
-  });
+  // const serieWatchLink = useE<IWatchResult>({
+  //   enabled: tmdbData.isSuccess && isTurkishProvider,
+  //   networkMode: "offlineFirst",
+  //   queryKey: ["dizi-watch", params.slug, season, chapter],
+  //   queryFn: async () => {
+  //     return AppService.fetchSeries(params.slug, season, chapter);
+  //   },
+  //   retry: 2,
+  // });
+
+  useEffect(() => {
+    const search_params = new URLSearchParams();
+    search_params.append("serie_name", params.slug);
+    search_params.append("season", season.toString());
+    search_params.append("episode", chapter.toString());
+
+    const eventSource = new EventSource(`${BASE_URL}/watch/?${search_params}`);
+
+    eventSource.addEventListener("message", (m) => {
+      setIsLoading(false);
+      setVideoSource(m.data);
+      console.log(m.data);
+      eventSource.close();
+    });
+
+    return () => {
+      eventSource.close();
+    };
+  }, []);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -97,14 +118,14 @@ export default function ChapterPage({ params }: IProps) {
     }, 60_000);
   }, [isAuthenticated, tmdbData]);
 
-  useEffect(() => {
-    if (!serieWatchLink.isStale && serieWatchLink.isError) {
-      toast.toast({
-        title: "Yükleme hatasi, tekrar deneniyor..",
-        variant: "destructive",
-      });
-    }
-  }, [serieWatchLink]);
+  // useEffect(() => {
+  //   if (!serieWatchLink.isStale && serieWatchLink.isError) {
+  //     toast.toast({
+  //       title: "Yükleme hatasi, tekrar deneniyor..",
+  //       variant: "destructive",
+  //     });
+  //   }
+  // }, [serieWatchLink]);
 
   if (tmdbData.isError) {
     return <div className="text-red-500">Dizi bulunamadı</div>;
@@ -137,23 +158,13 @@ export default function ChapterPage({ params }: IProps) {
               allowFullScreen
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             />
-          ) : serieWatchLink.isPending ? (
+          ) : isLoading ? (
             <Loading />
           ) : (
             <>
-              {serieWatchLink.isError ? (
-                <div className="flex justify-center">
-                  <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>Error</AlertTitle>
-                    <AlertDescription>
-                      Your session has expired. Please log in again.
-                    </AlertDescription>
-                  </Alert>
-                </div>
-              ) : (
+              {videoSource && (
                 <ReactPlayer
-                  url={serieWatchLink.data?.url}
+                  url={"https://kinnema.hasanisabbah.xyz/ss.m3u8"}
                   width={"100%"}
                   height={"100%"}
                   stopOnUnmount

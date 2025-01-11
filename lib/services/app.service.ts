@@ -1,6 +1,5 @@
 import axios from "axios";
 import { BASE_URL } from "../constants";
-import { IWatchResult } from "../models";
 import { useAuthStore } from "../stores/auth.store";
 
 export const appAxiosClient = axios.create({
@@ -20,7 +19,7 @@ appAxiosClient.interceptors.request.use(
 
 export default class AppService {
   static warmUpService = async () => {
-    await appAxiosClient.post("/app/warmup");
+    // await appAxiosClient.post("/app/warmup");
   };
 
   static fetchSeries = async (
@@ -28,10 +27,16 @@ export default class AppService {
     season: number,
     chapter: number
   ) => {
-    const response = await appAxiosClient.get<IWatchResult>(
-      `/watch/${serie}/${season}/${chapter}`
-    );
+    const search_params = new URLSearchParams();
+    search_params.append("serie_name", serie);
+    search_params.append("season", season.toString());
+    search_params.append("episode", chapter.toString());
 
-    return response.data;
+    new EventSource(`${BASE_URL}/watch/?${search_params}`).addEventListener(
+      "message",
+      (m) => {
+        alert(m.data);
+      }
+    );
   };
 }
