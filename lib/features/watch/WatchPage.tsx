@@ -161,7 +161,9 @@ export default function ChapterPage({ params }: IProps) {
             />
           ) : (
             <ReactPlayer
-              url={"https://kinnema.hasanisabbah.xyz/ss.m3u8"}
+              url={
+                "https://cehennemstream.click/cdn/hls/44d3ed4e79ae9c3cdea6bdfa7c965966/master.txt"
+              }
               width={"100%"}
               height={"100%"}
               stopOnUnmount
