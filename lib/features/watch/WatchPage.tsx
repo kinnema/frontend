@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Loading } from "@/lib/components/Loading";
-import { BASE_URL } from "@/lib/constants";
 import { ILastWatched, ILastWatchedMutation } from "@/lib/models";
 import TmdbService from "@/lib/services/tmdb.service";
 import UserService from "@/lib/services/user.service";
@@ -80,7 +79,9 @@ export default function ChapterPage({ params }: IProps) {
     search_params.append("season", season.toString());
     search_params.append("episode", chapter.toString());
 
-    const eventSource = new EventSource(`${BASE_URL}/watch/?${search_params}`);
+    const eventSource = new EventSource(
+      `https://kinnema.hasanisabbah.xyz/watch/?${search_params}`
+    );
 
     eventSource.addEventListener("message", (m) => {
       setIsLoading(false);
