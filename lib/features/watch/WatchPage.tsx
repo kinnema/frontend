@@ -159,31 +159,25 @@ export default function ChapterPage({ params }: IProps) {
               allowFullScreen
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             />
-          ) : isLoading ? (
-            <Loading />
           ) : (
-            <>
-              {/* {videoSource && ( */}
-              <ReactPlayer
-                url={"https://kinnema.hasanisabbah.xyz/ss.m3u8"}
-                width={"100%"}
-                height={"100%"}
-                stopOnUnmount
-                playing
-                ref={videoPlayerRef}
-                muted={isMuted}
-                style={{
-                  backgroundColor: "black",
-                  width: "100%",
-                  height: "100%",
-                }}
-                light={`https://image.tmdb.org/t/p/original/${tmdbData.data.poster_path}`}
-                controls
-                onPlay={onPlay}
-                onPause={onPause}
-              />
-              {/* )} */}
-            </>
+            <ReactPlayer
+              url={"https://kinnema.hasanisabbah.xyz/ss.m3u8"}
+              width={"100%"}
+              height={"100%"}
+              stopOnUnmount
+              playing
+              ref={videoPlayerRef}
+              muted={isMuted}
+              style={{
+                backgroundColor: "black",
+                width: "100%",
+                height: "100%",
+              }}
+              light={`https://image.tmdb.org/t/p/original/${tmdbData.data.poster_path}`}
+              controls
+              onPlay={onPlay}
+              onPause={onPause}
+            />
           )}
         </div>
         <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
