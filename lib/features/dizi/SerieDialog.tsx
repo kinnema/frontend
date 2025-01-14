@@ -5,15 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loading } from "@/lib/components/Loading";
 import { tmdbPoster } from "@/lib/helpers";
-import AppService from "@/lib/services/app.service";
 import TmdbService from "@/lib/services/tmdb.service";
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { ITmdbSerieDetails } from "@/lib/types/tmdb";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 interface Episode {
   id: number;
@@ -25,9 +24,6 @@ interface Episode {
 
 export function SerieDialogFeature({ params }: { params: { slug: string } }) {
   const router = useRouter();
-  const sendWarmUpPing = useMutation({
-    mutationFn: () => AppService.warmUpService(),
-  });
 
   const tmdbDetailsData = useQuery<ITmdbSerieDetails>({
     queryKey: ["tmdb-details-with-season", params.slug],
@@ -52,10 +48,6 @@ export function SerieDialogFeature({ params }: { params: { slug: string } }) {
 
     return containsAll;
   }, [serieNetwork]);
-
-  useEffect(() => {
-    if (isTurkishProvider) sendWarmUpPing.mutate();
-  }, [isTurkishProvider]);
 
   const [activeSeasonTab, setActivateSeasonTab] = useState<number>(1);
 
