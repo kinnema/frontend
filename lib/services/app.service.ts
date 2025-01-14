@@ -29,9 +29,12 @@ export default class AppService {
     search_params.append("season", season.toString());
     search_params.append("episode", chapter.toString());
 
-    const response = await axios.get(`${BASE_URL}/watch/?${search_params}`, {
-      responseType: "stream",
-    });
+    const response = await appAxiosClient.get(
+      `${BASE_URL}/watch/?${search_params}`,
+      {
+        responseType: "stream",
+      }
+    );
     return JSON.parse(response.data);
   };
 }
