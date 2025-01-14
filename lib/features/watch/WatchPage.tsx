@@ -3,7 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Loading } from "@/lib/components/Loading";
-import { ILastWatched, ILastWatchedMutation } from "@/lib/models";
+import { ILastWatched, ILastWatchedMutation, IWatchResult } from "@/lib/models";
+import AppService from "@/lib/services/app.service";
 import TmdbService from "@/lib/services/tmdb.service";
 import UserService from "@/lib/services/user.service";
 import { useAuthStore } from "@/lib/stores/auth.store";
@@ -63,29 +64,15 @@ export default function ChapterPage({ params }: IProps) {
     return TurkishProviderIds.includes(parseInt(network!));
   }, []);
 
-  useEffect(() => {
-    const search_params = new URLSearchParams();
-    search_params.append("serie_name", params.slug);
-    search_params.append("season", season.toString());
-    search_params.append("episode", chapter.toString());
-
-    const eventSource = new EventSource(
-      `${process.env.NEXT_PUBLIC_API}/watch/?${search_params}`
-    );
-
-    eventSource.addEventListener("message", (m) => {
-      toast.toast({
-        title: "Iyi seyirler!",
-      });
-      setIsLoading(false);
-      setVideoSource(m.data);
-      eventSource.close();
-    });
-
-    return () => {
-      eventSource.close();
-    };
-  }, []);
+  const serieWatchLink = useQuery<IWatchResult>({
+    enabled: tmdbData.isSuccess && isTurkishProvider,
+    networkMode: "offlineFirst",
+    queryKey: ["dizi-watch", params.slug, season, chapter],
+    queryFn: async () => {
+      return AppService.fetchSeries(params.slug, season, chapter);
+    },
+    retry: 1,
+  });
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -142,12 +129,14 @@ export default function ChapterPage({ params }: IProps) {
               allowFullScreen
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             />
-          ) : isLoading ? (
-            <Loading />
+          ) : serieWatchLink.isPending ? (
+            <div className="m-auto">
+              <Loading />
+            </div>
           ) : (
             <>
               <ReactHlsPlayer
-                url={videoSource}
+                url={serieWatchLink.data?.url}
                 width={"100%"}
                 height={"100%"}
                 stopOnUnmount
