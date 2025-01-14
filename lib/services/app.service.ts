@@ -29,7 +29,7 @@ export default class AppService {
     search_params.append("season", season.toString());
     search_params.append("episode", chapter.toString());
 
-    const response = await appAxiosClient.get(`/watch/?${search_params}`);
+    const response = await appAxiosClient.get(`/watch?${search_params}`);
     return JSON.parse(response.data);
   };
 }
