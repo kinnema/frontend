@@ -14,7 +14,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Volume2, VolumeX, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { default as ReactHlsPlayer } from "react-hls-player";
+import ReactHlsPlayer from "react-player";
 
 interface IProps {
   params: {
@@ -63,16 +63,6 @@ export default function ChapterPage({ params }: IProps) {
     return TurkishProviderIds.includes(parseInt(network!));
   }, []);
 
-  // const serieWatchLink = useE<IWatchResult>({
-  //   enabled: tmdbData.isSuccess && isTurkishProvider,
-  //   networkMode: "offlineFirst",
-  //   queryKey: ["dizi-watch", params.slug, season, chapter],
-  //   queryFn: async () => {
-  //     return AppService.fetchSeries(params.slug, season, chapter);
-  //   },
-  //   retry: 2,
-  // });
-
   useEffect(() => {
     const search_params = new URLSearchParams();
     search_params.append("serie_name", params.slug);
@@ -80,13 +70,15 @@ export default function ChapterPage({ params }: IProps) {
     search_params.append("episode", chapter.toString());
 
     const eventSource = new EventSource(
-      `https://kinnema.hasanisabbah.xyz/watch/?${search_params}`
+      `${process.env.NEXT_PUBLIC_API}/watch/?${search_params}`
     );
 
     eventSource.addEventListener("message", (m) => {
+      toast.toast({
+        title: "Iyi seyirler!",
+      });
       setIsLoading(false);
       setVideoSource(m.data);
-      console.log(m.data);
       eventSource.close();
     });
 
@@ -119,15 +111,6 @@ export default function ChapterPage({ params }: IProps) {
     }, 60_000);
   }, [isAuthenticated, tmdbData]);
 
-  // useEffect(() => {
-  //   if (!serieWatchLink.isStale && serieWatchLink.isError) {
-  //     toast.toast({
-  //       title: "Yükleme hatasi, tekrar deneniyor..",
-  //       variant: "destructive",
-  //     });
-  //   }
-  // }, [serieWatchLink]);
-
   if (tmdbData.isError) {
     return <div className="text-red-500">Dizi bulunamadı</div>;
   }
@@ -159,24 +142,29 @@ export default function ChapterPage({ params }: IProps) {
               allowFullScreen
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             />
+          ) : isLoading ? (
+            <Loading />
           ) : (
-            <ReactHlsPlayer
-              playerRef={videoPlayerRef}
-              src={
-                "https://cehennemstream.click/cdn/hls/44d3ed4e79ae9c3cdea6bdfa7c965966/master.txt"
-              }
-              width={"100%"}
-              height={"100%"}
-              muted={isMuted}
-              style={{
-                backgroundColor: "black",
-                width: "100%",
-                height: "100%",
-              }}
-              controls
-              onPlay={onPlay}
-              onPause={onPause}
-            />
+            <>
+              <ReactHlsPlayer
+                url={videoSource}
+                width={"100%"}
+                height={"100%"}
+                stopOnUnmount
+                playing
+                ref={videoPlayerRef}
+                muted={isMuted}
+                style={{
+                  backgroundColor: "black",
+                  width: "100%",
+                  height: "100%",
+                }}
+                light={`https://image.tmdb.org/t/p/original/${tmdbData.data.poster_path}`}
+                controls
+                onPlay={onPlay}
+                onPause={onPause}
+              />
+            </>
           )}
         </div>
         <div className="absolute top-4 right-4 z-20 flex items-center gap-2">

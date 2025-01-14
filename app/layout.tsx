@@ -12,7 +12,6 @@ export const metadata: Metadata = {
   title: "Kinnema",
   description: "Kinnema",
 };
-
 export default function RootLayout({
   children,
   modal,

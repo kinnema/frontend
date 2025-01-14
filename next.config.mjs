@@ -1,18 +1,16 @@
-// @ts-check
-import withSerwistInit from "@serwist/next";
-
-// You may want to use a more robust revision to cache
-// files more efficiently.
-// A viable option is `git rev-parse HEAD`.
+import NextPwa from 'next-pwa';
 const revision = crypto.randomUUID();
 
-const withSerwist = withSerwistInit({
-  cacheOnNavigation: false,
-  swSrc: "app/sw.ts",
-  swDest: "public/sw.js",
-  additionalPrecacheEntries: [{ url: "/~offline", revision }],
-  
+
+const withPWA = NextPwa({
+  dest: "public",
+  disable: process.env.NODE_ENV === "development",
+  register: true,
+  skipWaiting: true,
+  additionalManifestEntries: [{ url: "/~offline", revision }],
+  navigateFallback: "/offline"
 });
+
 
 /** @type {import("next").NextConfig} */
 const nextConfig = {
@@ -27,5 +25,5 @@ const nextConfig = {
   }
 };
 
-// export default withSerwist(nextConfig);
-export default nextConfig;
+export default withPWA(nextConfig);
+// export default nextConfig;
