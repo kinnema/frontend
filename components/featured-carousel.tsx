@@ -54,18 +54,7 @@ export function FeaturedCarousel() {
                   priority
                 />
               </div>
-              <div
-                className={`absolute inset-0 transition-transform duration-500 ease-in-out`}
-              >
-                <Image
-                  src={tmdbPoster(item.poster_path!)}
-                  alt={item.original_name}
-                  width={1920}
-                  height={1080}
-                  className="object-cover w-full h-full"
-                  priority
-                />
-              </div>
+
               <div className="absolute inset-0 z-20 flex items-center">
                 <div className="container px-4 md:px-6 space-y-4 flex-col flex flex-wrap text-wrap">
                   <h1 className="text-6xl font-bold tracking-wider max-w-2xl">

@@ -25,11 +25,6 @@ export function ShowCarousel({ title, shows }: ShowCarouselProps) {
             slidesPerView={2}
             spaceBetween={150}
             freeMode
-            autoplay={{
-              delay: 3000,
-              pauseOnMouseEnter: true,
-              disableOnInteraction: true,
-            }}
             modules={[FreeMode, Autoplay]}
             breakpoints={{
               320: {
