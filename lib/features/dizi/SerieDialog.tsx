@@ -14,15 +14,14 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 
-interface Episode {
-  id: number;
-  title: string;
-  description: string;
-  thumbnail: string;
-  views: number;
+interface IProps {
+  params: {
+    slug: string;
+  };
+  isClient?: boolean;
 }
 
-export function SerieDialogFeature({ params }: { params: { slug: string } }) {
+export function SerieDialogFeature({ params, isClient }: IProps) {
   const router = useRouter();
 
   const tmdbDetailsData = useQuery<ITmdbSerieDetails>({
@@ -80,20 +79,22 @@ export function SerieDialogFeature({ params }: { params: { slug: string } }) {
           width={600}
           height={500}
         />
-        <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="hover:bg-white/10 text-white"
-            onClick={() => router.back()}
-          >
-            <X className="h-6 w-6" />
-          </Button>
-        </div>
+        {isClient && (
+          <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hover:bg-white/10 text-white"
+              onClick={() => router.back()}
+            >
+              <X className="h-6 w-6" />
+            </Button>
+          </div>
+        )}
         <div className="absolute bottom-6 left-6 z-20">
           <span className="text-emerald-400 text-sm mb-2 gap-1 flex ">
             {tmdbDetailsData.data.networks.map((network) => (
-              <p>{network.name}</p>
+              <p key={network.id}>{network.name}</p>
             ))}
             orijinal dizisi
           </span>

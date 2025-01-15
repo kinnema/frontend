@@ -9,7 +9,7 @@ export default function Page({ params }: { params: { slug: string } }) {
         <VisuallyHidden>
           <DialogTitle>{params.slug}</DialogTitle>
         </VisuallyHidden>
-        <SerieDialogFeature params={params} />
+        <SerieDialogFeature params={params} isClient />
       </DialogContent>
     </Dialog>
   );

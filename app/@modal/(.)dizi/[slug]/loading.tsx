@@ -1,3 +1,5 @@
+import { Loading } from "@/lib/components/Loading";
+
 export default function _Loading() {
-  return <div>qwesqwelk</div>;
+  return <Loading fullscreen />;
 }

@@ -1,79 +1,33 @@
-"use client";
-
-import { FeaturedCarousel } from "@//components/featured-carousel";
-import { ShowCarousel } from "@/components/show-carousel";
+import { HomeFeature } from "@/lib/features/home/HomeFeature";
 import TmdbService from "@/lib/services/tmdb.service";
-import UserService from "@/lib/services/user.service";
-import { useAuthStore } from "@/lib/stores/auth.store";
 import { TmdbNetworks } from "@/lib/types/networks";
-import { Result } from "@/lib/types/tmdb";
-import { useQuery } from "@tanstack/react-query";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 
-export default function Home() {
-  const isAuthenticated = useAuthStore((state) => state.isLoggedIn);
-  const bluTvShows = useQuery({
+export default async function Home() {
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
     queryKey: ["home", "blutv"],
     queryFn: () => TmdbService.fetchNetworkSeries(TmdbNetworks.BLUTV),
   });
-  const gainTvShows = useQuery({
+
+  await queryClient.prefetchQuery({
     queryKey: ["home", "gain"],
     queryFn: () => TmdbService.fetchNetworkSeries(TmdbNetworks.GAIN),
   });
-  const exxenShows = useQuery({
+
+  await queryClient.prefetchQuery({
     queryKey: ["home", "exxen"],
     queryFn: () => TmdbService.fetchNetworkSeries(TmdbNetworks.EXXEN),
   });
-  const lastWatched = useQuery({
-    enabled: isAuthenticated,
-    queryKey: ["last-watched"],
-    queryFn: () => UserService.fetchLastWatched(),
-  });
 
   return (
-    <>
-      <FeaturedCarousel />
-      {isAuthenticated &&
-        lastWatched.isSuccess &&
-        lastWatched.data!.length > 0 && (
-          <ShowCarousel
-            title="Izlemeye devam et"
-            shows={
-              lastWatched.data?.map(
-                (s) =>
-                  ({
-                    name: `${s.name}`,
-                    original_name: `${s.name} - ${s.season}:${s.episode}`,
-                    poster_path: s.poster_path,
-                  } as Result)
-              ) ?? []
-            }
-            maxCards={5}
-            largeCards={true}
-            isLoading={bluTvShows.isPending}
-          />
-        )}
-
-      <ShowCarousel
-        title="BluTV"
-        shows={bluTvShows.data?.results ?? []}
-        maxCards={5}
-        largeCards={true}
-        isLoading={bluTvShows.isPending}
-      />
-      <ShowCarousel
-        title="GainTV"
-        shows={gainTvShows.data?.results ?? []}
-        maxCards={5}
-        largeCards={true}
-        isLoading={gainTvShows.isPending}
-      />
-      <ShowCarousel
-        title="Exxen"
-        shows={exxenShows.data?.results ?? []}
-        maxCards={5}
-        largeCards={true}
-        isLoading={exxenShows.isPending}
-      />
-    </>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <HomeFeature />
+    </HydrationBoundary>
   );
 }

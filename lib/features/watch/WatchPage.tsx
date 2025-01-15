@@ -26,8 +26,6 @@ interface IProps {
 }
 
 export default function ChapterPage({ params }: IProps) {
-  const [isLoading, setIsLoading] = useState(true);
-  const [videoSource, setVideoSource] = useState();
   const season = parseInt(params.season.replace("sezon-", ""));
   const chapter = parseInt(params.chapter.replace("bolum-", ""));
   const [isPlaying, setIsPlaying] = useState(false);
