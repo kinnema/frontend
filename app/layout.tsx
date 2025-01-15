@@ -9,7 +9,11 @@ import { Providers } from "./providers";
 const montserrat = Montserrat({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Kinnema",
+  title: {
+    default: "Kinnema",
+    absolute: "Kinnema",
+    template: "%s - Kinnema",
+  },
   description: "Kinnema",
 };
 export default function RootLayout({
