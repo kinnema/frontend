@@ -19,14 +19,16 @@ function makeQueryClient() {
     },
   });
 
-  const localStoragePersister = createSyncStoragePersister({
-    storage: window.localStorage,
-  });
+  if (typeof window !== "undefined") {
+    const localStoragePersister = createSyncStoragePersister({
+      storage: window.localStorage,
+    });
 
-  persistQueryClient({
-    queryClient,
-    persister: localStoragePersister,
-  });
+    persistQueryClient({
+      queryClient,
+      persister: localStoragePersister,
+    });
+  }
 
   return queryClient;
 }
