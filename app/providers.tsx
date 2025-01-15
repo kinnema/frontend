@@ -2,43 +2,33 @@
 
 import { Toaster } from "@/components/ui/toaster";
 import { useAppStore } from "@/lib/stores/app.store";
-import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { persistQueryClient } from "@tanstack/react-query-persist-client";
 import { PropsWithChildren, useEffect } from "react";
-
 import "swiper/css";
 
 function makeQueryClient() {
-  const queryClient = new QueryClient({
+  return new QueryClient({
     defaultOptions: {
       queries: {
+        // With SSR, we usually want to set some default staleTime
+        // above 0 to avoid refetching immediately on the client
         staleTime: 60 * 1000,
-        gcTime: 1000 * 60 * 60 * 24,
       },
     },
   });
-
-  if (typeof window !== "undefined") {
-    const localStoragePersister = createSyncStoragePersister({
-      storage: window.localStorage,
-    });
-
-    persistQueryClient({
-      queryClient,
-      persister: localStoragePersister,
-    });
-  }
-
-  return queryClient;
 }
 
 let browserQueryClient: QueryClient | undefined = undefined;
 
 function getQueryClient() {
   if (typeof window === "undefined") {
+    // Server: always make a new query client
     return makeQueryClient();
   } else {
+    // Browser: make a new query client if we don't already have one
+    // This is very important so we don't re-make a new client if React
+    // suspends during the initial render. This may not be needed if we
+    // have a suspense boundary BELOW the creation of the query client
     if (!browserQueryClient) browserQueryClient = makeQueryClient();
     return browserQueryClient;
   }
