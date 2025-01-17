@@ -53,9 +53,27 @@ components:
       title: "#LoginUserOutputType"
     def-4:
       type: object
-      title: url/last_watched
+      title: CreateUserInputType
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 5
+        username:
+          type: string
+          minLength: 5
+      required:
+        - email
+        - password
+        - username
     def-5:
       type: object
+      title: url/last_watched
+    def-6:
+      type: object
+      title: lastWatchedSchemaOutputType
       properties:
         id:
           type: string
@@ -72,7 +90,7 @@ components:
           type: boolean
           nullable: true
         tmdbId:
-          type: string
+          type: number
         userId:
           type: string
           format: uuid
@@ -92,8 +110,6 @@ components:
             - username
             - email
           title: "#UserSchema"
-        atSecond:
-          type: number
       required:
         - id
         - name
@@ -102,9 +118,7 @@ components:
         - episode
         - tmdbId
         - userId
-        - atSecond
-      title: "#lastWatchedSchemaOutputType"
-    def-6:
+    def-7:
       type: object
       properties:
         id:
@@ -120,76 +134,17 @@ components:
         - username
         - email
       title: "#UserSchema"
-    def-7:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        season:
-          type: number
-        episode:
-          type: number
-        isWatched:
-          type: boolean
-          nullable: true
-        tmdbId:
-          type: string
-        name:
-          type: string
-        poster_path:
-          type: string
-        userId:
-          type: string
-          format: uuid
-        atSecond:
-          type: number
-      required:
-        - id
-        - season
-        - episode
-        - tmdbId
-        - name
-        - poster_path
-        - userId
-        - atSecond
-      title: "#lastWatchedCreateSchemaOutputType"
     def-8:
       type: object
-      properties:
-        season:
-          type: number
-        episode:
-          type: number
-        name:
-          type: string
-        poster_path:
-          type: string
-        isWatched:
-          type: boolean
-          nullable: true
-        tmdbId:
-          type: string
-        userId:
-          type: string
-          format: uuid
-        atSecond:
-          type: number
-      required:
-        - season
-        - episode
-        - name
-        - poster_path
-        - tmdbId
-        - userId
-        - atSecond
-      title: "#lastWatchedCreateSchemaInputType"
-    def-9:
-      type: object
+      title: lastWatchedCreateSchemaOutputType
       properties:
         id:
           type: string
           format: uuid
+        name:
+          type: string
+        poster_path:
+          type: string
         season:
           type: number
         episode:
@@ -197,29 +152,79 @@ components:
         isWatched:
           type: boolean
           nullable: true
+        tmdbId:
+          type: number
+        userId:
+          type: string
+          format: uuid
+      required:
+        - id
+        - name
+        - poster_path
+        - season
+        - episode
+        - tmdbId
+        - userId
+    def-9:
+      type: object
+      title: lastWatchedCreateSchemaInputType
+      properties:
+        tmdbId:
+          type: number
         name:
           type: string
         poster_path:
           type: string
-        tmdbId:
-          type: string
-        userId:
-          type: string
-          format: uuid
+        season:
+          type: number
+        episode:
+          type: number
+        isWatched:
+          type: boolean
+          nullable: true
         atSecond:
           type: number
       required:
-        - id
-        - season
-        - episode
+        - tmdbId
         - name
         - poster_path
-        - tmdbId
-        - userId
+        - season
+        - episode
         - atSecond
-      title: "#lastWatchedPatchSchemaOutputType"
     def-10:
       type: object
+      title: lastWatchedPatchSchemaOutputType
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        poster_path:
+          type: string
+        season:
+          type: number
+        episode:
+          type: number
+        isWatched:
+          type: boolean
+          nullable: true
+        tmdbId:
+          type: number
+        userId:
+          type: string
+          format: uuid
+      required:
+        - id
+        - name
+        - poster_path
+        - season
+        - episode
+        - tmdbId
+        - userId
+    def-11:
+      type: object
+      title: lastWatchedPatchSchemaInputType
       properties:
         season:
           type: number
@@ -231,12 +236,14 @@ components:
           type: boolean
           nullable: true
         tmdbId:
-          type: string
+          type: number
           nullable: true
         name:
           type: string
+          nullable: true
         poster_path:
           type: string
+          nullable: true
         userId:
           type: string
           format: uuid
@@ -244,10 +251,6 @@ components:
         atSecond:
           type: number
           nullable: true
-      required:
-        - name
-        - poster_path
-      title: "#lastWatchedPatchSchemaInputType"
 paths:
   /api/auth/:
     get:
@@ -261,6 +264,7 @@ paths:
           application/json:
             schema:
               type: object
+              title: CreateUserInputType
               properties:
                 email:
                   type: string
@@ -332,6 +336,7 @@ paths:
                 type: array
                 items:
                   type: object
+                  title: lastWatchedSchemaOutputType
                   properties:
                     id:
                       type: string
@@ -348,7 +353,7 @@ paths:
                       type: boolean
                       nullable: true
                     tmdbId:
-                      type: string
+                      type: number
                     userId:
                       type: string
                       format: uuid
@@ -367,8 +372,6 @@ paths:
                         - id
                         - username
                         - email
-                    atSecond:
-                      type: number
                   required:
                     - id
                     - name
@@ -377,39 +380,35 @@ paths:
                     - episode
                     - tmdbId
                     - userId
-                    - atSecond
     post:
       requestBody:
         content:
           application/json:
             schema:
               type: object
+              title: lastWatchedCreateSchemaInputType
               properties:
-                season:
-                  type: number
-                episode:
+                tmdbId:
                   type: number
                 name:
                   type: string
                 poster_path:
                   type: string
+                season:
+                  type: number
+                episode:
+                  type: number
                 isWatched:
                   type: boolean
                   nullable: true
-                tmdbId:
-                  type: string
-                userId:
-                  type: string
-                  format: uuid
                 atSecond:
                   type: number
               required:
-                - season
-                - episode
+                - tmdbId
                 - name
                 - poster_path
-                - tmdbId
-                - userId
+                - season
+                - episode
                 - atSecond
         required: true
       responses:
@@ -419,10 +418,15 @@ paths:
             application/json:
               schema:
                 type: object
+                title: lastWatchedCreateSchemaOutputType
                 properties:
                   id:
                     type: string
                     format: uuid
+                  name:
+                    type: string
+                  poster_path:
+                    type: string
                   season:
                     type: number
                   episode:
@@ -431,25 +435,18 @@ paths:
                     type: boolean
                     nullable: true
                   tmdbId:
-                    type: string
-                  name:
-                    type: string
-                  poster_path:
-                    type: string
+                    type: number
                   userId:
                     type: string
                     format: uuid
-                  atSecond:
-                    type: number
                 required:
                   - id
+                  - name
+                  - poster_path
                   - season
                   - episode
                   - tmdbId
-                  - name
-                  - poster_path
                   - userId
-                  - atSecond
   /api/last_watched/{id}:
     get:
       parameters:
@@ -466,6 +463,7 @@ paths:
             application/json:
               schema:
                 type: object
+                title: lastWatchedSchemaOutputType
                 properties:
                   id:
                     type: string
@@ -482,7 +480,7 @@ paths:
                     type: boolean
                     nullable: true
                   tmdbId:
-                    type: string
+                    type: number
                   userId:
                     type: string
                     format: uuid
@@ -501,8 +499,6 @@ paths:
                       - id
                       - username
                       - email
-                  atSecond:
-                    type: number
                 required:
                   - id
                   - name
@@ -511,13 +507,13 @@ paths:
                   - episode
                   - tmdbId
                   - userId
-                  - atSecond
     patch:
       requestBody:
         content:
           application/json:
             schema:
               type: object
+              title: lastWatchedPatchSchemaInputType
               properties:
                 season:
                   type: number
@@ -529,12 +525,14 @@ paths:
                   type: boolean
                   nullable: true
                 tmdbId:
-                  type: string
+                  type: number
                   nullable: true
                 name:
                   type: string
+                  nullable: true
                 poster_path:
                   type: string
+                  nullable: true
                 userId:
                   type: string
                   format: uuid
@@ -542,13 +540,10 @@ paths:
                 atSecond:
                   type: number
                   nullable: true
-              required:
-                - name
-                - poster_path
-        required: true
       parameters:
         - schema:
-            type: number
+            type: string
+            format: uuid
           in: path
           name: id
           required: true
@@ -559,10 +554,15 @@ paths:
             application/json:
               schema:
                 type: object
+                title: lastWatchedPatchSchemaOutputType
                 properties:
                   id:
                     type: string
                     format: uuid
+                  name:
+                    type: string
+                  poster_path:
+                    type: string
                   season:
                     type: number
                   episode:
@@ -570,23 +570,16 @@ paths:
                   isWatched:
                     type: boolean
                     nullable: true
-                  name:
-                    type: string
-                  poster_path:
-                    type: string
                   tmdbId:
-                    type: string
+                    type: number
                   userId:
                     type: string
                     format: uuid
-                  atSecond:
-                    type: number
                 required:
                   - id
-                  - season
-                  - episode
                   - name
                   - poster_path
+                  - season
+                  - episode
                   - tmdbId
                   - userId
-                  - atSecond

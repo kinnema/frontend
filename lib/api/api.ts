@@ -70,326 +70,27 @@ export interface ApiAuthLoginPostRequest {
 /**
  * 
  * @export
- * @interface ApiAuthRegisterPostRequest
+ * @interface CreateUserInputType
  */
-export interface ApiAuthRegisterPostRequest {
+export interface CreateUserInputType {
     /**
      * 
      * @type {string}
-     * @memberof ApiAuthRegisterPostRequest
+     * @memberof CreateUserInputType
      */
     'email': string;
     /**
      * 
      * @type {string}
-     * @memberof ApiAuthRegisterPostRequest
+     * @memberof CreateUserInputType
      */
     'password': string;
     /**
      * 
      * @type {string}
-     * @memberof ApiAuthRegisterPostRequest
+     * @memberof CreateUserInputType
      */
     'username': string;
-}
-/**
- * 
- * @export
- * @interface ApiLastWatchedGet200ResponseInner
- */
-export interface ApiLastWatchedGet200ResponseInner {
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiLastWatchedGet200ResponseInner
-     */
-    'id': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiLastWatchedGet200ResponseInner
-     */
-    'name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiLastWatchedGet200ResponseInner
-     */
-    'poster_path': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof ApiLastWatchedGet200ResponseInner
-     */
-    'season': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ApiLastWatchedGet200ResponseInner
-     */
-    'episode': number;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ApiLastWatchedGet200ResponseInner
-     */
-    'isWatched'?: boolean | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiLastWatchedGet200ResponseInner
-     */
-    'tmdbId': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiLastWatchedGet200ResponseInner
-     */
-    'userId': string;
-    /**
-     * 
-     * @type {ApiAuthLoginPost200Response}
-     * @memberof ApiLastWatchedGet200ResponseInner
-     */
-    'user'?: ApiAuthLoginPost200Response;
-    /**
-     * 
-     * @type {number}
-     * @memberof ApiLastWatchedGet200ResponseInner
-     */
-    'atSecond': number;
-}
-/**
- * 
- * @export
- * @interface ApiLastWatchedIdPatch200Response
- */
-export interface ApiLastWatchedIdPatch200Response {
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiLastWatchedIdPatch200Response
-     */
-    'id': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof ApiLastWatchedIdPatch200Response
-     */
-    'season': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ApiLastWatchedIdPatch200Response
-     */
-    'episode': number;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ApiLastWatchedIdPatch200Response
-     */
-    'isWatched'?: boolean | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiLastWatchedIdPatch200Response
-     */
-    'name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiLastWatchedIdPatch200Response
-     */
-    'poster_path': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiLastWatchedIdPatch200Response
-     */
-    'tmdbId': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiLastWatchedIdPatch200Response
-     */
-    'userId': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof ApiLastWatchedIdPatch200Response
-     */
-    'atSecond': number;
-}
-/**
- * 
- * @export
- * @interface ApiLastWatchedIdPatchRequest
- */
-export interface ApiLastWatchedIdPatchRequest {
-    /**
-     * 
-     * @type {number}
-     * @memberof ApiLastWatchedIdPatchRequest
-     */
-    'season'?: number | null;
-    /**
-     * 
-     * @type {number}
-     * @memberof ApiLastWatchedIdPatchRequest
-     */
-    'episode'?: number | null;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ApiLastWatchedIdPatchRequest
-     */
-    'isWatched'?: boolean | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiLastWatchedIdPatchRequest
-     */
-    'tmdbId'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiLastWatchedIdPatchRequest
-     */
-    'name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiLastWatchedIdPatchRequest
-     */
-    'poster_path': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiLastWatchedIdPatchRequest
-     */
-    'userId'?: string | null;
-    /**
-     * 
-     * @type {number}
-     * @memberof ApiLastWatchedIdPatchRequest
-     */
-    'atSecond'?: number | null;
-}
-/**
- * 
- * @export
- * @interface ApiLastWatchedPost200Response
- */
-export interface ApiLastWatchedPost200Response {
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiLastWatchedPost200Response
-     */
-    'id': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof ApiLastWatchedPost200Response
-     */
-    'season': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ApiLastWatchedPost200Response
-     */
-    'episode': number;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ApiLastWatchedPost200Response
-     */
-    'isWatched'?: boolean | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiLastWatchedPost200Response
-     */
-    'tmdbId': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiLastWatchedPost200Response
-     */
-    'name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiLastWatchedPost200Response
-     */
-    'poster_path': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiLastWatchedPost200Response
-     */
-    'userId': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof ApiLastWatchedPost200Response
-     */
-    'atSecond': number;
-}
-/**
- * 
- * @export
- * @interface ApiLastWatchedPostRequest
- */
-export interface ApiLastWatchedPostRequest {
-    /**
-     * 
-     * @type {number}
-     * @memberof ApiLastWatchedPostRequest
-     */
-    'season': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ApiLastWatchedPostRequest
-     */
-    'episode': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiLastWatchedPostRequest
-     */
-    'name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiLastWatchedPostRequest
-     */
-    'poster_path': string;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ApiLastWatchedPostRequest
-     */
-    'isWatched'?: boolean | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiLastWatchedPostRequest
-     */
-    'tmdbId': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiLastWatchedPostRequest
-     */
-    'userId': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof ApiLastWatchedPostRequest
-     */
-    'atSecond': number;
 }
 /**
  * 
@@ -424,28 +125,10 @@ export interface Def1 {
 export interface Def10 {
     /**
      * 
-     * @type {number}
-     * @memberof Def10
-     */
-    'season'?: number | null;
-    /**
-     * 
-     * @type {number}
-     * @memberof Def10
-     */
-    'episode'?: number | null;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof Def10
-     */
-    'isWatched'?: boolean | null;
-    /**
-     * 
      * @type {string}
      * @memberof Def10
      */
-    'tmdbId'?: string | null;
+    'id': string;
     /**
      * 
      * @type {string}
@@ -460,14 +143,87 @@ export interface Def10 {
     'poster_path': string;
     /**
      * 
+     * @type {number}
+     * @memberof Def10
+     */
+    'season': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Def10
+     */
+    'episode': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Def10
+     */
+    'isWatched'?: boolean | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof Def10
+     */
+    'tmdbId': number;
+    /**
+     * 
      * @type {string}
      * @memberof Def10
+     */
+    'userId': string;
+}
+/**
+ * 
+ * @export
+ * @interface Def11
+ */
+export interface Def11 {
+    /**
+     * 
+     * @type {number}
+     * @memberof Def11
+     */
+    'season'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof Def11
+     */
+    'episode'?: number | null;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Def11
+     */
+    'isWatched'?: boolean | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof Def11
+     */
+    'tmdbId'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof Def11
+     */
+    'name'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof Def11
+     */
+    'poster_path'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof Def11
      */
     'userId'?: string | null;
     /**
      * 
      * @type {number}
-     * @memberof Def10
+     * @memberof Def11
      */
     'atSecond'?: number | null;
 }
@@ -518,69 +274,27 @@ export interface Def3 {
 /**
  * 
  * @export
- * @interface Def5
+ * @interface Def4
  */
-export interface Def5 {
+export interface Def4 {
     /**
      * 
      * @type {string}
-     * @memberof Def5
+     * @memberof Def4
      */
-    'id': string;
+    'email': string;
     /**
      * 
      * @type {string}
-     * @memberof Def5
+     * @memberof Def4
      */
-    'name': string;
+    'password': string;
     /**
      * 
      * @type {string}
-     * @memberof Def5
+     * @memberof Def4
      */
-    'poster_path': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof Def5
-     */
-    'season': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof Def5
-     */
-    'episode': number;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof Def5
-     */
-    'isWatched'?: boolean | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof Def5
-     */
-    'tmdbId': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Def5
-     */
-    'userId': string;
-    /**
-     * 
-     * @type {UserSchema}
-     * @memberof Def5
-     */
-    'user'?: UserSchema;
-    /**
-     * 
-     * @type {number}
-     * @memberof Def5
-     */
-    'atSecond': number;
+    'username': string;
 }
 /**
  * 
@@ -599,13 +313,49 @@ export interface Def6 {
      * @type {string}
      * @memberof Def6
      */
-    'username': string;
+    'name': string;
     /**
      * 
      * @type {string}
      * @memberof Def6
      */
-    'email': string;
+    'poster_path': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Def6
+     */
+    'season': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Def6
+     */
+    'episode': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Def6
+     */
+    'isWatched'?: boolean | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof Def6
+     */
+    'tmdbId': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Def6
+     */
+    'userId': string;
+    /**
+     * 
+     * @type {UserSchema}
+     * @memberof Def6
+     */
+    'user'?: UserSchema;
 }
 /**
  * 
@@ -621,52 +371,16 @@ export interface Def7 {
     'id': string;
     /**
      * 
-     * @type {number}
+     * @type {string}
      * @memberof Def7
      */
-    'season': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof Def7
-     */
-    'episode': number;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof Def7
-     */
-    'isWatched'?: boolean | null;
+    'username': string;
     /**
      * 
      * @type {string}
      * @memberof Def7
      */
-    'tmdbId': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Def7
-     */
-    'name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Def7
-     */
-    'poster_path': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Def7
-     */
-    'userId': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof Def7
-     */
-    'atSecond': number;
+    'email': string;
 }
 /**
  * 
@@ -676,16 +390,10 @@ export interface Def7 {
 export interface Def8 {
     /**
      * 
-     * @type {number}
+     * @type {string}
      * @memberof Def8
      */
-    'season': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof Def8
-     */
-    'episode': number;
+    'id': string;
     /**
      * 
      * @type {string}
@@ -700,28 +408,34 @@ export interface Def8 {
     'poster_path': string;
     /**
      * 
+     * @type {number}
+     * @memberof Def8
+     */
+    'season': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Def8
+     */
+    'episode': number;
+    /**
+     * 
      * @type {boolean}
      * @memberof Def8
      */
     'isWatched'?: boolean | null;
     /**
      * 
-     * @type {string}
+     * @type {number}
      * @memberof Def8
      */
-    'tmdbId': string;
+    'tmdbId': number;
     /**
      * 
      * @type {string}
      * @memberof Def8
      */
     'userId': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof Def8
-     */
-    'atSecond': number;
 }
 /**
  * 
@@ -731,10 +445,22 @@ export interface Def8 {
 export interface Def9 {
     /**
      * 
+     * @type {number}
+     * @memberof Def9
+     */
+    'tmdbId': number;
+    /**
+     * 
      * @type {string}
      * @memberof Def9
      */
-    'id': string;
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Def9
+     */
+    'poster_path': string;
     /**
      * 
      * @type {number}
@@ -755,34 +481,285 @@ export interface Def9 {
     'isWatched'?: boolean | null;
     /**
      * 
-     * @type {string}
+     * @type {number}
      * @memberof Def9
+     */
+    'atSecond': number;
+}
+/**
+ * 
+ * @export
+ * @interface LastWatchedCreateSchemaInputType
+ */
+export interface LastWatchedCreateSchemaInputType {
+    /**
+     * 
+     * @type {number}
+     * @memberof LastWatchedCreateSchemaInputType
+     */
+    'tmdbId': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof LastWatchedCreateSchemaInputType
      */
     'name': string;
     /**
      * 
      * @type {string}
-     * @memberof Def9
+     * @memberof LastWatchedCreateSchemaInputType
      */
     'poster_path': string;
     /**
      * 
-     * @type {string}
-     * @memberof Def9
+     * @type {number}
+     * @memberof LastWatchedCreateSchemaInputType
      */
-    'tmdbId': string;
+    'season': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof LastWatchedCreateSchemaInputType
+     */
+    'episode': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof LastWatchedCreateSchemaInputType
+     */
+    'isWatched'?: boolean | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof LastWatchedCreateSchemaInputType
+     */
+    'atSecond': number;
+}
+/**
+ * 
+ * @export
+ * @interface LastWatchedCreateSchemaOutputType
+ */
+export interface LastWatchedCreateSchemaOutputType {
     /**
      * 
      * @type {string}
-     * @memberof Def9
+     * @memberof LastWatchedCreateSchemaOutputType
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof LastWatchedCreateSchemaOutputType
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof LastWatchedCreateSchemaOutputType
+     */
+    'poster_path': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof LastWatchedCreateSchemaOutputType
+     */
+    'season': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof LastWatchedCreateSchemaOutputType
+     */
+    'episode': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof LastWatchedCreateSchemaOutputType
+     */
+    'isWatched'?: boolean | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof LastWatchedCreateSchemaOutputType
+     */
+    'tmdbId': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof LastWatchedCreateSchemaOutputType
+     */
+    'userId': string;
+}
+/**
+ * 
+ * @export
+ * @interface LastWatchedPatchSchemaInputType
+ */
+export interface LastWatchedPatchSchemaInputType {
+    /**
+     * 
+     * @type {number}
+     * @memberof LastWatchedPatchSchemaInputType
+     */
+    'season'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof LastWatchedPatchSchemaInputType
+     */
+    'episode'?: number | null;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof LastWatchedPatchSchemaInputType
+     */
+    'isWatched'?: boolean | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof LastWatchedPatchSchemaInputType
+     */
+    'tmdbId'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof LastWatchedPatchSchemaInputType
+     */
+    'name'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof LastWatchedPatchSchemaInputType
+     */
+    'poster_path'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof LastWatchedPatchSchemaInputType
+     */
+    'userId'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof LastWatchedPatchSchemaInputType
+     */
+    'atSecond'?: number | null;
+}
+/**
+ * 
+ * @export
+ * @interface LastWatchedPatchSchemaOutputType
+ */
+export interface LastWatchedPatchSchemaOutputType {
+    /**
+     * 
+     * @type {string}
+     * @memberof LastWatchedPatchSchemaOutputType
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof LastWatchedPatchSchemaOutputType
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof LastWatchedPatchSchemaOutputType
+     */
+    'poster_path': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof LastWatchedPatchSchemaOutputType
+     */
+    'season': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof LastWatchedPatchSchemaOutputType
+     */
+    'episode': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof LastWatchedPatchSchemaOutputType
+     */
+    'isWatched'?: boolean | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof LastWatchedPatchSchemaOutputType
+     */
+    'tmdbId': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof LastWatchedPatchSchemaOutputType
+     */
+    'userId': string;
+}
+/**
+ * 
+ * @export
+ * @interface LastWatchedSchemaOutputType
+ */
+export interface LastWatchedSchemaOutputType {
+    /**
+     * 
+     * @type {string}
+     * @memberof LastWatchedSchemaOutputType
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof LastWatchedSchemaOutputType
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof LastWatchedSchemaOutputType
+     */
+    'poster_path': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof LastWatchedSchemaOutputType
+     */
+    'season': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof LastWatchedSchemaOutputType
+     */
+    'episode': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof LastWatchedSchemaOutputType
+     */
+    'isWatched'?: boolean | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof LastWatchedSchemaOutputType
+     */
+    'tmdbId': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof LastWatchedSchemaOutputType
      */
     'userId': string;
     /**
      * 
-     * @type {number}
-     * @memberof Def9
+     * @type {ApiAuthLoginPost200Response}
+     * @memberof LastWatchedSchemaOutputType
      */
-    'atSecond': number;
+    'user'?: ApiAuthLoginPost200Response;
 }
 /**
  * 
@@ -911,13 +888,13 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
-         * @param {ApiAuthRegisterPostRequest} apiAuthRegisterPostRequest 
+         * @param {CreateUserInputType} createUserInputType 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiAuthRegisterPost: async (apiAuthRegisterPostRequest: ApiAuthRegisterPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'apiAuthRegisterPostRequest' is not null or undefined
-            assertParamExists('apiAuthRegisterPost', 'apiAuthRegisterPostRequest', apiAuthRegisterPostRequest)
+        apiAuthRegisterPost: async (createUserInputType: CreateUserInputType, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'createUserInputType' is not null or undefined
+            assertParamExists('apiAuthRegisterPost', 'createUserInputType', createUserInputType)
             const localVarPath = `/api/auth/register`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -937,7 +914,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(apiAuthRegisterPostRequest, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(createUserInputType, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -1008,16 +985,14 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
-         * @param {number} id 
-         * @param {ApiLastWatchedIdPatchRequest} apiLastWatchedIdPatchRequest 
+         * @param {string} id 
+         * @param {LastWatchedPatchSchemaInputType} [lastWatchedPatchSchemaInputType] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiLastWatchedIdPatch: async (id: number, apiLastWatchedIdPatchRequest: ApiLastWatchedIdPatchRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiLastWatchedIdPatch: async (id: string, lastWatchedPatchSchemaInputType?: LastWatchedPatchSchemaInputType, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('apiLastWatchedIdPatch', 'id', id)
-            // verify required parameter 'apiLastWatchedIdPatchRequest' is not null or undefined
-            assertParamExists('apiLastWatchedIdPatch', 'apiLastWatchedIdPatchRequest', apiLastWatchedIdPatchRequest)
             const localVarPath = `/api/last_watched/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -1038,7 +1013,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(apiLastWatchedIdPatchRequest, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(lastWatchedPatchSchemaInputType, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -1047,13 +1022,13 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
-         * @param {ApiLastWatchedPostRequest} apiLastWatchedPostRequest 
+         * @param {LastWatchedCreateSchemaInputType} lastWatchedCreateSchemaInputType 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiLastWatchedPost: async (apiLastWatchedPostRequest: ApiLastWatchedPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'apiLastWatchedPostRequest' is not null or undefined
-            assertParamExists('apiLastWatchedPost', 'apiLastWatchedPostRequest', apiLastWatchedPostRequest)
+        apiLastWatchedPost: async (lastWatchedCreateSchemaInputType: LastWatchedCreateSchemaInputType, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'lastWatchedCreateSchemaInputType' is not null or undefined
+            assertParamExists('apiLastWatchedPost', 'lastWatchedCreateSchemaInputType', lastWatchedCreateSchemaInputType)
             const localVarPath = `/api/last_watched/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1073,7 +1048,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(apiLastWatchedPostRequest, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(lastWatchedCreateSchemaInputType, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -1126,12 +1101,12 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {ApiAuthRegisterPostRequest} apiAuthRegisterPostRequest 
+         * @param {CreateUserInputType} createUserInputType 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiAuthRegisterPost(apiAuthRegisterPostRequest: ApiAuthRegisterPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiAuthRegisterPost(apiAuthRegisterPostRequest, options);
+        async apiAuthRegisterPost(createUserInputType: CreateUserInputType, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiAuthRegisterPost(createUserInputType, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.apiAuthRegisterPost']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -1141,7 +1116,7 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiLastWatchedGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<ApiLastWatchedGet200ResponseInner>>> {
+        async apiLastWatchedGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<LastWatchedSchemaOutputType>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiLastWatchedGet(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.apiLastWatchedGet']?.[localVarOperationServerIndex]?.url;
@@ -1153,7 +1128,7 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiLastWatchedIdGet(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiLastWatchedGet200ResponseInner>> {
+        async apiLastWatchedIdGet(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<LastWatchedSchemaOutputType>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiLastWatchedIdGet(id, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.apiLastWatchedIdGet']?.[localVarOperationServerIndex]?.url;
@@ -1161,25 +1136,25 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} id 
-         * @param {ApiLastWatchedIdPatchRequest} apiLastWatchedIdPatchRequest 
+         * @param {string} id 
+         * @param {LastWatchedPatchSchemaInputType} [lastWatchedPatchSchemaInputType] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiLastWatchedIdPatch(id: number, apiLastWatchedIdPatchRequest: ApiLastWatchedIdPatchRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiLastWatchedIdPatch200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiLastWatchedIdPatch(id, apiLastWatchedIdPatchRequest, options);
+        async apiLastWatchedIdPatch(id: string, lastWatchedPatchSchemaInputType?: LastWatchedPatchSchemaInputType, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<LastWatchedPatchSchemaOutputType>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiLastWatchedIdPatch(id, lastWatchedPatchSchemaInputType, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.apiLastWatchedIdPatch']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * 
-         * @param {ApiLastWatchedPostRequest} apiLastWatchedPostRequest 
+         * @param {LastWatchedCreateSchemaInputType} lastWatchedCreateSchemaInputType 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiLastWatchedPost(apiLastWatchedPostRequest: ApiLastWatchedPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiLastWatchedPost200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiLastWatchedPost(apiLastWatchedPostRequest, options);
+        async apiLastWatchedPost(lastWatchedCreateSchemaInputType: LastWatchedCreateSchemaInputType, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<LastWatchedCreateSchemaOutputType>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiLastWatchedPost(lastWatchedCreateSchemaInputType, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.apiLastWatchedPost']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -1221,19 +1196,19 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
-         * @param {ApiAuthRegisterPostRequest} apiAuthRegisterPostRequest 
+         * @param {CreateUserInputType} createUserInputType 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiAuthRegisterPost(apiAuthRegisterPostRequest: ApiAuthRegisterPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.apiAuthRegisterPost(apiAuthRegisterPostRequest, options).then((request) => request(axios, basePath));
+        apiAuthRegisterPost(createUserInputType: CreateUserInputType, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.apiAuthRegisterPost(createUserInputType, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiLastWatchedGet(options?: RawAxiosRequestConfig): AxiosPromise<Array<ApiLastWatchedGet200ResponseInner>> {
+        apiLastWatchedGet(options?: RawAxiosRequestConfig): AxiosPromise<Array<LastWatchedSchemaOutputType>> {
             return localVarFp.apiLastWatchedGet(options).then((request) => request(axios, basePath));
         },
         /**
@@ -1242,27 +1217,27 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiLastWatchedIdGet(id: string, options?: RawAxiosRequestConfig): AxiosPromise<ApiLastWatchedGet200ResponseInner> {
+        apiLastWatchedIdGet(id: string, options?: RawAxiosRequestConfig): AxiosPromise<LastWatchedSchemaOutputType> {
             return localVarFp.apiLastWatchedIdGet(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {number} id 
-         * @param {ApiLastWatchedIdPatchRequest} apiLastWatchedIdPatchRequest 
+         * @param {string} id 
+         * @param {LastWatchedPatchSchemaInputType} [lastWatchedPatchSchemaInputType] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiLastWatchedIdPatch(id: number, apiLastWatchedIdPatchRequest: ApiLastWatchedIdPatchRequest, options?: RawAxiosRequestConfig): AxiosPromise<ApiLastWatchedIdPatch200Response> {
-            return localVarFp.apiLastWatchedIdPatch(id, apiLastWatchedIdPatchRequest, options).then((request) => request(axios, basePath));
+        apiLastWatchedIdPatch(id: string, lastWatchedPatchSchemaInputType?: LastWatchedPatchSchemaInputType, options?: RawAxiosRequestConfig): AxiosPromise<LastWatchedPatchSchemaOutputType> {
+            return localVarFp.apiLastWatchedIdPatch(id, lastWatchedPatchSchemaInputType, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {ApiLastWatchedPostRequest} apiLastWatchedPostRequest 
+         * @param {LastWatchedCreateSchemaInputType} lastWatchedCreateSchemaInputType 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiLastWatchedPost(apiLastWatchedPostRequest: ApiLastWatchedPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<ApiLastWatchedPost200Response> {
-            return localVarFp.apiLastWatchedPost(apiLastWatchedPostRequest, options).then((request) => request(axios, basePath));
+        apiLastWatchedPost(lastWatchedCreateSchemaInputType: LastWatchedCreateSchemaInputType, options?: RawAxiosRequestConfig): AxiosPromise<LastWatchedCreateSchemaOutputType> {
+            return localVarFp.apiLastWatchedPost(lastWatchedCreateSchemaInputType, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -1307,13 +1282,13 @@ export class DefaultApi extends BaseAPI {
 
     /**
      * 
-     * @param {ApiAuthRegisterPostRequest} apiAuthRegisterPostRequest 
+     * @param {CreateUserInputType} createUserInputType 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public apiAuthRegisterPost(apiAuthRegisterPostRequest: ApiAuthRegisterPostRequest, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).apiAuthRegisterPost(apiAuthRegisterPostRequest, options).then((request) => request(this.axios, this.basePath));
+    public apiAuthRegisterPost(createUserInputType: CreateUserInputType, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).apiAuthRegisterPost(createUserInputType, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1339,25 +1314,25 @@ export class DefaultApi extends BaseAPI {
 
     /**
      * 
-     * @param {number} id 
-     * @param {ApiLastWatchedIdPatchRequest} apiLastWatchedIdPatchRequest 
+     * @param {string} id 
+     * @param {LastWatchedPatchSchemaInputType} [lastWatchedPatchSchemaInputType] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public apiLastWatchedIdPatch(id: number, apiLastWatchedIdPatchRequest: ApiLastWatchedIdPatchRequest, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).apiLastWatchedIdPatch(id, apiLastWatchedIdPatchRequest, options).then((request) => request(this.axios, this.basePath));
+    public apiLastWatchedIdPatch(id: string, lastWatchedPatchSchemaInputType?: LastWatchedPatchSchemaInputType, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).apiLastWatchedIdPatch(id, lastWatchedPatchSchemaInputType, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
-     * @param {ApiLastWatchedPostRequest} apiLastWatchedPostRequest 
+     * @param {LastWatchedCreateSchemaInputType} lastWatchedCreateSchemaInputType 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public apiLastWatchedPost(apiLastWatchedPostRequest: ApiLastWatchedPostRequest, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).apiLastWatchedPost(apiLastWatchedPostRequest, options).then((request) => request(this.axios, this.basePath));
+    public apiLastWatchedPost(lastWatchedCreateSchemaInputType: LastWatchedCreateSchemaInputType, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).apiLastWatchedPost(lastWatchedCreateSchemaInputType, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

@@ -1,7 +1,8 @@
 import {
   ApiAuthLoginPost200Response,
   ApiAuthLoginPostRequest,
-  ApiLastWatchedPostRequest,
+  LastWatchedCreateSchemaInputType,
+  LastWatchedCreateSchemaOutputType,
 } from "./api";
 import { ITmdbSearchResults } from "./types/tmdb";
 
@@ -68,21 +69,9 @@ export type IMutationLogin = ApiAuthLoginPostRequest;
 export type ILoginResponse = ApiAuthLoginPost200Response;
 export type IRegisterResponse = void;
 
-export interface ILastWatched {
-  id: number;
-  name: string;
-  slug: string;
-  poster_path: string;
-  season: number;
-  episode: number;
-  is_watched: boolean;
-  user: IUser;
-  tmdb_id: number;
-  network?: number;
-  current_time?: number;
-}
+export type ILastWatched = LastWatchedCreateSchemaOutputType;
 
-export type ILastWatchedMutation = ApiLastWatchedPostRequest;
+export type ILastWatchedMutation = LastWatchedCreateSchemaInputType;
 
 export interface ISerie {
   name: string;

@@ -22,6 +22,7 @@ interface IProps {
     slug: string;
     season: string;
     chapter: string;
+    tmdbId: string;
   };
 }
 
@@ -31,16 +32,15 @@ export default function ChapterPage({ params }: IProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isLoggedIn);
   const searchParams = useSearchParams();
-  const videoPlayerRef = useRef(null);
+  const videoPlayerRef = useRef<ReactHlsPlayer>(null);
   const [isMuted, setIsMuted] = useState(false);
   const router = useRouter();
   const toast = useToast();
 
   const tmdbData = useQuery<ITmdbSerieDetails>({
-    queryKey: ["tmdb-details-with-season", params.slug],
+    queryKey: ["tmdb-details-with-season", params.slug, params.tmdbId],
     queryFn: async () => {
-      const tmdbSearch = await TmdbService.searchSeries(params.slug);
-      const tmdbData = await TmdbService.fetchSerie(tmdbSearch.results[0].id);
+      const tmdbData = await TmdbService.fetchSerie(parseInt(params.tmdbId));
 
       return tmdbData;
     },
@@ -52,7 +52,9 @@ export default function ChapterPage({ params }: IProps) {
     ILastWatchedMutation
   >({
     mutationFn: async (data: ILastWatchedMutation) => {
-      return UserService.addLastWatch(data);
+      const response = await UserService.addLastWatch(data);
+
+      return response;
     },
   });
 
@@ -72,8 +74,6 @@ export default function ChapterPage({ params }: IProps) {
     retry: 1,
   });
 
-  console.log(videoPlayerRef.current?.getCurrentTime());
-
   useEffect(() => {
     if (!isAuthenticated) {
       return;
@@ -87,13 +87,10 @@ export default function ChapterPage({ params }: IProps) {
       await addToLastWatched.mutateAsync({
         name: tmdbData.data.name,
         poster_path: tmdbData.data.poster_path,
-        tmdb_id: tmdbData.data.id,
-        slug: params.slug,
+        tmdbId: tmdbData.data.id,
         season,
         episode: chapter,
-        network: searchParams.get("network")
-          ? parseInt(searchParams.get("network")!)
-          : undefined,
+        atSecond: videoPlayerRef.current?.getCurrentTime() ?? 0,
       });
     }, 10_000);
   }, [isAuthenticated, tmdbData]);

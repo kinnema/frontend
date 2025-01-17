@@ -9,14 +9,13 @@ import {
 export default async function SeriePage({
   params,
 }: {
-  params: { slug: string };
+  params: { slug: string; tmdbId: string };
 }) {
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
-    queryKey: ["tmdb-details-with-season", params.slug],
+    queryKey: ["tmdb-details-with-season", params.slug, params.tmdbId],
     queryFn: async () => {
-      const tmdbSearch = await TmdbService.searchSeries(params.slug);
-      const tmdbData = TmdbService.fetchSerie(tmdbSearch.results[0].id);
+      const tmdbData = await TmdbService.fetchSerie(parseInt(params.tmdbId));
 
       return tmdbData;
     },
@@ -24,7 +23,9 @@ export default async function SeriePage({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <SerieDialogFeature params={params} />
+      <SerieDialogFeature
+        params={{ ...params, tmdbId: parseInt(params.tmdbId) }}
+      />
     </HydrationBoundary>
   );
 }

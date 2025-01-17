@@ -17,6 +17,7 @@ import { useCallback, useMemo, useState } from "react";
 interface IProps {
   params: {
     slug: string;
+    tmdbId: number;
   };
   isClient?: boolean;
 }
@@ -25,10 +26,9 @@ export function SerieDialogFeature({ params, isClient }: IProps) {
   const router = useRouter();
 
   const tmdbDetailsData = useQuery<ITmdbSerieDetails>({
-    queryKey: ["tmdb-details-with-season", params.slug],
+    queryKey: ["tmdb-details-with-season", params.slug, params.tmdbId],
     queryFn: async () => {
-      const tmdbSearch = await TmdbService.searchSeries(params.slug);
-      const tmdbData = TmdbService.fetchSerie(tmdbSearch.results[0].id);
+      const tmdbData = await TmdbService.fetchSerie(params.tmdbId);
 
       return tmdbData;
     },
@@ -78,6 +78,7 @@ export function SerieDialogFeature({ params, isClient }: IProps) {
           alt={tmdbDetailsData.data.overview}
           width={600}
           height={500}
+          priority
         />
         {isClient && (
           <div className="absolute top-4 right-4 z-20 flex items-center gap-2">

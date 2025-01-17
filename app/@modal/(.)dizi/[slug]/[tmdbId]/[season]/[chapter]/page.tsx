@@ -8,6 +8,7 @@ import { useEffect } from "react";
 interface IProps {
   params: {
     slug: string;
+    tmdbId: string;
     season: string;
     chapter: string;
   };
