@@ -17,7 +17,7 @@ export default function LoginModule() {
   const toast = useToast();
   const setUser = useAuthStore((state) => state.setUser);
   const loginMutation = useMutation<ILoginResponse, void, IMutationLogin>({
-    mutationFn: (data) => AuthService.login(data.data),
+    mutationFn: (data) => AuthService.login(data),
     onSuccess(data) {
       setUser(data);
       toast.toast({
@@ -54,12 +54,9 @@ export default function LoginModule() {
         return;
       }
 
-      const formData = new FormData();
-      formData.append("username", email);
-      formData.append("password", password);
-
       await loginMutation.mutateAsync({
-        data: formData,
+        email,
+        password,
       });
     },
     [email, password]

@@ -1,11 +1,15 @@
 import axios from "axios";
+import { Configuration, DefaultApi } from "../api";
 import { BASE_URL } from "../constants";
 import { IWatchResult } from "../models";
 import { useAuthStore } from "../stores/auth.store";
 
 export const appAxiosClient = axios.create({
-  baseURL: BASE_URL,
+  withCredentials: true,
 });
+
+const apiConfig = new Configuration();
+export const apiClient = new DefaultApi(apiConfig, BASE_URL, appAxiosClient);
 
 appAxiosClient.interceptors.request.use(
   function (config) {

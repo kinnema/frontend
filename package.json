@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate-api": "npx @openapitools/openapi-generator-cli generate -i openapi.yaml -g typescript-axios -o lib/api"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.6.0",

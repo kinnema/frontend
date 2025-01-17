@@ -72,6 +72,8 @@ export default function ChapterPage({ params }: IProps) {
     retry: 1,
   });
 
+  console.log(videoPlayerRef.current?.getCurrentTime());
+
   useEffect(() => {
     if (!isAuthenticated) {
       return;
@@ -81,7 +83,7 @@ export default function ChapterPage({ params }: IProps) {
       return;
     }
 
-    setTimeout(async () => {
+    setInterval(async () => {
       await addToLastWatched.mutateAsync({
         name: tmdbData.data.name,
         poster_path: tmdbData.data.poster_path,
@@ -93,7 +95,7 @@ export default function ChapterPage({ params }: IProps) {
           ? parseInt(searchParams.get("network")!)
           : undefined,
       });
-    }, 60_000);
+    }, 10_000);
   }, [isAuthenticated, tmdbData]);
 
   if (tmdbData.isError) {

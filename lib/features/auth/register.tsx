@@ -9,7 +9,6 @@ import {
 } from "@/lib/forms/register.form";
 import { IRegisterResponse } from "@/lib/models";
 import { AuthService } from "@/lib/services/auth.service";
-import { useAuthStore } from "@/lib/stores/auth.store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -25,16 +24,14 @@ export default function RegisterModule() {
     reValidateMode: "onChange",
   });
   const toast = useToast();
-  const setUser = useAuthStore((state) => state.setUser);
   const router = useRouter();
 
   const mutation = useMutation<IRegisterResponse, void, REGISTER_FORM_INPUTS>({
     mutationFn: (data) => AuthService.register(data),
-    onSuccess(data) {
-      setUser(data);
+    onSuccess() {
       toast.toast({
         title: "Kayıt başarılı",
-        description: "Yönlendiriliyorsunuz...",
+        description: "Lütfen Giris Yapiniz, yönlendiriliyorsunuz...",
       });
 
       setTimeout(() => {

@@ -1,3 +1,8 @@
+import {
+  ApiAuthLoginPost200Response,
+  ApiAuthLoginPostRequest,
+  ApiLastWatchedPostRequest,
+} from "./api";
 import { ITmdbSearchResults } from "./types/tmdb";
 
 export interface IHomeResults {
@@ -59,16 +64,9 @@ export interface IFavorite extends IBaseFavorite {
   user: IUser;
 }
 
-export interface IMutationLogin {
-  data: FormData;
-}
-
-export interface ILoginResponse {
-  access_token: string;
-  user: IUser;
-}
-
-export type IRegisterResponse = ILoginResponse;
+export type IMutationLogin = ApiAuthLoginPostRequest;
+export type ILoginResponse = ApiAuthLoginPost200Response;
+export type IRegisterResponse = void;
 
 export interface ILastWatched {
   id: number;
@@ -81,12 +79,10 @@ export interface ILastWatched {
   user: IUser;
   tmdb_id: number;
   network?: number;
+  current_time?: number;
 }
 
-export type ILastWatchedMutation = Omit<
-  ILastWatched,
-  "user" | "id" | "is_watched"
->;
+export type ILastWatchedMutation = ApiLastWatchedPostRequest;
 
 export interface ISerie {
   name: string;

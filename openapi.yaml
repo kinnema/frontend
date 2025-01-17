@@ -1,0 +1,592 @@
+openapi: 3.0.3
+info:
+  title: Kinnema
+  version: 1.0.0
+components:
+  schemas:
+    def-0:
+      type: object
+      title: url/auth
+    def-1:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+        - id
+        - username
+        - email
+      title: "#UserSchema"
+    def-2:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+        - email
+        - password
+      title: "#LoginUserInputType"
+    def-3:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+        - id
+        - username
+        - email
+      title: "#LoginUserOutputType"
+    def-4:
+      type: object
+      title: url/last_watched
+    def-5:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        poster_path:
+          type: string
+        season:
+          type: number
+        episode:
+          type: number
+        isWatched:
+          type: boolean
+          nullable: true
+        tmdbId:
+          type: string
+        userId:
+          type: string
+          format: uuid
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            username:
+              type: string
+            email:
+              type: string
+              format: email
+          required:
+            - id
+            - username
+            - email
+          title: "#UserSchema"
+        atSecond:
+          type: number
+      required:
+        - id
+        - name
+        - poster_path
+        - season
+        - episode
+        - tmdbId
+        - userId
+        - atSecond
+      title: "#lastWatchedSchemaOutputType"
+    def-6:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+        - id
+        - username
+        - email
+      title: "#UserSchema"
+    def-7:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        season:
+          type: number
+        episode:
+          type: number
+        isWatched:
+          type: boolean
+          nullable: true
+        tmdbId:
+          type: string
+        name:
+          type: string
+        poster_path:
+          type: string
+        userId:
+          type: string
+          format: uuid
+        atSecond:
+          type: number
+      required:
+        - id
+        - season
+        - episode
+        - tmdbId
+        - name
+        - poster_path
+        - userId
+        - atSecond
+      title: "#lastWatchedCreateSchemaOutputType"
+    def-8:
+      type: object
+      properties:
+        season:
+          type: number
+        episode:
+          type: number
+        name:
+          type: string
+        poster_path:
+          type: string
+        isWatched:
+          type: boolean
+          nullable: true
+        tmdbId:
+          type: string
+        userId:
+          type: string
+          format: uuid
+        atSecond:
+          type: number
+      required:
+        - season
+        - episode
+        - name
+        - poster_path
+        - tmdbId
+        - userId
+        - atSecond
+      title: "#lastWatchedCreateSchemaInputType"
+    def-9:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        season:
+          type: number
+        episode:
+          type: number
+        isWatched:
+          type: boolean
+          nullable: true
+        name:
+          type: string
+        poster_path:
+          type: string
+        tmdbId:
+          type: string
+        userId:
+          type: string
+          format: uuid
+        atSecond:
+          type: number
+      required:
+        - id
+        - season
+        - episode
+        - name
+        - poster_path
+        - tmdbId
+        - userId
+        - atSecond
+      title: "#lastWatchedPatchSchemaOutputType"
+    def-10:
+      type: object
+      properties:
+        season:
+          type: number
+          nullable: true
+        episode:
+          type: number
+          nullable: true
+        isWatched:
+          type: boolean
+          nullable: true
+        tmdbId:
+          type: string
+          nullable: true
+        name:
+          type: string
+        poster_path:
+          type: string
+        userId:
+          type: string
+          format: uuid
+          nullable: true
+        atSecond:
+          type: number
+          nullable: true
+      required:
+        - name
+        - poster_path
+      title: "#lastWatchedPatchSchemaInputType"
+paths:
+  /api/auth/:
+    get:
+      responses:
+        "200":
+          description: Default Response
+  /api/auth/register:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 5
+                username:
+                  type: string
+                  minLength: 5
+              required:
+                - email
+                - password
+                - username
+        required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/auth/login:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+              required:
+                - email
+                - password
+        required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  username:
+                    type: string
+                  email:
+                    type: string
+                    format: email
+                required:
+                  - id
+                  - username
+                  - email
+  /api/auth/logout:
+    delete:
+      responses:
+        "200":
+          description: Default Response
+  /api/last_watched/:
+    get:
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                    name:
+                      type: string
+                    poster_path:
+                      type: string
+                    season:
+                      type: number
+                    episode:
+                      type: number
+                    isWatched:
+                      type: boolean
+                      nullable: true
+                    tmdbId:
+                      type: string
+                    userId:
+                      type: string
+                      format: uuid
+                    user:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        username:
+                          type: string
+                        email:
+                          type: string
+                          format: email
+                      required:
+                        - id
+                        - username
+                        - email
+                    atSecond:
+                      type: number
+                  required:
+                    - id
+                    - name
+                    - poster_path
+                    - season
+                    - episode
+                    - tmdbId
+                    - userId
+                    - atSecond
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                season:
+                  type: number
+                episode:
+                  type: number
+                name:
+                  type: string
+                poster_path:
+                  type: string
+                isWatched:
+                  type: boolean
+                  nullable: true
+                tmdbId:
+                  type: string
+                userId:
+                  type: string
+                  format: uuid
+                atSecond:
+                  type: number
+              required:
+                - season
+                - episode
+                - name
+                - poster_path
+                - tmdbId
+                - userId
+                - atSecond
+        required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  season:
+                    type: number
+                  episode:
+                    type: number
+                  isWatched:
+                    type: boolean
+                    nullable: true
+                  tmdbId:
+                    type: string
+                  name:
+                    type: string
+                  poster_path:
+                    type: string
+                  userId:
+                    type: string
+                    format: uuid
+                  atSecond:
+                    type: number
+                required:
+                  - id
+                  - season
+                  - episode
+                  - tmdbId
+                  - name
+                  - poster_path
+                  - userId
+                  - atSecond
+  /api/last_watched/{id}:
+    get:
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+          description: last watched id
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  name:
+                    type: string
+                  poster_path:
+                    type: string
+                  season:
+                    type: number
+                  episode:
+                    type: number
+                  isWatched:
+                    type: boolean
+                    nullable: true
+                  tmdbId:
+                    type: string
+                  userId:
+                    type: string
+                    format: uuid
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      username:
+                        type: string
+                      email:
+                        type: string
+                        format: email
+                    required:
+                      - id
+                      - username
+                      - email
+                  atSecond:
+                    type: number
+                required:
+                  - id
+                  - name
+                  - poster_path
+                  - season
+                  - episode
+                  - tmdbId
+                  - userId
+                  - atSecond
+    patch:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                season:
+                  type: number
+                  nullable: true
+                episode:
+                  type: number
+                  nullable: true
+                isWatched:
+                  type: boolean
+                  nullable: true
+                tmdbId:
+                  type: string
+                  nullable: true
+                name:
+                  type: string
+                poster_path:
+                  type: string
+                userId:
+                  type: string
+                  format: uuid
+                  nullable: true
+                atSecond:
+                  type: number
+                  nullable: true
+              required:
+                - name
+                - poster_path
+        required: true
+      parameters:
+        - schema:
+            type: number
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  season:
+                    type: number
+                  episode:
+                    type: number
+                  isWatched:
+                    type: boolean
+                    nullable: true
+                  name:
+                    type: string
+                  poster_path:
+                    type: string
+                  tmdbId:
+                    type: string
+                  userId:
+                    type: string
+                    format: uuid
+                  atSecond:
+                    type: number
+                required:
+                  - id
+                  - season
+                  - episode
+                  - name
+                  - poster_path
+                  - tmdbId
+                  - userId
+                  - atSecond

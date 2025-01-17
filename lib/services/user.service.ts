@@ -1,9 +1,5 @@
-import {
-  ILastWatched,
-  ILastWatchedMutation,
-  IMutationAddFavorite,
-} from "../models";
-import { appAxiosClient } from "./app.service";
+import { ILastWatchedMutation, IMutationAddFavorite } from "../models";
+import { apiClient, appAxiosClient } from "./app.service";
 
 export default class UserService {
   static addToFavorites = async (data: IMutationAddFavorite) => {
@@ -13,18 +9,13 @@ export default class UserService {
   };
 
   static fetchLastWatched = async () => {
-    const response = await appAxiosClient.get<ILastWatched[]>(
-      "/user/last_watched"
-    );
+    const response = await apiClient.apiLastWatchedGet();
 
     return response.data;
   };
 
   static addLastWatch = async (data: ILastWatchedMutation) => {
-    const response = await appAxiosClient.post<ILastWatched>(
-      "/user/last_watched",
-      data
-    );
+    const response = await apiClient.apiLastWatchedPost(data);
 
     return response.data;
   };
