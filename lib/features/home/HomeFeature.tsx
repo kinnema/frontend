@@ -41,8 +41,8 @@ export function HomeFeature() {
               lastWatched.data?.map(
                 (s) =>
                   ({
-                    name: `${s.name}`,
-                    original_name: `${s.name} - ${s.season}:${s.episode}`,
+                    name: `${s.name} - ${s.season}:${s.episode}`,
+                    original_name: `${s.name}`,
                     poster_path: s.poster_path,
                   } as Result)
               ) ?? []
