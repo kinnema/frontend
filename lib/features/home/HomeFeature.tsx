@@ -43,7 +43,7 @@ export function HomeFeature() {
                   ({
                     name: `${s.name}`,
                     original_name: `${s.name} - ${s.season}:${s.episode}`,
-                    poster_path: s.poster_path,
+                    poster_path: s.posterPath,
                   } as Result)
               ) ?? []
             }
