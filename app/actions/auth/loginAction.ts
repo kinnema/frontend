@@ -15,7 +15,11 @@ export async function loginServerAction(data: ApiAuthLoginPostRequest) {
     let cookie = responseCookies.split("access_token=")[1];
     cookie = cookie?.split(";")[0];
 
-    cookies().set("access_token", cookie!);
+    cookies().set("access_token", cookie!, {
+      httpOnly: true,
+      secure: true,
+      maxAge: 60 * 60 * 24 * 30,
+    });
   }
 
   return response.value();
