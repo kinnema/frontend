@@ -1,4 +1,3 @@
-import { logoutServerAction } from "@/app/actions/auth/logoutAction";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,7 +18,6 @@ export function UserNav() {
 
   function onPressLogout(): void {
     logOut();
-    logoutServerAction();
     toast.toast({
       title: "Çıkış başarılı",
     });

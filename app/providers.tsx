@@ -5,7 +5,7 @@ import { useAppStore } from "@/lib/stores/app.store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PropsWithChildren, useEffect } from "react";
 import "swiper/css";
-
+import { getAccessToken } from "./actions/auth/getAccessToken";
 function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
@@ -36,6 +36,14 @@ function getQueryClient() {
 export function Providers({ children }: PropsWithChildren) {
   const queryClient = getQueryClient();
   const initTheme = useAppStore((state) => state.initTheme);
+
+  useEffect(() => {
+    getAccessToken().then((token) => {
+      if (token) {
+        localStorage.setItem("access_token", token);
+      }
+    });
+  }, []);
 
   useEffect(() => {
     initTheme();

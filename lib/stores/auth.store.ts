@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { ApiAuthLoginPost200Response } from "../api";
+import { AuthService } from "../services/auth.service";
 
 interface IStore {
   user?: ApiAuthLoginPost200Response;
@@ -20,7 +21,8 @@ export const useAuthStore = create(
           isLoggedIn: true,
         });
       },
-      logOut() {
+      async logOut() {
+        await AuthService.logout();
         set({ user: undefined, isLoggedIn: false });
       },
     }),

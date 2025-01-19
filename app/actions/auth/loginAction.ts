@@ -19,7 +19,7 @@ export async function loginServerAction(data: ApiAuthLoginPostRequest) {
       httpOnly: true,
       secure: true,
       maxAge: 60 * 60 * 24 * 30,
-      domain: process.env.NEXT_PUBLIC_API,
+      sameSite: "strict",
     });
   }
 

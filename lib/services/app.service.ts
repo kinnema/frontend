@@ -1,12 +1,31 @@
-import { Configuration, DefaultApi } from "../api";
+import { Configuration, DefaultApi, RequestContext } from "../api";
 import { ApiWatchProvidersGet200Response } from "../api/models/ApiWatchProvidersGet200Response";
 import { BASE_URL } from "../constants";
 import { useWatchStore } from "../stores/watch.store";
 
+const getAuthMiddleware = () => ({
+  pre: async (context: RequestContext) => {
+    if (typeof window === "undefined") {
+      return context;
+    }
+
+    const token = localStorage.getItem("access_token");
+
+    if (token) {
+      context.init.headers = {
+        ...context.init.headers,
+        Authorization: `Bearer ${token}`,
+      };
+    }
+    return context;
+  },
+});
+
 const apiConfig = new Configuration({
   basePath: BASE_URL,
-  credentials: "include",
+  middleware: [getAuthMiddleware()],
 });
+
 export const apiClient = new DefaultApi(apiConfig);
 
 export default class AppService {
