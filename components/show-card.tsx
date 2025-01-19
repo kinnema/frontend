@@ -12,7 +12,7 @@ export function ShowCard({ show }: ShowCardProps) {
   return (
     <>
       <Link
-        href={`/dizi/${slugify(show.original_name)}/${show.id}`}
+        href={`/dizi/${slugify(show.name)}/${show.id}`}
         passHref
         legacyBehavior
       >
