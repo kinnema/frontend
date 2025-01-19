@@ -9,14 +9,9 @@ export default class UserService {
   };
 
   static addLastWatch = async (data: ILastWatchedMutation) => {
-    const response = await apiClient.apiLastWatchedPost(
-      {
-        lastWatchedCreateSchemaInputType: data,
-      },
-      {
-        credentials: "include",
-      }
-    );
+    const response = await apiClient.apiLastWatchedPost({
+      lastWatchedCreateSchemaInputType: data,
+    });
 
     return response;
   };
