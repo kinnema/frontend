@@ -23,14 +23,14 @@ export const Providers = ({ data }: { data: IWatchResult[] }) => {
     });
 
   return (
-    <div className="flex flex-col gap-2 w-full m-auto max-w-md">
+    <div className="flex flex-col gap-2 w-full m-auto max-w-md p-5 md:p-0">
       <h1 className="text-2xl font-bold">Kaynaklar</h1>
       <p className="text-sm text-muted-foreground">
         Aşağıdaki kaynakları kullanarak dizi izleyebilirsiniz, herhangi birine
         tiklamaniz yeterlidir.
       </p>
 
-      <div className="mt-10">
+      <div className="mt-10 ">
         {isPending ? (
           <Loading />
         ) : (
