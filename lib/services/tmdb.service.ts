@@ -1,4 +1,3 @@
-import axios from "axios";
 import { TMDB_API_KEY } from "../constants";
 import { IHomeResults } from "../models";
 import { TmdbNetworks } from "../types/networks";
@@ -9,36 +8,38 @@ import {
   ITmdbSerieDetails,
 } from "../types/tmdb";
 
-const axiosClient = axios.create({
-  baseURL: "https://api.themoviedb.org/3",
+const BASE_URL = "https://api.themoviedb.org/3";
+const DEFAULT_OPTIONS = {
   headers: {
     Authorization: "Bearer " + TMDB_API_KEY,
   },
-});
+};
 
 class TmdbService {
+  private static async fetchTMDB<T>(endpoint: string): Promise<T> {
+    const response = await fetch(`${BASE_URL}${endpoint}`, DEFAULT_OPTIONS);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  }
+
   static fetchSeasonEpisodes = async (tvId: number, seasonNumber: number) => {
-    const url = `/tv/${tvId}/season/${seasonNumber}?language=tr-TR`;
-
-    const response = await axiosClient.get<ISeasonEpisodes>(url);
-
-    return response.data;
+    return this.fetchTMDB<ISeasonEpisodes>(
+      `/tv/${tvId}/season/${seasonNumber}?language=tr-TR`
+    );
   };
 
   static searchSeries = async (query: string) => {
-    const response = await axiosClient.get<ITmdbSearchResults>(
+    return this.fetchTMDB<ITmdbSearchResults>(
       `/search/tv?query=${query}&language=tr-TR`
     );
-
-    return response.data;
   };
 
   static fetchSerie = async (serieId: number) => {
-    const response = await axiosClient.get<ITmdbSerieDetails>(
+    return this.fetchTMDB<ITmdbSerieDetails>(
       `/tv/${serieId}?append_to_response=episode_groups&language=tr-TR`
     );
-
-    return response.data;
   };
 
   static fetchEpisode = async (
@@ -46,11 +47,9 @@ class TmdbService {
     seasonNumber: number,
     episodeNumber: number
   ) => {
-    const response = await axiosClient.get<Episode>(
+    return this.fetchTMDB<Episode>(
       `/tv/${serieId}/season/${seasonNumber}/episode/${episodeNumber}?language=tr-TR`
     );
-
-    return response.data;
   };
 
   static fetchHomeData = async (): Promise<IHomeResults> => {
@@ -61,7 +60,6 @@ class TmdbService {
     ]);
 
     const [popular, trending, airToday] = responses;
-
     return { popular, trending, airToday };
   };
 
@@ -72,35 +70,27 @@ class TmdbService {
   };
 
   private static fetchSeriesByNetwork = async (network: TmdbNetworks) => {
-    const url = "/discover/tv?with_networks=" + network;
-
-    const response = await axiosClient.get<ITmdbSearchResults>(url);
-
-    return response.data;
+    return this.fetchTMDB<ITmdbSearchResults>(
+      "/discover/tv?with_networks=" + network
+    );
   };
 
   private static fetchHomePopular = async () => {
-    const url = `/trending/tv/day?language=tr-TR`;
-
-    const response = await axiosClient.get(url);
-
-    return response.data;
+    return this.fetchTMDB<ITmdbSearchResults>(
+      `/trending/tv/day?language=tr-TR`
+    );
   };
 
   private static fetchHomeTrending = async () => {
-    const url = "/trending/tv/week?language=tr-TR";
-
-    const response = await axiosClient.get(url);
-
-    return response.data;
+    return this.fetchTMDB<ITmdbSearchResults>(
+      "/trending/tv/week?language=tr-TR"
+    );
   };
 
   private static fetchAiringToday = async () => {
-    const url = `/tv/airing_today?language=tr-TR`;
-
-    const response = await axiosClient.get(url);
-
-    return response.data;
+    return this.fetchTMDB<ITmdbSearchResults>(
+      `/tv/airing_today?language=tr-TR`
+    );
   };
 }
 

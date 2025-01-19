@@ -1,12 +1,8 @@
-import axios from "axios";
 import { Configuration, DefaultApi } from "../api";
 import { ApiWatchProvidersGet200Response } from "../api/models/ApiWatchProvidersGet200Response";
 import { BASE_URL } from "../constants";
 import { useWatchStore } from "../stores/watch.store";
 
-export const appAxiosClient = axios.create({
-  withCredentials: true,
-});
 const apiConfig = new Configuration({
   basePath: BASE_URL,
   credentials: "include",
