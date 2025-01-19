@@ -77,26 +77,26 @@ export default function ChapterPage({ params }: IProps) {
     };
   }, []);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!isAuthenticated) {
+  //     return;
+  //   }
 
-    if (!tmdbData.data) {
-      return;
-    }
+  //   if (!tmdbData.data) {
+  //     return;
+  //   }
 
-    setInterval(async () => {
-      await addToLastWatched.mutateAsync({
-        name: tmdbData.data.name,
-        posterPath: tmdbData.data.poster_path,
-        tmdbId: tmdbData.data.id,
-        season,
-        episode: chapter,
-        atSecond: videoPlayerRef.current?.getCurrentTime() ?? 0,
-      });
-    }, 10_000);
-  }, [isAuthenticated, tmdbData]);
+  //   setInterval(async () => {
+  //     await addToLastWatched.mutateAsync({
+  //       name: tmdbData.data.name,
+  //       posterPath: tmdbData.data.poster_path,
+  //       tmdbId: tmdbData.data.id,
+  //       season,
+  //       episode: chapter,
+  //       atSecond: videoPlayerRef.current?.getCurrentTime() ?? 0,
+  //     });
+  //   }, 10_000);
+  // }, [isAuthenticated, tmdbData]);
 
   if (tmdbData.isError) {
     return <div className="text-red-500">Dizi bulunamadı</div>;
