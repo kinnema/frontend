@@ -16,9 +16,11 @@ export interface IResult<T> {
   results: T;
 }
 
-export interface IWatchResult {
-  url: string;
-}
+export type IWatchResult = {
+  provider: string;
+  url?: string;
+  error?: string;
+};
 
 export interface ISeriePageEpisode {
   episodes: {
@@ -44,15 +46,6 @@ export interface IMutationAddFavorite {
   poster_path: string;
 }
 
-export interface IUser {
-  username: string;
-  email: string;
-  full_name?: string;
-  is_active: boolean;
-  is_superuser: boolean;
-  id: number;
-}
-
 export interface IBaseFavorite {
   tmdb_id: number;
   name: string;
@@ -60,10 +53,6 @@ export interface IBaseFavorite {
 }
 
 export interface IMutationAddFavorite extends IBaseFavorite {}
-
-export interface IFavorite extends IBaseFavorite {
-  user: IUser;
-}
 
 export type IMutationLogin = ApiAuthLoginPostRequest;
 export type ILoginResponse = ApiAuthLoginPost200Response;

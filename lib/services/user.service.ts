@@ -11,12 +11,14 @@ export default class UserService {
   static fetchLastWatched = async () => {
     const response = await apiClient.apiLastWatchedGet();
 
-    return response.data;
+    return response;
   };
 
   static addLastWatch = async (data: ILastWatchedMutation) => {
-    const response = await apiClient.apiLastWatchedPost(data);
+    const response = await apiClient.apiLastWatchedPost({
+      lastWatchedCreateSchemaInputType: data,
+    });
 
-    return response.data;
+    return response;
   };
 }

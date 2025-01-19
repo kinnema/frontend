@@ -583,3 +583,52 @@ paths:
                   - episode
                   - tmdbId
                   - userId
+  /openapi.yaml/:
+    get:
+      responses:
+        "200":
+          description: Default Response
+  /api/watch/providers:
+    get:
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  providers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        priority:
+                          type: number
+                        isEnabled:
+                          type: boolean
+                        providerUrl:
+                          type: string
+  /api/watch/:
+    get:
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: serie_name
+          required: false
+        - schema:
+            type: number
+          in: query
+          name: season_number
+          required: false
+        - schema:
+            type: number
+          in: query
+          name: episode_number
+          required: false
+      responses:
+        "200":
+          description: Default Response
