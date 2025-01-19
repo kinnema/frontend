@@ -1,4 +1,4 @@
-import { logoutServerAction } from "@/app/actions/logoutAction";
+import { logoutServerAction } from "@/app/actions/auth/logoutAction";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
