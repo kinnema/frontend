@@ -3,16 +3,14 @@
 import SeasonEpisodes from "@/app/dizi/[slug]/components/SeasonEpisodes";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { toast } from "@/hooks/use-toast";
-import { ApiFavoritesGet200ResponseInner, ApiFavoritesPostRequest } from "@/lib/api";
 import { Loading } from "@/lib/components/Loading";
+import { FavoriteButton } from "@/lib/components/User/FavoriteButton";
 import { tmdbPoster } from "@/lib/helpers";
 import TmdbService from "@/lib/services/tmdb.service";
-import UserService from "@/lib/services/user.service";
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { ITmdbSerieDetails } from "@/lib/types/tmdb";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Heart, Loader2, X } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
@@ -27,25 +25,6 @@ interface IProps {
 
 export function SerieDialogFeature({ params, isClient }: IProps) {
   const router = useRouter();
-  const queryClient = useQueryClient();
-
-  const addToFavorites = useMutation<ApiFavoritesGet200ResponseInner, void, ApiFavoritesPostRequest>({
-    mutationFn: (data: ApiFavoritesPostRequest) => UserService.addToFavorites(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["favorites"] });
-
-      toast({
-        title: "Favorilere eklendi",
-        variant: "default",
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Favorilere eklenirken bir hata oluştu",
-        variant: "destructive",
-      });
-    },
-  });
 
   const tmdbDetailsData = useQuery<ITmdbSerieDetails>({
     queryKey: ["tmdb-details-with-season", params.slug, params.tmdbId],
@@ -140,21 +119,9 @@ export function SerieDialogFeature({ params, isClient }: IProps) {
           </div>
 
           <div className="mt-10">
-            <Button variant="outline" className="w-full" onClick={() => addToFavorites.mutate({
-              name: tmdbDetailsData.data.name,
-              posterPath: tmdbDetailsData.data.poster_path,
-              tmdbId: tmdbDetailsData.data.id,
-            })}
-            >
-              {addToFavorites.isPending ? (
-                <Loader2 className="h-6 w-6 animate-spin" />
-              ) : (
-                <Heart className="h-6 w-6" />
-              )}
-            </Button>
+            <FavoriteButton tmdbData={tmdbDetailsData.data} />
           </div>
         </div>
-
       </div>
 
       <Tabs

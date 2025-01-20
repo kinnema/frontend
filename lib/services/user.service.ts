@@ -3,6 +3,14 @@ import { ILastWatchedMutation } from "../models";
 import { apiClient } from "./app.service";
 
 export default class UserService {
+  static removeFromFavorites = async (favoriteId: string) => {
+    const response = await apiClient.apiFavoritesIdDelete({
+      id: favoriteId,
+    });
+
+    return response;
+  };
+
   static addToFavorites = async (data: ApiFavoritesPostRequest) => {
     const response = await apiClient.apiFavoritesPost({
       apiFavoritesPostRequest: data,
