@@ -17,6 +17,8 @@ import * as runtime from '../runtime';
 import type {
   ApiAuthLoginPost200Response,
   ApiAuthLoginPostRequest,
+  ApiFavoritesGet200ResponseInner,
+  ApiFavoritesPostRequest,
   ApiWatchProvidersGet200Response,
   CreateUserInputType,
   LastWatchedCreateSchemaInputType,
@@ -30,6 +32,10 @@ import {
     ApiAuthLoginPost200ResponseToJSON,
     ApiAuthLoginPostRequestFromJSON,
     ApiAuthLoginPostRequestToJSON,
+    ApiFavoritesGet200ResponseInnerFromJSON,
+    ApiFavoritesGet200ResponseInnerToJSON,
+    ApiFavoritesPostRequestFromJSON,
+    ApiFavoritesPostRequestToJSON,
     ApiWatchProvidersGet200ResponseFromJSON,
     ApiWatchProvidersGet200ResponseToJSON,
     CreateUserInputTypeFromJSON,
@@ -52,6 +58,14 @@ export interface ApiAuthLoginPostOperationRequest {
 
 export interface ApiAuthRegisterPostRequest {
     createUserInputType: CreateUserInputType;
+}
+
+export interface ApiFavoritesIdDeleteRequest {
+    id: string;
+}
+
+export interface ApiFavoritesPostOperationRequest {
+    apiFavoritesPostRequest: ApiFavoritesPostRequest;
 }
 
 export interface ApiLastWatchedIdGetRequest {
@@ -189,6 +203,95 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async apiAuthRegisterPost(requestParameters: ApiAuthRegisterPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.apiAuthRegisterPostRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     */
+    async apiFavoritesGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<ApiFavoritesGet200ResponseInner>>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/favorites/`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ApiFavoritesGet200ResponseInnerFromJSON));
+    }
+
+    /**
+     */
+    async apiFavoritesGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<ApiFavoritesGet200ResponseInner>> {
+        const response = await this.apiFavoritesGetRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async apiFavoritesIdDeleteRaw(requestParameters: ApiFavoritesIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ApiFavoritesGet200ResponseInner>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling apiFavoritesIdDelete().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/favorites/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ApiFavoritesGet200ResponseInnerFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async apiFavoritesIdDelete(requestParameters: ApiFavoritesIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ApiFavoritesGet200ResponseInner> {
+        const response = await this.apiFavoritesIdDeleteRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async apiFavoritesPostRaw(requestParameters: ApiFavoritesPostOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ApiFavoritesGet200ResponseInner>> {
+        if (requestParameters['apiFavoritesPostRequest'] == null) {
+            throw new runtime.RequiredError(
+                'apiFavoritesPostRequest',
+                'Required parameter "apiFavoritesPostRequest" was null or undefined when calling apiFavoritesPost().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/favorites/`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: ApiFavoritesPostRequestToJSON(requestParameters['apiFavoritesPostRequest']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ApiFavoritesGet200ResponseInnerFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async apiFavoritesPost(requestParameters: ApiFavoritesPostOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ApiFavoritesGet200ResponseInner> {
+        const response = await this.apiFavoritesPostRaw(requestParameters, initOverrides);
+        return await response.value();
     }
 
     /**

@@ -13,6 +13,14 @@
  */
 
 import { mapValues } from '../runtime';
+import type { UserSchema } from './UserSchema';
+import {
+    UserSchemaFromJSON,
+    UserSchemaFromJSONTyped,
+    UserSchemaToJSON,
+    UserSchemaToJSONTyped,
+} from './UserSchema';
+
 /**
  * 
  * @export
@@ -30,13 +38,49 @@ export interface Def7 {
      * @type {string}
      * @memberof Def7
      */
-    username: string;
+    name: string;
     /**
      * 
      * @type {string}
      * @memberof Def7
      */
-    email: string;
+    posterPath: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Def7
+     */
+    season: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Def7
+     */
+    episode: number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Def7
+     */
+    isWatched?: boolean | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof Def7
+     */
+    tmdbId: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Def7
+     */
+    userId: string;
+    /**
+     * 
+     * @type {UserSchema}
+     * @memberof Def7
+     */
+    user?: UserSchema;
 }
 
 /**
@@ -44,8 +88,12 @@ export interface Def7 {
  */
 export function instanceOfDef7(value: object): value is Def7 {
     if (!('id' in value) || value['id'] === undefined) return false;
-    if (!('username' in value) || value['username'] === undefined) return false;
-    if (!('email' in value) || value['email'] === undefined) return false;
+    if (!('name' in value) || value['name'] === undefined) return false;
+    if (!('posterPath' in value) || value['posterPath'] === undefined) return false;
+    if (!('season' in value) || value['season'] === undefined) return false;
+    if (!('episode' in value) || value['episode'] === undefined) return false;
+    if (!('tmdbId' in value) || value['tmdbId'] === undefined) return false;
+    if (!('userId' in value) || value['userId'] === undefined) return false;
     return true;
 }
 
@@ -60,8 +108,14 @@ export function Def7FromJSONTyped(json: any, ignoreDiscriminator: boolean): Def7
     return {
         
         'id': json['id'],
-        'username': json['username'],
-        'email': json['email'],
+        'name': json['name'],
+        'posterPath': json['poster_path'],
+        'season': json['season'],
+        'episode': json['episode'],
+        'isWatched': json['isWatched'] == null ? undefined : json['isWatched'],
+        'tmdbId': json['tmdbId'],
+        'userId': json['userId'],
+        'user': json['user'] == null ? undefined : UserSchemaFromJSON(json['user']),
     };
 }
 
@@ -77,8 +131,14 @@ export function Def7ToJSONTyped(value?: Def7 | null, ignoreDiscriminator: boolea
     return {
         
         'id': value['id'],
-        'username': value['username'],
-        'email': value['email'],
+        'name': value['name'],
+        'poster_path': value['posterPath'],
+        'season': value['season'],
+        'episode': value['episode'],
+        'isWatched': value['isWatched'],
+        'tmdbId': value['tmdbId'],
+        'userId': value['userId'],
+        'user': UserSchemaToJSON(value['user']),
     };
 }
 

@@ -70,8 +70,11 @@ components:
         - username
     def-5:
       type: object
-      title: url/last_watched
+      title: url/favorite
     def-6:
+      type: object
+      title: url/last_watched
+    def-7:
       type: object
       title: lastWatchedSchemaOutputType
       properties:
@@ -118,7 +121,7 @@ components:
         - episode
         - tmdbId
         - userId
-    def-7:
+    def-8:
       type: object
       properties:
         id:
@@ -134,7 +137,7 @@ components:
         - username
         - email
       title: "#UserSchema"
-    def-8:
+    def-9:
       type: object
       title: lastWatchedCreateSchemaOutputType
       properties:
@@ -165,7 +168,7 @@ components:
         - episode
         - tmdbId
         - userId
-    def-9:
+    def-10:
       type: object
       title: lastWatchedCreateSchemaInputType
       properties:
@@ -191,7 +194,7 @@ components:
         - season
         - episode
         - atSecond
-    def-10:
+    def-11:
       type: object
       title: lastWatchedPatchSchemaOutputType
       properties:
@@ -222,7 +225,7 @@ components:
         - episode
         - tmdbId
         - userId
-    def-11:
+    def-12:
       type: object
       title: lastWatchedPatchSchemaInputType
       properties:
@@ -325,6 +328,103 @@ paths:
       responses:
         "200":
           description: Default Response
+  /api/favorites/:
+    get:
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                    name:
+                      type: string
+                    poster_path:
+                      type: string
+                    tmdbId:
+                      type: number
+                    userId:
+                      type: string
+                    createdAt:
+                      type: string
+                      format: date-time
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                poster_path:
+                  type: string
+                tmdbId:
+                  type: number
+              required:
+                - name
+                - poster_path
+                - tmdbId
+        required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  name:
+                    type: string
+                  poster_path:
+                    type: string
+                  tmdbId:
+                    type: number
+                  userId:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+  /api/favorites/{id}:
+    delete:
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  name:
+                    type: string
+                  poster_path:
+                    type: string
+                  tmdbId:
+                    type: number
+                  userId:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
   /api/last_watched/:
     get:
       responses:

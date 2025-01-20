@@ -21,16 +21,34 @@ import { mapValues } from '../runtime';
 export interface Def11 {
     /**
      * 
-     * @type {number}
+     * @type {string}
      * @memberof Def11
      */
-    season?: number | null;
+    id: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Def11
+     */
+    name: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Def11
+     */
+    posterPath: string;
     /**
      * 
      * @type {number}
      * @memberof Def11
      */
-    episode?: number | null;
+    season: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Def11
+     */
+    episode: number;
     /**
      * 
      * @type {boolean}
@@ -42,37 +60,26 @@ export interface Def11 {
      * @type {number}
      * @memberof Def11
      */
-    tmdbId?: number | null;
+    tmdbId: number;
     /**
      * 
      * @type {string}
      * @memberof Def11
      */
-    name?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof Def11
-     */
-    posterPath?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof Def11
-     */
-    userId?: string | null;
-    /**
-     * 
-     * @type {number}
-     * @memberof Def11
-     */
-    atSecond?: number | null;
+    userId: string;
 }
 
 /**
  * Check if a given object implements the Def11 interface.
  */
 export function instanceOfDef11(value: object): value is Def11 {
+    if (!('id' in value) || value['id'] === undefined) return false;
+    if (!('name' in value) || value['name'] === undefined) return false;
+    if (!('posterPath' in value) || value['posterPath'] === undefined) return false;
+    if (!('season' in value) || value['season'] === undefined) return false;
+    if (!('episode' in value) || value['episode'] === undefined) return false;
+    if (!('tmdbId' in value) || value['tmdbId'] === undefined) return false;
+    if (!('userId' in value) || value['userId'] === undefined) return false;
     return true;
 }
 
@@ -86,14 +93,14 @@ export function Def11FromJSONTyped(json: any, ignoreDiscriminator: boolean): Def
     }
     return {
         
-        'season': json['season'] == null ? undefined : json['season'],
-        'episode': json['episode'] == null ? undefined : json['episode'],
+        'id': json['id'],
+        'name': json['name'],
+        'posterPath': json['poster_path'],
+        'season': json['season'],
+        'episode': json['episode'],
         'isWatched': json['isWatched'] == null ? undefined : json['isWatched'],
-        'tmdbId': json['tmdbId'] == null ? undefined : json['tmdbId'],
-        'name': json['name'] == null ? undefined : json['name'],
-        'posterPath': json['poster_path'] == null ? undefined : json['poster_path'],
-        'userId': json['userId'] == null ? undefined : json['userId'],
-        'atSecond': json['atSecond'] == null ? undefined : json['atSecond'],
+        'tmdbId': json['tmdbId'],
+        'userId': json['userId'],
     };
 }
 
@@ -108,14 +115,14 @@ export function Def11ToJSONTyped(value?: Def11 | null, ignoreDiscriminator: bool
 
     return {
         
+        'id': value['id'],
+        'name': value['name'],
+        'poster_path': value['posterPath'],
         'season': value['season'],
         'episode': value['episode'],
         'isWatched': value['isWatched'],
         'tmdbId': value['tmdbId'],
-        'name': value['name'],
-        'poster_path': value['posterPath'],
         'userId': value['userId'],
-        'atSecond': value['atSecond'],
     };
 }
 

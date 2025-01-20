@@ -30,43 +30,13 @@ export interface Def8 {
      * @type {string}
      * @memberof Def8
      */
-    name: string;
+    username: string;
     /**
      * 
      * @type {string}
      * @memberof Def8
      */
-    posterPath: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof Def8
-     */
-    season: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof Def8
-     */
-    episode: number;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof Def8
-     */
-    isWatched?: boolean | null;
-    /**
-     * 
-     * @type {number}
-     * @memberof Def8
-     */
-    tmdbId: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof Def8
-     */
-    userId: string;
+    email: string;
 }
 
 /**
@@ -74,12 +44,8 @@ export interface Def8 {
  */
 export function instanceOfDef8(value: object): value is Def8 {
     if (!('id' in value) || value['id'] === undefined) return false;
-    if (!('name' in value) || value['name'] === undefined) return false;
-    if (!('posterPath' in value) || value['posterPath'] === undefined) return false;
-    if (!('season' in value) || value['season'] === undefined) return false;
-    if (!('episode' in value) || value['episode'] === undefined) return false;
-    if (!('tmdbId' in value) || value['tmdbId'] === undefined) return false;
-    if (!('userId' in value) || value['userId'] === undefined) return false;
+    if (!('username' in value) || value['username'] === undefined) return false;
+    if (!('email' in value) || value['email'] === undefined) return false;
     return true;
 }
 
@@ -94,13 +60,8 @@ export function Def8FromJSONTyped(json: any, ignoreDiscriminator: boolean): Def8
     return {
         
         'id': json['id'],
-        'name': json['name'],
-        'posterPath': json['poster_path'],
-        'season': json['season'],
-        'episode': json['episode'],
-        'isWatched': json['isWatched'] == null ? undefined : json['isWatched'],
-        'tmdbId': json['tmdbId'],
-        'userId': json['userId'],
+        'username': json['username'],
+        'email': json['email'],
     };
 }
 
@@ -116,13 +77,8 @@ export function Def8ToJSONTyped(value?: Def8 | null, ignoreDiscriminator: boolea
     return {
         
         'id': value['id'],
-        'name': value['name'],
-        'poster_path': value['posterPath'],
-        'season': value['season'],
-        'episode': value['episode'],
-        'isWatched': value['isWatched'],
-        'tmdbId': value['tmdbId'],
-        'userId': value['userId'],
+        'username': value['username'],
+        'email': value['email'],
     };
 }
 

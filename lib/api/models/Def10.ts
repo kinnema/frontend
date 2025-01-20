@@ -21,10 +21,10 @@ import { mapValues } from '../runtime';
 export interface Def10 {
     /**
      * 
-     * @type {string}
+     * @type {number}
      * @memberof Def10
      */
-    id: string;
+    tmdbId: number;
     /**
      * 
      * @type {string}
@@ -60,26 +60,19 @@ export interface Def10 {
      * @type {number}
      * @memberof Def10
      */
-    tmdbId: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof Def10
-     */
-    userId: string;
+    atSecond: number;
 }
 
 /**
  * Check if a given object implements the Def10 interface.
  */
 export function instanceOfDef10(value: object): value is Def10 {
-    if (!('id' in value) || value['id'] === undefined) return false;
+    if (!('tmdbId' in value) || value['tmdbId'] === undefined) return false;
     if (!('name' in value) || value['name'] === undefined) return false;
     if (!('posterPath' in value) || value['posterPath'] === undefined) return false;
     if (!('season' in value) || value['season'] === undefined) return false;
     if (!('episode' in value) || value['episode'] === undefined) return false;
-    if (!('tmdbId' in value) || value['tmdbId'] === undefined) return false;
-    if (!('userId' in value) || value['userId'] === undefined) return false;
+    if (!('atSecond' in value) || value['atSecond'] === undefined) return false;
     return true;
 }
 
@@ -93,14 +86,13 @@ export function Def10FromJSONTyped(json: any, ignoreDiscriminator: boolean): Def
     }
     return {
         
-        'id': json['id'],
+        'tmdbId': json['tmdbId'],
         'name': json['name'],
         'posterPath': json['poster_path'],
         'season': json['season'],
         'episode': json['episode'],
         'isWatched': json['isWatched'] == null ? undefined : json['isWatched'],
-        'tmdbId': json['tmdbId'],
-        'userId': json['userId'],
+        'atSecond': json['atSecond'],
     };
 }
 
@@ -115,14 +107,13 @@ export function Def10ToJSONTyped(value?: Def10 | null, ignoreDiscriminator: bool
 
     return {
         
-        'id': value['id'],
+        'tmdbId': value['tmdbId'],
         'name': value['name'],
         'poster_path': value['posterPath'],
         'season': value['season'],
         'episode': value['episode'],
         'isWatched': value['isWatched'],
-        'tmdbId': value['tmdbId'],
-        'userId': value['userId'],
+        'atSecond': value['atSecond'],
     };
 }
 
