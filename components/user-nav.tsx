@@ -9,12 +9,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import { useAuthStore } from "@/lib/stores/auth.store";
-import { LogOut, User } from "lucide-react";
+import { Heart, LogOut, User } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export function UserNav() {
   const user = useAuthStore((state) => state.user);
   const logOut = useAuthStore((state) => state.logOut);
   const toast = useToast();
+  const router = useRouter();
 
   function onPressLogout(): void {
     logOut();
@@ -37,10 +40,14 @@ export function UserNav() {
           <User className="mr-2 h-4 w-4" />
           <span>{user?.username}</span>
         </DropdownMenuItem>
-        {/* <DropdownMenuItem>
-          <Settings className="mr-2 h-4 w-4" />
-          <span>Ayarlar</span>
-        </DropdownMenuItem> */}
+        <Link href="/favorites" legacyBehavior>
+          <DropdownMenuItem
+            className="cursor-pointer"
+          >
+            <Heart className="mr-2 h-4 w-4" />
+            <span>Favoriler</span>
+          </DropdownMenuItem>
+        </Link>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="text-red-600" onClick={onPressLogout}>
           <LogOut className="mr-2 h-4 w-4" />
