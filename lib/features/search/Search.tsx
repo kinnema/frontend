@@ -71,7 +71,14 @@ export function SearchFeature() {
               <Loading />
             ) : (
               data?.results.map((show) => (
-                <ShowCard key={show.name} show={show} />
+                <ShowCard
+                  key={show.name}
+                  show={{
+                    id: show.id,
+                    title: show.name,
+                    image: show.poster_path,
+                  }}
+                />
               ))
             )}
           </div>

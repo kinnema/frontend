@@ -24,43 +24,49 @@ export interface ApiFavoritesGet200ResponseInner {
      * @type {string}
      * @memberof ApiFavoritesGet200ResponseInner
      */
-    id?: string;
+    id: string;
     /**
      * 
      * @type {string}
      * @memberof ApiFavoritesGet200ResponseInner
      */
-    name?: string;
+    name: string;
     /**
      * 
      * @type {string}
      * @memberof ApiFavoritesGet200ResponseInner
      */
-    posterPath?: string;
+    posterPath: string;
     /**
      * 
      * @type {number}
      * @memberof ApiFavoritesGet200ResponseInner
      */
-    tmdbId?: number;
+    tmdbId: number;
     /**
      * 
      * @type {string}
      * @memberof ApiFavoritesGet200ResponseInner
      */
-    userId?: string;
+    userId: string;
     /**
      * 
      * @type {Date}
      * @memberof ApiFavoritesGet200ResponseInner
      */
-    createdAt?: Date;
+    createdAt: Date;
 }
 
 /**
  * Check if a given object implements the ApiFavoritesGet200ResponseInner interface.
  */
 export function instanceOfApiFavoritesGet200ResponseInner(value: object): value is ApiFavoritesGet200ResponseInner {
+    if (!('id' in value) || value['id'] === undefined) return false;
+    if (!('name' in value) || value['name'] === undefined) return false;
+    if (!('posterPath' in value) || value['posterPath'] === undefined) return false;
+    if (!('tmdbId' in value) || value['tmdbId'] === undefined) return false;
+    if (!('userId' in value) || value['userId'] === undefined) return false;
+    if (!('createdAt' in value) || value['createdAt'] === undefined) return false;
     return true;
 }
 
@@ -74,12 +80,12 @@ export function ApiFavoritesGet200ResponseInnerFromJSONTyped(json: any, ignoreDi
     }
     return {
         
-        'id': json['id'] == null ? undefined : json['id'],
-        'name': json['name'] == null ? undefined : json['name'],
-        'posterPath': json['poster_path'] == null ? undefined : json['poster_path'],
-        'tmdbId': json['tmdbId'] == null ? undefined : json['tmdbId'],
-        'userId': json['userId'] == null ? undefined : json['userId'],
-        'createdAt': json['createdAt'] == null ? undefined : (new Date(json['createdAt'])),
+        'id': json['id'],
+        'name': json['name'],
+        'posterPath': json['poster_path'],
+        'tmdbId': json['tmdbId'],
+        'userId': json['userId'],
+        'createdAt': (new Date(json['createdAt'])),
     };
 }
 
@@ -99,7 +105,7 @@ export function ApiFavoritesGet200ResponseInnerToJSONTyped(value?: ApiFavoritesG
         'poster_path': value['posterPath'],
         'tmdbId': value['tmdbId'],
         'userId': value['userId'],
-        'createdAt': value['createdAt'] == null ? undefined : ((value['createdAt']).toISOString()),
+        'createdAt': ((value['createdAt']).toISOString()),
     };
 }
 

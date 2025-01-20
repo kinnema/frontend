@@ -44,7 +44,13 @@ export function ShowCarousel({ title, shows }: ShowCarouselProps) {
           >
             {shows.map((show) => (
               <SwiperSlide key={show.id}>
-                <ShowCard show={show} />
+                <ShowCard
+                  show={{
+                    id: show.id,
+                    image: show.poster_path,
+                    title: show.name,
+                  }}
+                />
               </SwiperSlide>
             ))}
           </Swiper>
