@@ -1,41 +1,77 @@
-import axios from "axios";
-import { Configuration, DefaultApi } from "../api";
+import { Configuration, DefaultApi, RequestContext } from "../api";
+import { ApiWatchProvidersGet200Response } from "../api/models/ApiWatchProvidersGet200Response";
 import { BASE_URL } from "../constants";
-import { IWatchResult } from "../models";
-import { useAuthStore } from "../stores/auth.store";
+import { useWatchStore } from "../stores/watch.store";
 
-export const appAxiosClient = axios.create({
-  withCredentials: true,
+const getAuthMiddleware = () => ({
+  pre: async (context: RequestContext) => {
+    if (typeof window === "undefined") {
+      return context;
+    }
+
+    const token = localStorage.getItem("access_token");
+
+    if (token) {
+      context.init.headers = {
+        ...context.init.headers,
+        Authorization: `Bearer ${token}`,
+      };
+    }
+    return context;
+  },
 });
 
-const apiConfig = new Configuration();
-export const apiClient = new DefaultApi(apiConfig, BASE_URL, appAxiosClient);
+const apiConfig = new Configuration({
+  basePath: BASE_URL,
+  middleware: [getAuthMiddleware()],
+});
 
-appAxiosClient.interceptors.request.use(
-  function (config) {
-    const accessToken = useAuthStore.getState().access_token;
-    if (accessToken) {
-      config.headers.Authorization = "Bearer " + accessToken;
-    }
-    return config;
-  },
-  function (error) {}
-);
+export const apiClient = new DefaultApi(apiConfig);
 
 export default class AppService {
+  static fetchProviders =
+    async (): Promise<ApiWatchProvidersGet200Response> => {
+      const response = await apiClient.apiWatchProvidersGet();
+
+      return response;
+    };
+
   static fetchSeries = async (
     serie: string,
     season: number,
     chapter: number
-  ): Promise<IWatchResult> => {
-    const search_params = new URLSearchParams();
-    search_params.append("serie_name", serie);
-    search_params.append("season", season.toString());
-    search_params.append("episode", chapter.toString());
-
-    const response = await appAxiosClient.get(`/watch?${search_params}`, {
-      responseType: "stream",
+  ): Promise<void> => {
+    const response = await apiClient.apiWatchGetRaw({
+      serieName: serie,
+      seasonNumber: season,
+      episodeNumber: chapter,
     });
-    return JSON.parse(response.data);
+
+    // Get the response body as a readable stream
+    const reader = response.raw.body!.getReader();
+    const decoder = new TextDecoder();
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      // Decode the chunk and split by newlines
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split("\n");
+
+      // Parse each non-empty line as JSON
+      for (const line of lines) {
+        if (line.trim()) {
+          try {
+            const jsonData = JSON.parse(line);
+            useWatchStore.getState().addLink(jsonData);
+
+            await new Promise((resolve) => setTimeout(resolve, 500));
+          } catch (e) {
+            console.warn("Failed to parse JSON line:", e);
+          }
+        }
+      }
+    }
   };
 }

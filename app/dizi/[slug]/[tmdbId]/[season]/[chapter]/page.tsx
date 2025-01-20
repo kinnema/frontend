@@ -10,6 +10,7 @@ import {
 interface IProps {
   params: {
     slug: string;
+    tmdbId: string;
     season: string;
     chapter: string;
   };
@@ -21,10 +22,9 @@ export default async function ChapterPage({ params }: IProps) {
   const chapter = parseInt(params.chapter.replace("bolum-", ""));
 
   await queryClient.prefetchQuery({
-    queryKey: ["tmdb-details-with-season", params.slug],
+    queryKey: ["tmdb-details-with-season", params.slug, params.tmdbId],
     queryFn: async () => {
-      const tmdbSearch = await TmdbService.searchSeries(params.slug);
-      const tmdbData = await TmdbService.fetchSerie(tmdbSearch.results[0].id);
+      const tmdbData = await TmdbService.fetchSerie(parseInt(params.tmdbId));
 
       return tmdbData;
     },

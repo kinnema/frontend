@@ -3,11 +3,13 @@
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Loading } from "@/lib/components/Loading";
-import { ILastWatched, ILastWatchedMutation, IWatchResult } from "@/lib/models";
+import { Providers } from "@/lib/components/Providers";
+import { ILastWatched, ILastWatchedMutation } from "@/lib/models";
 import AppService from "@/lib/services/app.service";
 import TmdbService from "@/lib/services/tmdb.service";
 import UserService from "@/lib/services/user.service";
 import { useAuthStore } from "@/lib/stores/auth.store";
+import { useWatchStore } from "@/lib/stores/watch.store";
 
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { ITmdbSerieDetails } from "@/lib/types/tmdb";
@@ -22,6 +24,7 @@ interface IProps {
     slug: string;
     season: string;
     chapter: string;
+    tmdbId: string;
   };
 }
 
@@ -31,16 +34,18 @@ export default function ChapterPage({ params }: IProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isLoggedIn);
   const searchParams = useSearchParams();
-  const videoPlayerRef = useRef(null);
+  const videoPlayerRef = useRef<ReactHlsPlayer>(null);
   const [isMuted, setIsMuted] = useState(false);
   const router = useRouter();
   const toast = useToast();
+  const watchLinks = useWatchStore((state) => state.links);
+  const clear = useWatchStore((state) => state.clear);
+  const selectedWatchLink = useWatchStore((state) => state.selectedWatchLink);
 
   const tmdbData = useQuery<ITmdbSerieDetails>({
-    queryKey: ["tmdb-details-with-season", params.slug],
+    queryKey: ["tmdb-details-with-season", params.slug, params.tmdbId],
     queryFn: async () => {
-      const tmdbSearch = await TmdbService.searchSeries(params.slug);
-      const tmdbData = await TmdbService.fetchSerie(tmdbSearch.results[0].id);
+      const tmdbData = await TmdbService.fetchSerie(parseInt(params.tmdbId));
 
       return tmdbData;
     },
@@ -52,7 +57,9 @@ export default function ChapterPage({ params }: IProps) {
     ILastWatchedMutation
   >({
     mutationFn: async (data: ILastWatchedMutation) => {
-      return UserService.addLastWatch(data);
+      const response = await UserService.addLastWatch(data);
+
+      return response;
     },
   });
 
@@ -62,41 +69,34 @@ export default function ChapterPage({ params }: IProps) {
     return TurkishProviderIds.includes(parseInt(network!));
   }, []);
 
-  const serieWatchLink = useQuery<IWatchResult>({
-    enabled: tmdbData.isSuccess && isTurkishProvider,
-    networkMode: "offlineFirst",
-    queryKey: ["dizi-watch", params.slug, season, chapter],
-    queryFn: async () => {
-      return AppService.fetchSeries(params.slug, season, chapter);
-    },
-    retry: 1,
-  });
-
-  console.log(videoPlayerRef.current?.getCurrentTime());
-
   useEffect(() => {
-    if (!isAuthenticated) {
-      return;
-    }
+    AppService.fetchSeries(params.slug, season, chapter);
 
-    if (!tmdbData.data) {
-      return;
-    }
+    return () => {
+      clear();
+    };
+  }, []);
 
-    setInterval(async () => {
-      await addToLastWatched.mutateAsync({
-        name: tmdbData.data.name,
-        poster_path: tmdbData.data.poster_path,
-        tmdb_id: tmdbData.data.id,
-        slug: params.slug,
-        season,
-        episode: chapter,
-        network: searchParams.get("network")
-          ? parseInt(searchParams.get("network")!)
-          : undefined,
-      });
-    }, 10_000);
-  }, [isAuthenticated, tmdbData]);
+  // useEffect(() => {
+  //   if (!isAuthenticated) {
+  //     return;
+  //   }
+
+  //   if (!tmdbData.data) {
+  //     return;
+  //   }
+
+  //   setInterval(async () => {
+  //     await addToLastWatched.mutateAsync({
+  //       name: tmdbData.data.name,
+  //       posterPath: tmdbData.data.poster_path,
+  //       tmdbId: tmdbData.data.id,
+  //       season,
+  //       episode: chapter,
+  //       atSecond: videoPlayerRef.current?.getCurrentTime() ?? 0,
+  //     });
+  //   }, 10_000);
+  // }, [isAuthenticated, tmdbData]);
 
   if (tmdbData.isError) {
     return <div className="text-red-500">Dizi bulunamadı</div>;
@@ -129,30 +129,34 @@ export default function ChapterPage({ params }: IProps) {
               allowFullScreen
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             />
-          ) : serieWatchLink.isPending ? (
+          ) : watchLinks.length === 0 ? (
             <div className="m-auto">
               <Loading />
             </div>
           ) : (
             <>
-              <ReactHlsPlayer
-                url={serieWatchLink.data?.url}
-                width={"100%"}
-                height={"100%"}
-                stopOnUnmount
-                playing
-                ref={videoPlayerRef}
-                muted={isMuted}
-                style={{
-                  backgroundColor: "black",
-                  width: "100%",
-                  height: "100%",
-                }}
-                light={`https://image.tmdb.org/t/p/original/${tmdbData.data.poster_path}`}
-                controls
-                onPlay={onPlay}
-                onPause={onPause}
-              />
+              {!selectedWatchLink ? (
+                <Providers data={watchLinks} />
+              ) : (
+                <ReactHlsPlayer
+                  url={selectedWatchLink?.url}
+                  width={"100%"}
+                  height={"100%"}
+                  stopOnUnmount
+                  playing
+                  ref={videoPlayerRef}
+                  muted={isMuted}
+                  style={{
+                    backgroundColor: "black",
+                    width: "100%",
+                    height: "100%",
+                  }}
+                  light={`https://image.tmdb.org/t/p/original/${tmdbData.data.poster_path}`}
+                  controls
+                  onPlay={onPlay}
+                  onPause={onPause}
+                />
+              )}
             </>
           )}
         </div>

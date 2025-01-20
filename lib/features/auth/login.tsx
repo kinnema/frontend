@@ -1,10 +1,10 @@
 "use client";
 
+import { loginServerAction } from "@/app/actions/auth/loginAction";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { ILoginResponse, IMutationLogin } from "@/lib/models";
-import { AuthService } from "@/lib/services/auth.service";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { useMutation } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
@@ -17,7 +17,7 @@ export default function LoginModule() {
   const toast = useToast();
   const setUser = useAuthStore((state) => state.setUser);
   const loginMutation = useMutation<ILoginResponse, void, IMutationLogin>({
-    mutationFn: (data) => AuthService.login(data),
+    mutationFn: (data) => loginServerAction(data),
     onSuccess(data) {
       setUser(data);
       toast.toast({

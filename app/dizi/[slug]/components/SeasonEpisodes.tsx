@@ -51,7 +51,7 @@ export default function SeasonEpisodes({
         if (episode.runtime !== null) {
           let episodeHref = `/dizi/${slugify(
             serie_name
-          )}/sezon-${season}/bolum-${episode.episode_number}`;
+          )}/${id}/sezon-${season}/bolum-${episode.episode_number}`;
 
           if (isTurkishProvider) {
             episodeHref += `?network=${serieNetwork?.at(network)}`;
