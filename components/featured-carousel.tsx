@@ -46,7 +46,7 @@ export function FeaturedCarousel() {
             passHref
             className="w-full h-full"
           >
-            <section className="relative h-screen overflow-hidden">
+            <section className="relative h-[calc(100vh-35vh)] overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10" />
               <div className={`absolute inset-0`}>
                 <Image
@@ -59,8 +59,8 @@ export function FeaturedCarousel() {
                 />
               </div>
 
-              <div className="absolute inset-0 z-20 flex items-center">
-                <div className="container px-4 md:px-6 space-y-4 flex-col flex flex-wrap text-wrap">
+              <div className="absolute top-40 sm:top-0 inset-0 z-20 flex items-center">
+                <div className="container px-4 md:px-6 space-y-4 flex-col flex flex-wrap text-wrap items-center text-center sm:items-start sm:text-start">
                   <h1 className="text-6xl font-bold tracking-wider max-w-2xl">
                     {item.name}
                   </h1>
