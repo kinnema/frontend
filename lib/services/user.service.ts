@@ -1,4 +1,4 @@
-import { ApiFavoritesPostRequest } from "../api";
+import { ApiFavoritesPostRequest, ApiLastWatchedIdPatchRequest } from "../api";
 import { ILastWatchedMutation } from "../models";
 import { apiClient } from "./app.service";
 
@@ -27,6 +27,20 @@ export default class UserService {
 
   static fetchLastWatched = async () => {
     const response = await apiClient.apiLastWatchedGet();
+
+    return response;
+  };
+
+  static fetchSingleLastWatched = async (tmdbId: number) => {
+    const response = await apiClient.apiLastWatchedTmdbIdGet({
+      tmdbId,
+    });
+
+    return response;
+  };
+
+  static patchLastWatch = async (data: ApiLastWatchedIdPatchRequest) => {
+    const response = await apiClient.apiLastWatchedIdPatch(data);
 
     return response;
   };

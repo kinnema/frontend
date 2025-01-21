@@ -1,7 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import {
+  ApiLastWatchedIdPatchRequest,
+  LastWatchedPatchSchemaOutputType,
+  LastWatchedSchemaOutputType,
+} from "@/lib/api";
 import { Loading } from "@/lib/components/Loading";
 import { Providers } from "@/lib/components/Providers";
 import { ILastWatched, ILastWatchedMutation } from "@/lib/models";
@@ -37,7 +41,6 @@ export default function ChapterPage({ params }: IProps) {
   const videoPlayerRef = useRef<ReactHlsPlayer>(null);
   const [isMuted, setIsMuted] = useState(false);
   const router = useRouter();
-  const toast = useToast();
   const watchLinks = useWatchStore((state) => state.links);
   const clear = useWatchStore((state) => state.clear);
   const selectedWatchLink = useWatchStore((state) => state.selectedWatchLink);
@@ -51,6 +54,17 @@ export default function ChapterPage({ params }: IProps) {
     },
   });
 
+  const lastWatched = useQuery<LastWatchedSchemaOutputType>({
+    queryKey: ["last-watched", tmdbData.data?.id],
+    queryFn: async () => {
+      const lastWatched = await UserService.fetchSingleLastWatched(
+        tmdbData.data?.id!
+      );
+
+      return lastWatched;
+    },
+  });
+
   const addToLastWatched = useMutation<
     ILastWatched,
     void,
@@ -58,6 +72,18 @@ export default function ChapterPage({ params }: IProps) {
   >({
     mutationFn: async (data: ILastWatchedMutation) => {
       const response = await UserService.addLastWatch(data);
+
+      return response;
+    },
+  });
+
+  const patchLastWatched = useMutation<
+    LastWatchedPatchSchemaOutputType,
+    void,
+    ApiLastWatchedIdPatchRequest
+  >({
+    mutationFn: async (data: ApiLastWatchedIdPatchRequest) => {
+      const response = await UserService.patchLastWatch(data);
 
       return response;
     },
@@ -77,26 +103,34 @@ export default function ChapterPage({ params }: IProps) {
     };
   }, []);
 
-  // useEffect(() => {
-  //   if (!isAuthenticated) {
-  //     return;
-  //   }
+  const handleProgress = async (state: { playedSeconds: number }) => {
+    if (!isAuthenticated || !tmdbData.data) return;
 
-  //   if (!tmdbData.data) {
-  //     return;
-  //   }
-
-  //   setInterval(async () => {
-  //     await addToLastWatched.mutateAsync({
-  //       name: tmdbData.data.name,
-  //       posterPath: tmdbData.data.poster_path,
-  //       tmdbId: tmdbData.data.id,
-  //       season,
-  //       episode: chapter,
-  //       atSecond: videoPlayerRef.current?.getCurrentTime() ?? 0,
-  //     });
-  //   }, 10_000);
-  // }, [isAuthenticated, tmdbData]);
+    // Only update every 10 seconds to avoid too many requests
+    if (Math.floor(state.playedSeconds) % 10 === 0) {
+      try {
+        if (lastWatched.data) {
+          await patchLastWatched.mutateAsync({
+            id: lastWatched.data.id,
+            lastWatchedPatchSchemaInputType: {
+              atSecond: state.playedSeconds,
+            },
+          });
+        } else {
+          await addToLastWatched.mutateAsync({
+            name: tmdbData.data.name,
+            posterPath: tmdbData.data.poster_path,
+            tmdbId: tmdbData.data.id,
+            season,
+            episode: chapter,
+            atSecond: state.playedSeconds,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to update last watched:", error);
+      }
+    }
+  };
 
   if (tmdbData.isError) {
     return <div className="text-red-500">Dizi bulunamadı</div>;
@@ -155,6 +189,7 @@ export default function ChapterPage({ params }: IProps) {
                   controls
                   onPlay={onPlay}
                   onPause={onPause}
+                  onProgress={handleProgress}
                 />
               )}
             </>

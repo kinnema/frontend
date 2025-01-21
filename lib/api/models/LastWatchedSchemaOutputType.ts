@@ -71,6 +71,12 @@ export interface LastWatchedSchemaOutputType {
     tmdbId: number;
     /**
      * 
+     * @type {number}
+     * @memberof LastWatchedSchemaOutputType
+     */
+    atSecond: number;
+    /**
+     * 
      * @type {string}
      * @memberof LastWatchedSchemaOutputType
      */
@@ -93,6 +99,7 @@ export function instanceOfLastWatchedSchemaOutputType(value: object): value is L
     if (!('season' in value) || value['season'] === undefined) return false;
     if (!('episode' in value) || value['episode'] === undefined) return false;
     if (!('tmdbId' in value) || value['tmdbId'] === undefined) return false;
+    if (!('atSecond' in value) || value['atSecond'] === undefined) return false;
     if (!('userId' in value) || value['userId'] === undefined) return false;
     return true;
 }
@@ -114,6 +121,7 @@ export function LastWatchedSchemaOutputTypeFromJSONTyped(json: any, ignoreDiscri
         'episode': json['episode'],
         'isWatched': json['isWatched'] == null ? undefined : json['isWatched'],
         'tmdbId': json['tmdbId'],
+        'atSecond': json['atSecond'],
         'userId': json['userId'],
         'user': json['user'] == null ? undefined : ApiAuthLoginPost200ResponseFromJSON(json['user']),
     };
@@ -137,6 +145,7 @@ export function LastWatchedSchemaOutputTypeToJSONTyped(value?: LastWatchedSchema
         'episode': value['episode'],
         'isWatched': value['isWatched'],
         'tmdbId': value['tmdbId'],
+        'atSecond': value['atSecond'],
         'userId': value['userId'],
         'user': ApiAuthLoginPost200ResponseToJSON(value['user']),
     };

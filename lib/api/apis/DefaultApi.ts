@@ -68,10 +68,6 @@ export interface ApiFavoritesPostOperationRequest {
     apiFavoritesPostRequest: ApiFavoritesPostRequest;
 }
 
-export interface ApiLastWatchedIdGetRequest {
-    id: string;
-}
-
 export interface ApiLastWatchedIdPatchRequest {
     id: string;
     lastWatchedPatchSchemaInputType?: LastWatchedPatchSchemaInputType;
@@ -79,6 +75,10 @@ export interface ApiLastWatchedIdPatchRequest {
 
 export interface ApiLastWatchedPostRequest {
     lastWatchedCreateSchemaInputType: LastWatchedCreateSchemaInputType;
+}
+
+export interface ApiLastWatchedTmdbIdGetRequest {
+    tmdbId: number;
 }
 
 export interface ApiWatchGetRequest {
@@ -320,37 +320,6 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async apiLastWatchedIdGetRaw(requestParameters: ApiLastWatchedIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LastWatchedSchemaOutputType>> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling apiLastWatchedIdGet().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/api/last_watched/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => LastWatchedSchemaOutputTypeFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async apiLastWatchedIdGet(requestParameters: ApiLastWatchedIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LastWatchedSchemaOutputType> {
-        const response = await this.apiLastWatchedIdGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
     async apiLastWatchedIdPatchRaw(requestParameters: ApiLastWatchedIdPatchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LastWatchedPatchSchemaOutputType>> {
         if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
@@ -414,6 +383,37 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async apiLastWatchedPost(requestParameters: ApiLastWatchedPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LastWatchedCreateSchemaOutputType> {
         const response = await this.apiLastWatchedPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async apiLastWatchedTmdbIdGetRaw(requestParameters: ApiLastWatchedTmdbIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LastWatchedSchemaOutputType>> {
+        if (requestParameters['tmdbId'] == null) {
+            throw new runtime.RequiredError(
+                'tmdbId',
+                'Required parameter "tmdbId" was null or undefined when calling apiLastWatchedTmdbIdGet().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/last_watched/{tmdbId}`.replace(`{${"tmdbId"}}`, encodeURIComponent(String(requestParameters['tmdbId']))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => LastWatchedSchemaOutputTypeFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async apiLastWatchedTmdbIdGet(requestParameters: ApiLastWatchedTmdbIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LastWatchedSchemaOutputType> {
+        const response = await this.apiLastWatchedTmdbIdGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

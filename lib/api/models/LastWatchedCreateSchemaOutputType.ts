@@ -63,6 +63,12 @@ export interface LastWatchedCreateSchemaOutputType {
     tmdbId: number;
     /**
      * 
+     * @type {number}
+     * @memberof LastWatchedCreateSchemaOutputType
+     */
+    atSecond: number;
+    /**
+     * 
      * @type {string}
      * @memberof LastWatchedCreateSchemaOutputType
      */
@@ -79,6 +85,7 @@ export function instanceOfLastWatchedCreateSchemaOutputType(value: object): valu
     if (!('season' in value) || value['season'] === undefined) return false;
     if (!('episode' in value) || value['episode'] === undefined) return false;
     if (!('tmdbId' in value) || value['tmdbId'] === undefined) return false;
+    if (!('atSecond' in value) || value['atSecond'] === undefined) return false;
     if (!('userId' in value) || value['userId'] === undefined) return false;
     return true;
 }
@@ -100,6 +107,7 @@ export function LastWatchedCreateSchemaOutputTypeFromJSONTyped(json: any, ignore
         'episode': json['episode'],
         'isWatched': json['isWatched'] == null ? undefined : json['isWatched'],
         'tmdbId': json['tmdbId'],
+        'atSecond': json['atSecond'],
         'userId': json['userId'],
     };
 }
@@ -122,6 +130,7 @@ export function LastWatchedCreateSchemaOutputTypeToJSONTyped(value?: LastWatched
         'episode': value['episode'],
         'isWatched': value['isWatched'],
         'tmdbId': value['tmdbId'],
+        'atSecond': value['atSecond'],
         'userId': value['userId'],
     };
 }

@@ -71,6 +71,12 @@ export interface Def7 {
     tmdbId: number;
     /**
      * 
+     * @type {number}
+     * @memberof Def7
+     */
+    atSecond: number;
+    /**
+     * 
      * @type {string}
      * @memberof Def7
      */
@@ -93,6 +99,7 @@ export function instanceOfDef7(value: object): value is Def7 {
     if (!('season' in value) || value['season'] === undefined) return false;
     if (!('episode' in value) || value['episode'] === undefined) return false;
     if (!('tmdbId' in value) || value['tmdbId'] === undefined) return false;
+    if (!('atSecond' in value) || value['atSecond'] === undefined) return false;
     if (!('userId' in value) || value['userId'] === undefined) return false;
     return true;
 }
@@ -114,6 +121,7 @@ export function Def7FromJSONTyped(json: any, ignoreDiscriminator: boolean): Def7
         'episode': json['episode'],
         'isWatched': json['isWatched'] == null ? undefined : json['isWatched'],
         'tmdbId': json['tmdbId'],
+        'atSecond': json['atSecond'],
         'userId': json['userId'],
         'user': json['user'] == null ? undefined : UserSchemaFromJSON(json['user']),
     };
@@ -137,6 +145,7 @@ export function Def7ToJSONTyped(value?: Def7 | null, ignoreDiscriminator: boolea
         'episode': value['episode'],
         'isWatched': value['isWatched'],
         'tmdbId': value['tmdbId'],
+        'atSecond': value['atSecond'],
         'userId': value['userId'],
         'user': UserSchemaToJSON(value['user']),
     };

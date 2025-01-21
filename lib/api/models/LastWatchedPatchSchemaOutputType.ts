@@ -63,6 +63,12 @@ export interface LastWatchedPatchSchemaOutputType {
     tmdbId: number;
     /**
      * 
+     * @type {number}
+     * @memberof LastWatchedPatchSchemaOutputType
+     */
+    atSecond: number;
+    /**
+     * 
      * @type {string}
      * @memberof LastWatchedPatchSchemaOutputType
      */
@@ -79,6 +85,7 @@ export function instanceOfLastWatchedPatchSchemaOutputType(value: object): value
     if (!('season' in value) || value['season'] === undefined) return false;
     if (!('episode' in value) || value['episode'] === undefined) return false;
     if (!('tmdbId' in value) || value['tmdbId'] === undefined) return false;
+    if (!('atSecond' in value) || value['atSecond'] === undefined) return false;
     if (!('userId' in value) || value['userId'] === undefined) return false;
     return true;
 }
@@ -100,6 +107,7 @@ export function LastWatchedPatchSchemaOutputTypeFromJSONTyped(json: any, ignoreD
         'episode': json['episode'],
         'isWatched': json['isWatched'] == null ? undefined : json['isWatched'],
         'tmdbId': json['tmdbId'],
+        'atSecond': json['atSecond'],
         'userId': json['userId'],
     };
 }
@@ -122,6 +130,7 @@ export function LastWatchedPatchSchemaOutputTypeToJSONTyped(value?: LastWatchedP
         'episode': value['episode'],
         'isWatched': value['isWatched'],
         'tmdbId': value['tmdbId'],
+        'atSecond': value['atSecond'],
         'userId': value['userId'],
     };
 }

@@ -94,6 +94,8 @@ components:
           nullable: true
         tmdbId:
           type: number
+        atSecond:
+          type: number
         userId:
           type: string
           format: uuid
@@ -120,6 +122,7 @@ components:
         - season
         - episode
         - tmdbId
+        - atSecond
         - userId
     def-8:
       type: object
@@ -157,6 +160,8 @@ components:
           nullable: true
         tmdbId:
           type: number
+        atSecond:
+          type: number
         userId:
           type: string
           format: uuid
@@ -167,6 +172,7 @@ components:
         - season
         - episode
         - tmdbId
+        - atSecond
         - userId
     def-10:
       type: object
@@ -214,6 +220,8 @@ components:
           nullable: true
         tmdbId:
           type: number
+        atSecond:
+          type: number
         userId:
           type: string
           format: uuid
@@ -224,6 +232,7 @@ components:
         - season
         - episode
         - tmdbId
+        - atSecond
         - userId
     def-12:
       type: object
@@ -475,6 +484,8 @@ paths:
                       nullable: true
                     tmdbId:
                       type: number
+                    atSecond:
+                      type: number
                     userId:
                       type: string
                       format: uuid
@@ -500,6 +511,7 @@ paths:
                     - season
                     - episode
                     - tmdbId
+                    - atSecond
                     - userId
     post:
       requestBody:
@@ -557,6 +569,8 @@ paths:
                     nullable: true
                   tmdbId:
                     type: number
+                  atSecond:
+                    type: number
                   userId:
                     type: string
                     format: uuid
@@ -567,16 +581,16 @@ paths:
                   - season
                   - episode
                   - tmdbId
+                  - atSecond
                   - userId
-  /api/last_watched/{id}:
+  /api/last_watched/{tmdbId}:
     get:
       parameters:
         - schema:
-            type: string
+            type: number
           in: path
-          name: id
+          name: tmdbId
           required: true
-          description: last watched id
       responses:
         "200":
           description: Default Response
@@ -601,6 +615,8 @@ paths:
                     type: boolean
                     nullable: true
                   tmdbId:
+                    type: number
+                  atSecond:
                     type: number
                   userId:
                     type: string
@@ -627,7 +643,9 @@ paths:
                   - season
                   - episode
                   - tmdbId
+                  - atSecond
                   - userId
+  /api/last_watched/{id}:
     patch:
       requestBody:
         content:
@@ -693,6 +711,8 @@ paths:
                     nullable: true
                   tmdbId:
                     type: number
+                  atSecond:
+                    type: number
                   userId:
                     type: string
                     format: uuid
@@ -703,6 +723,7 @@ paths:
                   - season
                   - episode
                   - tmdbId
+                  - atSecond
                   - userId
   /openapi.yaml/:
     get:
