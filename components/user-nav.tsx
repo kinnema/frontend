@@ -35,15 +35,13 @@ export function UserNav() {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end">
         <DropdownMenuLabel>Hesabım</DropdownMenuLabel>
-        <DropdownMenuSeparator />
         <DropdownMenuItem>
           <User className="mr-2 h-4 w-4" />
           <span>{user?.username}</span>
         </DropdownMenuItem>
+        <DropdownMenuSeparator />
         <Link href="/favorites" legacyBehavior>
-          <DropdownMenuItem
-            className="cursor-pointer"
-          >
+          <DropdownMenuItem className="cursor-pointer">
             <Heart className="mr-2 h-4 w-4" />
             <span>Favoriler</span>
           </DropdownMenuItem>

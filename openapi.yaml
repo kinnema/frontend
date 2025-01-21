@@ -354,6 +354,13 @@ paths:
                     createdAt:
                       type: string
                       format: date-time
+                  required:
+                    - id
+                    - name
+                    - poster_path
+                    - tmdbId
+                    - userId
+                    - createdAt
     post:
       requestBody:
         content:
@@ -394,6 +401,13 @@ paths:
                   createdAt:
                     type: string
                     format: date-time
+                required:
+                  - id
+                  - name
+                  - poster_path
+                  - tmdbId
+                  - userId
+                  - createdAt
   /api/favorites/{id}:
     delete:
       parameters:
@@ -425,6 +439,13 @@ paths:
                   createdAt:
                     type: string
                     format: date-time
+                required:
+                  - id
+                  - name
+                  - poster_path
+                  - tmdbId
+                  - userId
+                  - createdAt
   /api/last_watched/:
     get:
       responses:
