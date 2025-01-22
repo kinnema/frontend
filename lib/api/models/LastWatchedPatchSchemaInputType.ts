@@ -42,30 +42,6 @@ export interface LastWatchedPatchSchemaInputType {
      * @type {number}
      * @memberof LastWatchedPatchSchemaInputType
      */
-    tmdbId?: number | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof LastWatchedPatchSchemaInputType
-     */
-    name?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof LastWatchedPatchSchemaInputType
-     */
-    posterPath?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof LastWatchedPatchSchemaInputType
-     */
-    userId?: string | null;
-    /**
-     * 
-     * @type {number}
-     * @memberof LastWatchedPatchSchemaInputType
-     */
     atSecond?: number | null;
 }
 
@@ -89,10 +65,6 @@ export function LastWatchedPatchSchemaInputTypeFromJSONTyped(json: any, ignoreDi
         'season': json['season'] == null ? undefined : json['season'],
         'episode': json['episode'] == null ? undefined : json['episode'],
         'isWatched': json['isWatched'] == null ? undefined : json['isWatched'],
-        'tmdbId': json['tmdbId'] == null ? undefined : json['tmdbId'],
-        'name': json['name'] == null ? undefined : json['name'],
-        'posterPath': json['poster_path'] == null ? undefined : json['poster_path'],
-        'userId': json['userId'] == null ? undefined : json['userId'],
         'atSecond': json['atSecond'] == null ? undefined : json['atSecond'],
     };
 }
@@ -111,10 +83,6 @@ export function LastWatchedPatchSchemaInputTypeToJSONTyped(value?: LastWatchedPa
         'season': value['season'],
         'episode': value['episode'],
         'isWatched': value['isWatched'],
-        'tmdbId': value['tmdbId'],
-        'name': value['name'],
-        'poster_path': value['posterPath'],
-        'userId': value['userId'],
         'atSecond': value['atSecond'],
     };
 }

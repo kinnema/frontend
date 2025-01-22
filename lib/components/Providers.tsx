@@ -18,6 +18,7 @@ export const Providers = ({ data }: { data: IWatchResult[] }) => {
   );
   const { data: providers, isPending } =
     useQuery<ApiWatchProvidersGet200Response>({
+      networkMode: "offlineFirst",
       queryKey: ["providers"],
       queryFn: () => AppService.fetchProviders(),
     });

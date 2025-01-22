@@ -69,6 +69,24 @@ export interface Def9 {
     atSecond: number;
     /**
      * 
+     * @type {number}
+     * @memberof Def9
+     */
+    totalSeconds: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Def9
+     */
+    episodeName: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Def9
+     */
+    network: number;
+    /**
+     * 
      * @type {string}
      * @memberof Def9
      */
@@ -86,6 +104,9 @@ export function instanceOfDef9(value: object): value is Def9 {
     if (!('episode' in value) || value['episode'] === undefined) return false;
     if (!('tmdbId' in value) || value['tmdbId'] === undefined) return false;
     if (!('atSecond' in value) || value['atSecond'] === undefined) return false;
+    if (!('totalSeconds' in value) || value['totalSeconds'] === undefined) return false;
+    if (!('episodeName' in value) || value['episodeName'] === undefined) return false;
+    if (!('network' in value) || value['network'] === undefined) return false;
     if (!('userId' in value) || value['userId'] === undefined) return false;
     return true;
 }
@@ -108,6 +129,9 @@ export function Def9FromJSONTyped(json: any, ignoreDiscriminator: boolean): Def9
         'isWatched': json['isWatched'] == null ? undefined : json['isWatched'],
         'tmdbId': json['tmdbId'],
         'atSecond': json['atSecond'],
+        'totalSeconds': json['totalSeconds'],
+        'episodeName': json['episode_name'],
+        'network': json['network'],
         'userId': json['userId'],
     };
 }
@@ -131,6 +155,9 @@ export function Def9ToJSONTyped(value?: Def9 | null, ignoreDiscriminator: boolea
         'isWatched': value['isWatched'],
         'tmdbId': value['tmdbId'],
         'atSecond': value['atSecond'],
+        'totalSeconds': value['totalSeconds'],
+        'episode_name': value['episodeName'],
+        'network': value['network'],
         'userId': value['userId'],
     };
 }

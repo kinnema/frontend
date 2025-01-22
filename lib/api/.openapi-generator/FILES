@@ -5,6 +5,7 @@ models/ApiAuthLoginPost200Response.ts
 models/ApiAuthLoginPostRequest.ts
 models/ApiFavoritesGet200ResponseInner.ts
 models/ApiFavoritesPostRequest.ts
+models/ApiLastWatchedTmdbIdGet404Response.ts
 models/ApiWatchProvidersGet200Response.ts
 models/ApiWatchProvidersGet200ResponseProvidersInner.ts
 models/CreateUserInputType.ts

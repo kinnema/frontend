@@ -1,15 +1,13 @@
 "use client";
 
-import { Result } from "@/lib/types/tmdb";
 import "swiper/css/autoplay";
 import "swiper/css/free-mode";
 import { Autoplay, FreeMode } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { ShowCard } from "./show-card";
 
 interface ShowCarouselProps {
   title: string;
-  shows: Array<Result>;
+  shows: Array<React.ReactNode>;
   maxCards?: number;
   largeCards?: boolean;
   isLoading?: boolean;
@@ -43,15 +41,7 @@ export function ShowCarousel({ title, shows }: ShowCarouselProps) {
             }}
           >
             {shows.map((show) => (
-              <SwiperSlide key={show.id}>
-                <ShowCard
-                  show={{
-                    id: show.id,
-                    image: show.poster_path,
-                    title: show.name,
-                  }}
-                />
-              </SwiperSlide>
+              <SwiperSlide key={show?.toString()}>{show}</SwiperSlide>
             ))}
           </Swiper>
         </div>

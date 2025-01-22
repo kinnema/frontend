@@ -69,6 +69,24 @@ export interface LastWatchedCreateSchemaOutputType {
     atSecond: number;
     /**
      * 
+     * @type {number}
+     * @memberof LastWatchedCreateSchemaOutputType
+     */
+    totalSeconds: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof LastWatchedCreateSchemaOutputType
+     */
+    episodeName: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof LastWatchedCreateSchemaOutputType
+     */
+    network: number;
+    /**
+     * 
      * @type {string}
      * @memberof LastWatchedCreateSchemaOutputType
      */
@@ -86,6 +104,9 @@ export function instanceOfLastWatchedCreateSchemaOutputType(value: object): valu
     if (!('episode' in value) || value['episode'] === undefined) return false;
     if (!('tmdbId' in value) || value['tmdbId'] === undefined) return false;
     if (!('atSecond' in value) || value['atSecond'] === undefined) return false;
+    if (!('totalSeconds' in value) || value['totalSeconds'] === undefined) return false;
+    if (!('episodeName' in value) || value['episodeName'] === undefined) return false;
+    if (!('network' in value) || value['network'] === undefined) return false;
     if (!('userId' in value) || value['userId'] === undefined) return false;
     return true;
 }
@@ -108,6 +129,9 @@ export function LastWatchedCreateSchemaOutputTypeFromJSONTyped(json: any, ignore
         'isWatched': json['isWatched'] == null ? undefined : json['isWatched'],
         'tmdbId': json['tmdbId'],
         'atSecond': json['atSecond'],
+        'totalSeconds': json['totalSeconds'],
+        'episodeName': json['episode_name'],
+        'network': json['network'],
         'userId': json['userId'],
     };
 }
@@ -131,6 +155,9 @@ export function LastWatchedCreateSchemaOutputTypeToJSONTyped(value?: LastWatched
         'isWatched': value['isWatched'],
         'tmdbId': value['tmdbId'],
         'atSecond': value['atSecond'],
+        'totalSeconds': value['totalSeconds'],
+        'episode_name': value['episodeName'],
+        'network': value['network'],
         'userId': value['userId'],
     };
 }

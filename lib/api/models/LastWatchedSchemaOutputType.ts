@@ -77,6 +77,24 @@ export interface LastWatchedSchemaOutputType {
     atSecond: number;
     /**
      * 
+     * @type {number}
+     * @memberof LastWatchedSchemaOutputType
+     */
+    totalSeconds: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof LastWatchedSchemaOutputType
+     */
+    episodeName: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof LastWatchedSchemaOutputType
+     */
+    network: number;
+    /**
+     * 
      * @type {string}
      * @memberof LastWatchedSchemaOutputType
      */
@@ -100,6 +118,9 @@ export function instanceOfLastWatchedSchemaOutputType(value: object): value is L
     if (!('episode' in value) || value['episode'] === undefined) return false;
     if (!('tmdbId' in value) || value['tmdbId'] === undefined) return false;
     if (!('atSecond' in value) || value['atSecond'] === undefined) return false;
+    if (!('totalSeconds' in value) || value['totalSeconds'] === undefined) return false;
+    if (!('episodeName' in value) || value['episodeName'] === undefined) return false;
+    if (!('network' in value) || value['network'] === undefined) return false;
     if (!('userId' in value) || value['userId'] === undefined) return false;
     return true;
 }
@@ -122,6 +143,9 @@ export function LastWatchedSchemaOutputTypeFromJSONTyped(json: any, ignoreDiscri
         'isWatched': json['isWatched'] == null ? undefined : json['isWatched'],
         'tmdbId': json['tmdbId'],
         'atSecond': json['atSecond'],
+        'totalSeconds': json['totalSeconds'],
+        'episodeName': json['episode_name'],
+        'network': json['network'],
         'userId': json['userId'],
         'user': json['user'] == null ? undefined : ApiAuthLoginPost200ResponseFromJSON(json['user']),
     };
@@ -146,6 +170,9 @@ export function LastWatchedSchemaOutputTypeToJSONTyped(value?: LastWatchedSchema
         'isWatched': value['isWatched'],
         'tmdbId': value['tmdbId'],
         'atSecond': value['atSecond'],
+        'totalSeconds': value['totalSeconds'],
+        'episode_name': value['episodeName'],
+        'network': value['network'],
         'userId': value['userId'],
         'user': ApiAuthLoginPost200ResponseToJSON(value['user']),
     };

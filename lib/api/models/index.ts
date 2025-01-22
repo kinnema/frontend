@@ -4,6 +4,7 @@ export * from './ApiAuthLoginPost200Response';
 export * from './ApiAuthLoginPostRequest';
 export * from './ApiFavoritesGet200ResponseInner';
 export * from './ApiFavoritesPostRequest';
+export * from './ApiLastWatchedTmdbIdGet404Response';
 export * from './ApiWatchProvidersGet200Response';
 export * from './ApiWatchProvidersGet200ResponseProvidersInner';
 export * from './CreateUserInputType';

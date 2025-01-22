@@ -2,6 +2,7 @@
 
 import SeasonEpisodes from "@/app/dizi/[slug]/components/SeasonEpisodes";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loading } from "@/lib/components/Loading";
 import { FavoriteButton } from "@/lib/components/User/FavoriteButton";
@@ -107,7 +108,7 @@ export function SerieDialogFeature({ params, isClient }: IProps) {
           </h1>
           <div className="flex items-center gap-2 text-sm text-gray-300">
             {tmdbDetailsData.data.genres.map((genre, index) => {
-              if (index !== tmdbDetailsData.data.genres.length) {
+              if (index !== tmdbDetailsData.data.genres.length - 1) {
                 return (
                   <div key={genre.name}>
                     <span>{genre.name}</span>
@@ -130,7 +131,7 @@ export function SerieDialogFeature({ params, isClient }: IProps) {
 
       <Tabs
         defaultValue={activeSeasonTab.toString()}
-        className="w-full overflow-y-scroll scrollbar-hide scroll-smooth"
+        className="w-full"
         onValueChange={(tab) => setActivateSeasonTab(parseInt(tab))}
       >
         <TabsList className="w-full justify-start h-16 rounded-none border-b border-zinc-800 bg-black">
@@ -145,7 +146,9 @@ export function SerieDialogFeature({ params, isClient }: IProps) {
         </TabsList>
         <TabsContent value={activeSeasonTab.toString()} className="mt-0">
           <div className="p-6">
-            <div className="space-y-4">{renderSeasonTab()}</div>
+            <div className="space-y-4">
+              <ScrollArea className="h-[26vh]">{renderSeasonTab()}</ScrollArea>
+            </div>
           </div>
         </TabsContent>
       </Tabs>

@@ -69,6 +69,24 @@ export interface Def11 {
     atSecond: number;
     /**
      * 
+     * @type {number}
+     * @memberof Def11
+     */
+    totalSeconds: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Def11
+     */
+    episodeName: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Def11
+     */
+    network: number;
+    /**
+     * 
      * @type {string}
      * @memberof Def11
      */
@@ -86,6 +104,9 @@ export function instanceOfDef11(value: object): value is Def11 {
     if (!('episode' in value) || value['episode'] === undefined) return false;
     if (!('tmdbId' in value) || value['tmdbId'] === undefined) return false;
     if (!('atSecond' in value) || value['atSecond'] === undefined) return false;
+    if (!('totalSeconds' in value) || value['totalSeconds'] === undefined) return false;
+    if (!('episodeName' in value) || value['episodeName'] === undefined) return false;
+    if (!('network' in value) || value['network'] === undefined) return false;
     if (!('userId' in value) || value['userId'] === undefined) return false;
     return true;
 }
@@ -108,6 +129,9 @@ export function Def11FromJSONTyped(json: any, ignoreDiscriminator: boolean): Def
         'isWatched': json['isWatched'] == null ? undefined : json['isWatched'],
         'tmdbId': json['tmdbId'],
         'atSecond': json['atSecond'],
+        'totalSeconds': json['totalSeconds'],
+        'episodeName': json['episode_name'],
+        'network': json['network'],
         'userId': json['userId'],
     };
 }
@@ -131,6 +155,9 @@ export function Def11ToJSONTyped(value?: Def11 | null, ignoreDiscriminator: bool
         'isWatched': value['isWatched'],
         'tmdbId': value['tmdbId'],
         'atSecond': value['atSecond'],
+        'totalSeconds': value['totalSeconds'],
+        'episode_name': value['episodeName'],
+        'network': value['network'],
         'userId': value['userId'],
     };
 }

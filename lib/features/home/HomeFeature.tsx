@@ -1,12 +1,13 @@
 "use client";
 
-import { FeaturedCarousel } from "@//components/featured-carousel";
+import { FeaturedCarousel } from "@/components/featured-carousel";
+import { ShowCard } from "@/components/show-card";
 import { ShowCarousel } from "@/components/show-carousel";
+import { LastWatchedSeries } from "@/lib/components/User/LastWatchedSeries";
 import TmdbService from "@/lib/services/tmdb.service";
 import UserService from "@/lib/services/user.service";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { TmdbNetworks } from "@/lib/types/networks";
-import { Result } from "@/lib/types/tmdb";
 import { useQuery } from "@tanstack/react-query";
 
 export function HomeFeature() {
@@ -34,42 +35,46 @@ export function HomeFeature() {
       <FeaturedCarousel />
       {isAuthenticated &&
         lastWatched.isSuccess &&
-        lastWatched.data!.length > 0 && (
-          <ShowCarousel
-            title="Izlemeye devam et"
-            shows={
-              lastWatched.data?.map(
-                (s) =>
-                  ({
-                    name: `${s.name}`,
-                    original_name: `${s.name} - ${s.season}:${s.episode}`,
-                    poster_path: s.posterPath,
-                  } as Result)
-              ) ?? []
-            }
-            maxCards={5}
-            largeCards={true}
-            isLoading={bluTvShows.isPending}
-          />
-        )}
+        lastWatched.data!.length > 0 && <LastWatchedSeries />}
 
       <ShowCarousel
         title="BluTV"
-        shows={bluTvShows.data?.results ?? []}
+        shows={
+          bluTvShows.data?.results.map((s) => (
+            <ShowCard
+              show={{ id: s.id, image: s.poster_path, title: s.name }}
+              key={s.id}
+            />
+          )) ?? []
+        }
         maxCards={5}
         largeCards={true}
         isLoading={bluTvShows.isPending}
       />
       <ShowCarousel
         title="GainTV"
-        shows={gainTvShows.data?.results ?? []}
+        shows={
+          gainTvShows.data?.results.map((s) => (
+            <ShowCard
+              show={{ id: s.id, image: s.poster_path, title: s.name }}
+              key={s.id}
+            />
+          )) ?? []
+        }
         maxCards={5}
         largeCards={true}
         isLoading={gainTvShows.isPending}
       />
       <ShowCarousel
         title="Exxen"
-        shows={exxenShows.data?.results ?? []}
+        shows={
+          exxenShows.data?.results.map((s) => (
+            <ShowCard
+              show={{ id: s.id, image: s.poster_path, title: s.name }}
+              key={s.id}
+            />
+          )) ?? []
+        }
         maxCards={5}
         largeCards={true}
         isLoading={exxenShows.isPending}

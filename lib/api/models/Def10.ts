@@ -61,6 +61,24 @@ export interface Def10 {
      * @memberof Def10
      */
     atSecond: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Def10
+     */
+    totalSeconds: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Def10
+     */
+    episodeName: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Def10
+     */
+    network: number;
 }
 
 /**
@@ -73,6 +91,9 @@ export function instanceOfDef10(value: object): value is Def10 {
     if (!('season' in value) || value['season'] === undefined) return false;
     if (!('episode' in value) || value['episode'] === undefined) return false;
     if (!('atSecond' in value) || value['atSecond'] === undefined) return false;
+    if (!('totalSeconds' in value) || value['totalSeconds'] === undefined) return false;
+    if (!('episodeName' in value) || value['episodeName'] === undefined) return false;
+    if (!('network' in value) || value['network'] === undefined) return false;
     return true;
 }
 
@@ -93,6 +114,9 @@ export function Def10FromJSONTyped(json: any, ignoreDiscriminator: boolean): Def
         'episode': json['episode'],
         'isWatched': json['isWatched'] == null ? undefined : json['isWatched'],
         'atSecond': json['atSecond'],
+        'totalSeconds': json['totalSeconds'],
+        'episodeName': json['episode_name'],
+        'network': json['network'],
     };
 }
 
@@ -114,6 +138,9 @@ export function Def10ToJSONTyped(value?: Def10 | null, ignoreDiscriminator: bool
         'episode': value['episode'],
         'isWatched': value['isWatched'],
         'atSecond': value['atSecond'],
+        'totalSeconds': value['totalSeconds'],
+        'episode_name': value['episodeName'],
+        'network': value['network'],
     };
 }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import {
   ApiLastWatchedIdPatchRequest,
   LastWatchedPatchSchemaOutputType,
@@ -16,8 +17,8 @@ import { useAuthStore } from "@/lib/stores/auth.store";
 import { useWatchStore } from "@/lib/stores/watch.store";
 
 import { TurkishProviderIds } from "@/lib/types/networks";
-import { ITmdbSerieDetails } from "@/lib/types/tmdb";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { Episode, ITmdbSerieDetails } from "@/lib/types/tmdb";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Volume2, VolumeX, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -33,6 +34,7 @@ interface IProps {
 }
 
 export default function ChapterPage({ params }: IProps) {
+  const queryClient = useQueryClient();
   const season = parseInt(params.season.replace("sezon-", ""));
   const chapter = parseInt(params.chapter.replace("bolum-", ""));
   const [isPlaying, setIsPlaying] = useState(false);
@@ -44,6 +46,7 @@ export default function ChapterPage({ params }: IProps) {
   const watchLinks = useWatchStore((state) => state.links);
   const clear = useWatchStore((state) => state.clear);
   const selectedWatchLink = useWatchStore((state) => state.selectedWatchLink);
+  const toast = useToast();
 
   const tmdbData = useQuery<ITmdbSerieDetails>({
     queryKey: ["tmdb-details-with-season", params.slug, params.tmdbId],
@@ -54,8 +57,22 @@ export default function ChapterPage({ params }: IProps) {
     },
   });
 
+  const tmdbEpisodeData = useQuery<Episode>({
+    queryKey: ["tmdb-detail-episode", params.tmdbId, season, chapter],
+    queryFn: async () => {
+      const tmdbData = await TmdbService.fetchEpisode(
+        parseInt(params.tmdbId),
+        season,
+        chapter
+      );
+
+      return tmdbData;
+    },
+  });
+
   const lastWatched = useQuery<LastWatchedSchemaOutputType>({
     queryKey: ["last-watched", tmdbData.data?.id],
+    retry: 1,
     queryFn: async () => {
       const lastWatched = await UserService.fetchSingleLastWatched(
         tmdbData.data?.id!
@@ -87,6 +104,14 @@ export default function ChapterPage({ params }: IProps) {
 
       return response;
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["last-watched", tmdbData.data?.id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["lastWatched"],
+      });
+    },
   });
 
   const isTurkishProvider = useMemo(() => {
@@ -117,13 +142,20 @@ export default function ChapterPage({ params }: IProps) {
             },
           });
         } else {
+          const minutesToSeconds = Math.floor(
+            tmdbEpisodeData.data!.runtime * 60
+          );
+
           await addToLastWatched.mutateAsync({
             name: tmdbData.data.name,
-            posterPath: tmdbData.data.poster_path,
+            posterPath: tmdbEpisodeData.data!.still_path,
             tmdbId: tmdbData.data.id,
             season,
             episode: chapter,
             atSecond: state.playedSeconds,
+            totalSeconds: minutesToSeconds,
+            episodeName: tmdbEpisodeData.data!.name,
+            network: parseInt(searchParams.get("network")!),
           });
         }
       } catch (error) {
@@ -132,11 +164,11 @@ export default function ChapterPage({ params }: IProps) {
     }
   };
 
-  if (tmdbData.isError) {
+  if (tmdbData.isError || tmdbEpisodeData.isError) {
     return <div className="text-red-500">Dizi bulunamadı</div>;
   }
 
-  if (tmdbData.isPending) {
+  if (tmdbData.isPending || tmdbEpisodeData.isPending) {
     return <Loading fullscreen />;
   }
 
@@ -150,6 +182,15 @@ export default function ChapterPage({ params }: IProps) {
 
   function onPause(): void {
     setIsPlaying(false);
+  }
+  function onStart(): void {
+    if (lastWatched.data) {
+      toast.toast({
+        title: "İzlemeye devam ediyorsunuz",
+        description: `İzlemeye devam ediyorsunuz. ${lastWatched.data.atSecond} saniyede devam ediyorsunuz.`,
+      });
+      videoPlayerRef.current?.seekTo(lastWatched.data.atSecond);
+    }
   }
 
   return (
@@ -185,11 +226,12 @@ export default function ChapterPage({ params }: IProps) {
                     width: "100%",
                     height: "100%",
                   }}
-                  light={`https://image.tmdb.org/t/p/original/${tmdbData.data.poster_path}`}
+                  light={`https://image.tmdb.org/t/p/original/${tmdbEpisodeData.data.still_path}`}
                   controls
                   onPlay={onPlay}
                   onPause={onPause}
                   onProgress={handleProgress}
+                  onStart={onStart}
                 />
               )}
             </>
@@ -231,11 +273,12 @@ export default function ChapterPage({ params }: IProps) {
             orijinal dizisi
           </span>
           <h1 className="text-2xl md:text-4xl font-bold mb-2">
-            {tmdbData.data.original_name}
+            {tmdbData.data.name}
           </h1>
+          <h3 className="text-xl mb-2">{tmdbEpisodeData.data.name}</h3>
           <div className="flex items-center gap-2 text-xs md:text-sm text-gray-300">
             {tmdbData.data.genres.map((genre, index) => {
-              if (index !== tmdbData.data.genres.length) {
+              if (index !== tmdbData.data.genres.length - 1) {
                 return (
                   <div key={genre.name}>
                     <span>{genre.name}</span>

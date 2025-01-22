@@ -37,12 +37,6 @@ export interface ApiWatchProvidersGet200ResponseProvidersInner {
      * @memberof ApiWatchProvidersGet200ResponseProvidersInner
      */
     isEnabled?: boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof ApiWatchProvidersGet200ResponseProvidersInner
-     */
-    providerUrl?: string;
 }
 
 /**
@@ -65,7 +59,6 @@ export function ApiWatchProvidersGet200ResponseProvidersInnerFromJSONTyped(json:
         'name': json['name'] == null ? undefined : json['name'],
         'priority': json['priority'] == null ? undefined : json['priority'],
         'isEnabled': json['isEnabled'] == null ? undefined : json['isEnabled'],
-        'providerUrl': json['providerUrl'] == null ? undefined : json['providerUrl'],
     };
 }
 
@@ -83,7 +76,6 @@ export function ApiWatchProvidersGet200ResponseProvidersInnerToJSONTyped(value?:
         'name': value['name'],
         'priority': value['priority'],
         'isEnabled': value['isEnabled'],
-        'providerUrl': value['providerUrl'],
     };
 }
 

@@ -96,6 +96,12 @@ components:
           type: number
         atSecond:
           type: number
+        totalSeconds:
+          type: number
+        episode_name:
+          type: string
+        network:
+          type: number
         userId:
           type: string
           format: uuid
@@ -123,6 +129,9 @@ components:
         - episode
         - tmdbId
         - atSecond
+        - totalSeconds
+        - episode_name
+        - network
         - userId
     def-8:
       type: object
@@ -162,6 +171,12 @@ components:
           type: number
         atSecond:
           type: number
+        totalSeconds:
+          type: number
+        episode_name:
+          type: string
+        network:
+          type: number
         userId:
           type: string
           format: uuid
@@ -173,6 +188,9 @@ components:
         - episode
         - tmdbId
         - atSecond
+        - totalSeconds
+        - episode_name
+        - network
         - userId
     def-10:
       type: object
@@ -193,6 +211,12 @@ components:
           nullable: true
         atSecond:
           type: number
+        totalSeconds:
+          type: number
+        episode_name:
+          type: string
+        network:
+          type: number
       required:
         - tmdbId
         - name
@@ -200,6 +224,9 @@ components:
         - season
         - episode
         - atSecond
+        - totalSeconds
+        - episode_name
+        - network
     def-11:
       type: object
       title: lastWatchedPatchSchemaOutputType
@@ -222,6 +249,12 @@ components:
           type: number
         atSecond:
           type: number
+        totalSeconds:
+          type: number
+        episode_name:
+          type: string
+        network:
+          type: number
         userId:
           type: string
           format: uuid
@@ -233,6 +266,9 @@ components:
         - episode
         - tmdbId
         - atSecond
+        - totalSeconds
+        - episode_name
+        - network
         - userId
     def-12:
       type: object
@@ -246,19 +282,6 @@ components:
           nullable: true
         isWatched:
           type: boolean
-          nullable: true
-        tmdbId:
-          type: number
-          nullable: true
-        name:
-          type: string
-          nullable: true
-        poster_path:
-          type: string
-          nullable: true
-        userId:
-          type: string
-          format: uuid
           nullable: true
         atSecond:
           type: number
@@ -486,6 +509,12 @@ paths:
                       type: number
                     atSecond:
                       type: number
+                    totalSeconds:
+                      type: number
+                    episode_name:
+                      type: string
+                    network:
+                      type: number
                     userId:
                       type: string
                       format: uuid
@@ -512,6 +541,9 @@ paths:
                     - episode
                     - tmdbId
                     - atSecond
+                    - totalSeconds
+                    - episode_name
+                    - network
                     - userId
     post:
       requestBody:
@@ -536,6 +568,12 @@ paths:
                   nullable: true
                 atSecond:
                   type: number
+                totalSeconds:
+                  type: number
+                episode_name:
+                  type: string
+                network:
+                  type: number
               required:
                 - tmdbId
                 - name
@@ -543,6 +581,9 @@ paths:
                 - season
                 - episode
                 - atSecond
+                - totalSeconds
+                - episode_name
+                - network
         required: true
       responses:
         "200":
@@ -571,6 +612,12 @@ paths:
                     type: number
                   atSecond:
                     type: number
+                  totalSeconds:
+                    type: number
+                  episode_name:
+                    type: string
+                  network:
+                    type: number
                   userId:
                     type: string
                     format: uuid
@@ -582,6 +629,9 @@ paths:
                   - episode
                   - tmdbId
                   - atSecond
+                  - totalSeconds
+                  - episode_name
+                  - network
                   - userId
   /api/last_watched/{tmdbId}:
     get:
@@ -618,6 +668,12 @@ paths:
                     type: number
                   atSecond:
                     type: number
+                  totalSeconds:
+                    type: number
+                  episode_name:
+                    type: string
+                  network:
+                    type: number
                   userId:
                     type: string
                     format: uuid
@@ -644,7 +700,21 @@ paths:
                   - episode
                   - tmdbId
                   - atSecond
+                  - totalSeconds
+                  - episode_name
+                  - network
                   - userId
+        "404":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                  - error
   /api/last_watched/{id}:
     patch:
       requestBody:
@@ -662,19 +732,6 @@ paths:
                   nullable: true
                 isWatched:
                   type: boolean
-                  nullable: true
-                tmdbId:
-                  type: number
-                  nullable: true
-                name:
-                  type: string
-                  nullable: true
-                poster_path:
-                  type: string
-                  nullable: true
-                userId:
-                  type: string
-                  format: uuid
                   nullable: true
                 atSecond:
                   type: number
@@ -713,6 +770,12 @@ paths:
                     type: number
                   atSecond:
                     type: number
+                  totalSeconds:
+                    type: number
+                  episode_name:
+                    type: string
+                  network:
+                    type: number
                   userId:
                     type: string
                     format: uuid
@@ -724,6 +787,9 @@ paths:
                   - episode
                   - tmdbId
                   - atSecond
+                  - totalSeconds
+                  - episode_name
+                  - network
                   - userId
   /openapi.yaml/:
     get:
@@ -751,8 +817,6 @@ paths:
                           type: number
                         isEnabled:
                           type: boolean
-                        providerUrl:
-                          type: string
   /api/watch/:
     get:
       parameters:

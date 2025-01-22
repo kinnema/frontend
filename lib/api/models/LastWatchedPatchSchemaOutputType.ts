@@ -69,6 +69,24 @@ export interface LastWatchedPatchSchemaOutputType {
     atSecond: number;
     /**
      * 
+     * @type {number}
+     * @memberof LastWatchedPatchSchemaOutputType
+     */
+    totalSeconds: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof LastWatchedPatchSchemaOutputType
+     */
+    episodeName: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof LastWatchedPatchSchemaOutputType
+     */
+    network: number;
+    /**
+     * 
      * @type {string}
      * @memberof LastWatchedPatchSchemaOutputType
      */
@@ -86,6 +104,9 @@ export function instanceOfLastWatchedPatchSchemaOutputType(value: object): value
     if (!('episode' in value) || value['episode'] === undefined) return false;
     if (!('tmdbId' in value) || value['tmdbId'] === undefined) return false;
     if (!('atSecond' in value) || value['atSecond'] === undefined) return false;
+    if (!('totalSeconds' in value) || value['totalSeconds'] === undefined) return false;
+    if (!('episodeName' in value) || value['episodeName'] === undefined) return false;
+    if (!('network' in value) || value['network'] === undefined) return false;
     if (!('userId' in value) || value['userId'] === undefined) return false;
     return true;
 }
@@ -108,6 +129,9 @@ export function LastWatchedPatchSchemaOutputTypeFromJSONTyped(json: any, ignoreD
         'isWatched': json['isWatched'] == null ? undefined : json['isWatched'],
         'tmdbId': json['tmdbId'],
         'atSecond': json['atSecond'],
+        'totalSeconds': json['totalSeconds'],
+        'episodeName': json['episode_name'],
+        'network': json['network'],
         'userId': json['userId'],
     };
 }
@@ -131,6 +155,9 @@ export function LastWatchedPatchSchemaOutputTypeToJSONTyped(value?: LastWatchedP
         'isWatched': value['isWatched'],
         'tmdbId': value['tmdbId'],
         'atSecond': value['atSecond'],
+        'totalSeconds': value['totalSeconds'],
+        'episode_name': value['episodeName'],
+        'network': value['network'],
         'userId': value['userId'],
     };
 }

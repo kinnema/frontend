@@ -9,6 +9,7 @@ import UserService from "@/lib/services/user.service";
 import { ITmdbSerieDetails } from "@/lib/types/tmdb";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Heart, Loader2 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 
 interface IProps {
   tmdbData: ITmdbSerieDetails;
@@ -94,35 +95,64 @@ export function FavoriteButton({ tmdbData }: IProps) {
     <Button
       variant="outline"
       className="w-full"
-      onClick={() =>
-        addToFavorites.mutate({
-          name: tmdbData.name,
-          posterPath: tmdbData.poster_path,
-          tmdbId: tmdbData.id,
-        })
-      }
+      onClick={isFavorite ? onRemoveFavorite : onAddFavorite}
     >
       {addToFavorites.isPending ||
       favorites.isPending ||
       removeFavorite.isPending ? (
         <Loader2 className="h-6 w-6 animate-spin" />
       ) : (
-        <>
+        <AnimatePresence mode="wait">
           {isFavorite ? (
-            <span
-              onClick={onRemoveFavorite}
+            <motion.span
+              key="remove"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2 }}
               className="flex gap-2 items-center"
             >
-              <Heart className="w-6 h-6 text-primary fill-primary" />
+              <motion.div
+                whileTap={{ scale: 0.8 }}
+                animate={{
+                  scale: [1, 1.2, 1],
+                  rotate: [0, -15, 15, -15, 0],
+                }}
+                transition={{
+                  duration: 0.5,
+                  ease: "easeInOut",
+                }}
+              >
+                <Heart className="w-6 h-6 text-primary fill-primary" />
+              </motion.div>
               Favorilerden cikar
-            </span>
+            </motion.span>
           ) : (
-            <span onClick={onAddFavorite} className="flex gap-2 items-center">
-              <Heart className="h-6 w-6" />
+            <motion.span
+              key="add"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.2 }}
+              className="flex gap-2 items-center"
+            >
+              <motion.div
+                whileTap={{ scale: 0.8 }}
+                animate={{
+                  scale: [1, 1.2, 1],
+                  rotate: [0, -15, 15, -15, 0],
+                }}
+                transition={{
+                  duration: 0.5,
+                  ease: "easeInOut",
+                }}
+              >
+                <Heart className="h-6 w-6" />
+              </motion.div>
               Favorilere ekle
-            </span>
+            </motion.span>
           )}
-        </>
+        </AnimatePresence>
       )}
     </Button>
   );
