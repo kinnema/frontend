@@ -30,7 +30,7 @@ export function ShowCard({
         passHref
         legacyBehavior
       >
-        <div className="relative block aspect-[2/3] w-[200px] rounded-lg overflow-hidden group cursor-pointer">
+        <div className="relative block aspect-[2/3] w-40 rounded-lg overflow-hidden group cursor-pointer">
           {onRemove && (
             <Button
               variant="link"

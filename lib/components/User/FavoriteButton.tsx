@@ -94,12 +94,11 @@ export function FavoriteButton({ tmdbData }: IProps) {
   return (
     <Button
       variant="outline"
-      className="w-full"
       onClick={isFavorite ? onRemoveFavorite : onAddFavorite}
     >
       {addToFavorites.isPending ||
-      favorites.isPending ||
-      removeFavorite.isPending ? (
+        favorites.isPending ||
+        removeFavorite.isPending ? (
         <Loader2 className="h-6 w-6 animate-spin" />
       ) : (
         <AnimatePresence mode="wait">
