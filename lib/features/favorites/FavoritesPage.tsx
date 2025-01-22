@@ -38,7 +38,7 @@ export function FavoritesPageFeature() {
               <div className="flex flex-col sm:flex-row items-center gap-4 p-4">
                 <ShowCard
                   show={{
-                    id: show.id,
+                    id: show.tmdbId,
                     title: show.name,
                     image: show.posterPath,
                   }}
