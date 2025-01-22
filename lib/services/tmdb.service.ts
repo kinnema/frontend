@@ -64,14 +64,18 @@ class TmdbService {
   };
 
   static fetchNetworkSeries = (
-    network: TmdbNetworks
+    network: TmdbNetworks,
+    page: number = 1
   ): Promise<ITmdbSearchResults> => {
-    return this.fetchSeriesByNetwork(network);
+    return this.fetchSeriesByNetwork(network, page);
   };
 
-  private static fetchSeriesByNetwork = async (network: TmdbNetworks) => {
+  private static fetchSeriesByNetwork = async (
+    network: TmdbNetworks,
+    page: number = 1
+  ) => {
     return this.fetchTMDB<ITmdbSearchResults>(
-      "/discover/tv?with_networks=" + network
+      `/discover/tv?with_networks=${network}&page=${page}&language=tr-TR`
     );
   };
 

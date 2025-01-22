@@ -11,13 +11,11 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { Heart, LogOut, User } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 export function UserNav() {
   const user = useAuthStore((state) => state.user);
   const logOut = useAuthStore((state) => state.logOut);
   const toast = useToast();
-  const router = useRouter();
 
   function onPressLogout(): void {
     logOut();

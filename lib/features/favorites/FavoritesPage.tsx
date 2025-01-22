@@ -30,17 +30,24 @@ export function FavoritesPageFeature() {
   }
 
   return (
-    <ScrollArea>
-      {data?.map((show) => (
-        <ShowCard
-          key={show.id}
-          show={{
-            id: show.id,
-            title: show.name,
-            image: show.posterPath,
-          }}
-        />
-      ))}
+    <ScrollArea className="h-[calc(100vh-4rem)]">
+      <div className="container mx-auto p-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          {data?.map((show) => (
+            <div key={show.id} className="w-full hover:bg-accent/50 rounded-lg transition-colors">
+              <div className="flex flex-col sm:flex-row items-center gap-4 p-4">
+                <ShowCard
+                  show={{
+                    id: show.id,
+                    title: show.name,
+                    image: show.posterPath,
+                  }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </ScrollArea>
   );
 }

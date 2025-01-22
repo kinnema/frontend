@@ -43,7 +43,9 @@ export function ShowCarousel({ title, shows }: ShowCarouselProps) {
             }}
           >
             {shows.map((show) => (
-              <SwiperSlide key={show?.toString()}>{show}</SwiperSlide>
+              <SwiperSlide key={show?.toString()} className="!w-auto">
+                {show}
+              </SwiperSlide>
             ))}
           </Swiper>
         </div>

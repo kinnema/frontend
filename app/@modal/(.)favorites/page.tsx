@@ -10,9 +10,9 @@ import { useRouter } from "next/navigation";
 export default function FavoritesModal() {
     const router = useRouter();
     return (
-        <Dialog open modal >
-            <DialogContent>
-                <DialogHeader>
+        <Dialog open modal>
+            <DialogContent className="max-w-[95vw] w-full md:max-w-3xl lg:max-w-4xl xl:max-w-5xl h-[90vh] overflow-y-auto">
+                <DialogHeader className="relative">
                     <DialogTitle>Favoriler</DialogTitle>
                     <DialogDescription>İzlediğiniz herşeyi kaydedin!</DialogDescription>
                     <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
@@ -26,7 +26,6 @@ export default function FavoritesModal() {
                         </Button>
                     </div>
                 </DialogHeader>
-
                 <FavoritesPageFeature />
             </DialogContent>
         </Dialog>

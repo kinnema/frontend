@@ -100,10 +100,10 @@ export const Providers = ({ data }: { data: IWatchResult[] }) => {
                   transition={{ delay: 0.2 }}
                 >
                   {hasError
-                    ? "Error occurred"
+                    ? "Hata oluştu"
                     : notFound
-                    ? "Doesn't have the video"
-                    : "Available"}
+                      ? "Video bulunamadı"
+                      : "Kaynak mevcut"}
                 </motion.span>
               </MotionCard>
             );

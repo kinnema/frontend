@@ -185,9 +185,11 @@ export default function ChapterPage({ params }: IProps) {
   }
   function onStart(): void {
     if (lastWatched.data) {
+      const secondsToMinutes = Math.floor(lastWatched.data.atSecond / 60);
       toast.toast({
         title: "İzlemeye devam ediyorsunuz",
-        description: `İzlemeye devam ediyorsunuz. ${lastWatched.data.atSecond} saniyede devam ediyorsunuz.`,
+        description: `İzlemeye devam ediyorsunuz. ${secondsToMinutes}.dakika da devam ediyorsunuz.`,
+        duration: 1000,
       });
       videoPlayerRef.current?.seekTo(lastWatched.data.atSecond);
     }

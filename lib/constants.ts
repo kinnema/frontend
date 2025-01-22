@@ -23,4 +23,8 @@ export const NAV_LINKS = [
     name: "Netflix",
     href: "/collection/netflix",
   },
+  {
+    name: "tabii",
+    href: "/collection/tabii",
+  },
 ];

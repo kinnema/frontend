@@ -1,6 +1,6 @@
 "use client";
 
-import { MainNav, navItems } from "@/components/main-nav";
+import { MainNav } from "@/components/main-nav";
 import { Button } from "@/components/ui/button";
 import { UserNav } from "@/components/user-nav";
 import { useToast } from "@/hooks/use-toast";
@@ -9,6 +9,7 @@ import { Menu, Search, SearchIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { NAV_LINKS } from "../constants";
 import { useAuthStore } from "../stores/auth.store";
 
 export function Header() {
@@ -122,7 +123,7 @@ export function Header() {
           </Link>
 
           <ul className="flex flex-col justify-center items-center mt-10">
-            {navItems.map((link) => (
+            {NAV_LINKS.map((link) => (
               <li className="p-3 text-center" key={link.href}>
                 <Link
                   key={link.href}
@@ -133,7 +134,7 @@ export function Header() {
                     "dark:hover:text-red-600"
                   )}
                 >
-                  <span>{link.label}</span>
+                  <span>{link.name}</span>
                 </Link>
               </li>
             ))}
