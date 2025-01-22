@@ -41,7 +41,7 @@ export function CollectionSeries({ network }: IProps) {
       <div className="mt-4 flex flex-wrap justify-center md:justify-start gap-3 md:gap-5">
         {data.results.map((serie) => (
           <Link
-            href={`/dizi/${slugify(serie.original_name)}`}
+            href={`/dizi/${slugify(serie.original_name)}/${serie.id}`}
             key={serie.id}
             className="overflow-hidden"
           >
