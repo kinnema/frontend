@@ -234,6 +234,7 @@ export default function ChapterPage({ params }: IProps) {
                   onPause={onPause}
                   onProgress={handleProgress}
                   onStart={onStart}
+                  pip={true}
                 />
               )}
             </>
