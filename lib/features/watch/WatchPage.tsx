@@ -19,7 +19,7 @@ import { useWatchStore } from "@/lib/stores/watch.store";
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { Episode, ITmdbSerieDetails } from "@/lib/types/tmdb";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Volume2, VolumeX, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ReactHlsPlayer from "react-player";
@@ -41,7 +41,6 @@ export default function ChapterPage({ params }: IProps) {
   const isAuthenticated = useAuthStore((state) => state.isLoggedIn);
   const searchParams = useSearchParams();
   const videoPlayerRef = useRef<ReactHlsPlayer>(null);
-  const [isMuted, setIsMuted] = useState(false);
   const router = useRouter();
   const watchLinks = useWatchStore((state) => state.links);
   const clear = useWatchStore((state) => state.clear);
@@ -222,7 +221,6 @@ export default function ChapterPage({ params }: IProps) {
                   stopOnUnmount
                   playing
                   ref={videoPlayerRef}
-                  muted={isMuted}
                   style={{
                     backgroundColor: "black",
                     width: "100%",
@@ -241,18 +239,7 @@ export default function ChapterPage({ params }: IProps) {
           )}
         </div>
         <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="hover:bg-white/10 text-white"
-            onClick={() => setIsMuted(!isMuted)}
-          >
-            {isMuted ? (
-              <VolumeX className="h-6 w-6" />
-            ) : (
-              <Volume2 className="h-6 w-6" />
-            )}
-          </Button>
+
           <Button
             onClick={onClickClose}
             variant="ghost"
