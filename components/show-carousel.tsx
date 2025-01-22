@@ -14,6 +14,8 @@ interface ShowCarouselProps {
 }
 
 export function ShowCarousel({ title, shows }: ShowCarouselProps) {
+  if (shows.length === 0) return null;
+
   return (
     <section className="py-8">
       <div className=" md:px-6">

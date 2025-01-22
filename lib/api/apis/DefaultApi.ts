@@ -71,6 +71,10 @@ export interface ApiFavoritesPostOperationRequest {
     apiFavoritesPostRequest: ApiFavoritesPostRequest;
 }
 
+export interface ApiLastWatchedIdDeleteRequest {
+    id: string;
+}
+
 export interface ApiLastWatchedIdPatchRequest {
     id: string;
     lastWatchedPatchSchemaInputType?: LastWatchedPatchSchemaInputType;
@@ -319,6 +323,36 @@ export class DefaultApi extends runtime.BaseAPI {
     async apiLastWatchedGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<LastWatchedSchemaOutputType>> {
         const response = await this.apiLastWatchedGetRaw(initOverrides);
         return await response.value();
+    }
+
+    /**
+     */
+    async apiLastWatchedIdDeleteRaw(requestParameters: ApiLastWatchedIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling apiLastWatchedIdDelete().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/last_watched/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async apiLastWatchedIdDelete(requestParameters: ApiLastWatchedIdDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.apiLastWatchedIdDeleteRaw(requestParameters, initOverrides);
     }
 
     /**

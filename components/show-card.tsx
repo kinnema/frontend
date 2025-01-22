@@ -3,14 +3,17 @@
 import { Progress } from "@/components/ui/progress";
 import { slugify, tmdbPoster } from "@/lib/helpers";
 import { IShowCard } from "@/lib/types/show_card";
+import { X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { Button } from "./ui/button";
 
 interface ShowCardProps {
   show: IShowCard;
   withTimeline?: boolean;
   progress?: number;
   href?: string;
+  onRemove?: () => void;
 }
 
 export function ShowCard({
@@ -18,6 +21,7 @@ export function ShowCard({
   withTimeline = false,
   progress = 70,
   href,
+  onRemove,
 }: ShowCardProps) {
   return (
     <>
@@ -26,7 +30,19 @@ export function ShowCard({
         passHref
         legacyBehavior
       >
-        <button className="relative block aspect-[2/3] w-[200px] rounded-lg overflow-hidden group">
+        <div className="relative block aspect-[2/3] w-[200px] rounded-lg overflow-hidden group cursor-pointer">
+          {onRemove && (
+            <Button
+              variant="link"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRemove();
+              }}
+              className="absolute top-2 right-2 z-10 p-1.5 w-8 h-8 rounded-full bg-black/50 hover:bg-black/70 transition-colors opacity-0 group-hover:opacity-100"
+            >
+              <X className="text-white" />
+            </Button>
+          )}
           <Image
             src={tmdbPoster(show.image!)}
             alt={show.title}
@@ -52,7 +68,7 @@ export function ShowCard({
               />
             </div>
           )}
-        </button>
+        </div>
       </Link>
     </>
   );

@@ -791,6 +791,17 @@ paths:
                   - episode_name
                   - network
                   - userId
+    delete:
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: path
+          name: id
+          required: true
+      responses:
+        "204":
+          description: Default Response
   /openapi.yaml/:
     get:
       responses:

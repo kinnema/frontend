@@ -25,6 +25,14 @@ export default class UserService {
     return response;
   };
 
+  static deleteLastWatched = async (id: string) => {
+    const response = await apiClient.apiLastWatchedIdDelete({
+      id,
+    });
+
+    return response;
+  };
+
   static fetchLastWatched = async () => {
     const response = await apiClient.apiLastWatchedGet();
 
