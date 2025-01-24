@@ -120,6 +120,12 @@ export default function ChapterPage({ params }: IProps) {
   }, []);
 
   useEffect(() => {
+    if (!isTurkishProvider) {
+      setIsPlaying(true);
+    }
+  }, [isTurkishProvider]);
+
+  useEffect(() => {
     AppService.fetchSeries(params.slug, season, chapter);
 
     return () => {
