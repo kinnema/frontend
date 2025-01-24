@@ -38,6 +38,59 @@ export function Providers({ children }: PropsWithChildren) {
   const queryClient = getQueryClient();
   const initTheme = useAppStore((state) => state.initTheme);
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const logOut = useAuthStore((state) => state.logOut);
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+
+    const checkToken = async () => {
+      const token = await getAccessToken();
+      if (!token && isLoggedIn) {
+        logOut();
+      }
+    };
+
+    let timeoutId: NodeJS.Timeout;
+
+    const scheduleNextCheck = () => {
+      // Only schedule next check if page is visible
+      if (document.visibilityState === 'visible') {
+        timeoutId = setTimeout(async () => {
+          await checkToken();
+          scheduleNextCheck();
+        }, 30000); // Check every 30 seconds when visible
+      }
+    };
+
+    // Initial check and start periodic checks
+    checkToken();
+    scheduleNextCheck();
+
+    // Check when tab becomes visible
+    const visibilityHandler = () => {
+      if (document.visibilityState === 'visible') {
+        checkToken();
+        scheduleNextCheck();
+      } else {
+        // Clear timeout when page becomes hidden
+        clearTimeout(timeoutId);
+      }
+    };
+
+    // Check on focus
+    const focusHandler = () => {
+      checkToken();
+    };
+
+    document.addEventListener('visibilitychange', visibilityHandler);
+    window.addEventListener('focus', focusHandler);
+
+    return () => {
+      document.removeEventListener('visibilitychange', visibilityHandler);
+      window.removeEventListener('focus', focusHandler);
+      clearTimeout(timeoutId);
+    };
+  }, [isLoggedIn, logOut]);
 
   useEffect(() => {
     if (!isLoggedIn) return;

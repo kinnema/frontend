@@ -18,7 +18,7 @@ export async function loginServerAction(data: ApiAuthLoginPostRequest) {
     cookies().set("access_token", cookie!, {
       httpOnly: true,
       secure: true,
-      maxAge: 60 * 60 * 24 * 30,
+      maxAge: 60 * 60 * 24 * 7,
       sameSite: "strict",
     });
   }
