@@ -75,7 +75,7 @@ class TmdbService {
     page: number = 1
   ) => {
     return this.fetchTMDB<ITmdbSearchResults>(
-      `/discover/tv?with_networks=${network}&page=${page}&language=tr-TR`
+      `/discover/tv?with_networks=${network}&page=${page}&language=tr-TR&with_status=0`
     );
   };
 
