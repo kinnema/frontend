@@ -5,7 +5,6 @@ const revision = crypto.randomUUID();
 const withPWA = NextPwa({
   dest: "public",
   register: true,
-  skipWaiting: true,
   additionalManifestEntries: [{ url: "/~offline", revision }],
   navigateFallback: "/offline",
   runtimeCaching: [
