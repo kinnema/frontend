@@ -32,12 +32,11 @@ export function LastWatchedSeries() {
 
   if (lastWatched.isPending) return <Loading />;
 
-  if (lastWatched.isError) return <div>Error</div>;
 
   return (
     <ShowCarousel
-      title="Izlemeye devam et"
-      shows={lastWatched.data!.map((s) => {
+      title="İzlemeye devam et"
+      shows={lastWatched.isError ? [] : lastWatched.data!.map((s) => {
         return (
           <ShowCard
             show={{
@@ -50,9 +49,8 @@ export function LastWatchedSeries() {
             withTimeline={true}
             progress={Math.floor((s.atSecond / s.totalSeconds) * 100)}
             onRemove={() => handleRemove(s.id)}
-            href={`/dizi/${slugify(s.name)}/${s.tmdbId}/sezon-${
-              s.season
-            }/bolum-${s.episode}?network=${s.network}`}
+            href={`/dizi/${slugify(s.name)}/${s.tmdbId}/sezon-${s.season
+              }/bolum-${s.episode}?network=${s.network}`}
           />
         );
       })}
