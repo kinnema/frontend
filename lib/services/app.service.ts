@@ -1,4 +1,4 @@
-import EventEmitter from "node:events";
+import { EventEmitter } from "node:events";
 import type TypedEmitter from "typed-emitter";
 import { Configuration, DefaultApi, RequestContext } from "../api";
 import { BASE_URL } from "../constants";
@@ -10,6 +10,7 @@ import {
   IWatchEventProviderSuccess,
   IWatchEventTryingProvider,
 } from "../types/watch";
+
 const getAuthMiddleware = () => ({
   pre: async (context: RequestContext) => {
     if (typeof window === "undefined") {
