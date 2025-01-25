@@ -53,7 +53,11 @@ export default class AppService {
 
     while (true) {
       const { done, value } = await reader.read();
-      if (done) break;
+      if (done) {
+        useWatchStore.getState().setIsPending(false);
+
+        break;
+      }
 
       // Decode the chunk and split by newlines
       const chunk = decoder.decode(value, { stream: true });
@@ -64,6 +68,7 @@ export default class AppService {
         if (line.trim()) {
           try {
             const jsonData = JSON.parse(line);
+            console.log(jsonData);
             useWatchStore.getState().addLink(jsonData);
 
             await new Promise((resolve) => setTimeout(resolve, 500));

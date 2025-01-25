@@ -211,10 +211,6 @@ export default function ChapterPage({ params }: IProps) {
               allowFullScreen
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             />
-          ) : watchLinks.length === 0 ? (
-            <div className="m-auto">
-              <Loading />
-            </div>
           ) : (
             <>
               {!selectedWatchLink ? (
@@ -245,7 +241,6 @@ export default function ChapterPage({ params }: IProps) {
           )}
         </div>
         <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
-
           <Button
             onClick={onClickClose}
             variant="ghost"
