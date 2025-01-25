@@ -3,18 +3,19 @@
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import WatchPage from "@/lib/features/watch/WatchPage";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { useEffect } from "react";
+import { use, useEffect } from "react";
 
 interface IProps {
-  params: {
+  params: Promise<{
     slug: string;
     tmdbId: string;
     season: string;
     chapter: string;
-  };
+  }>;
 }
 
-export default function ChapterPage({ params }: IProps) {
+export default function ChapterPage(props: IProps) {
+  const params = use(props.params);
   useEffect(() => {
     document.body.style.overflow = "hidden";
 

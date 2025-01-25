@@ -6,12 +6,13 @@ import { redirect } from "next/navigation";
 import { CollectionSeries } from "./series";
 
 interface IProps {
-  params: {
+  params: Promise<{
     network: string;
-  };
+  }>;
 }
 
-export default async function Page({ params }: IProps) {
+export default async function Page(props: IProps) {
+  const params = await props.params;
   const queryClient = getQueryClient();
   const networkAsTmdbKey =
     params.network.toUpperCase() as keyof typeof TmdbNetworks;

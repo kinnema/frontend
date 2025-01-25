@@ -8,15 +8,16 @@ import {
 } from "@tanstack/react-query";
 
 interface IProps {
-  params: {
+  params: Promise<{
     slug: string;
     tmdbId: string;
     season: string;
     chapter: string;
-  };
+  }>;
 }
 
-export default async function ChapterPage({ params }: IProps) {
+export default async function ChapterPage(props: IProps) {
+  const params = await props.params;
   const queryClient = new QueryClient();
   const season = parseInt(params.season.replace("sezon-", ""));
   const chapter = parseInt(params.chapter.replace("bolum-", ""));

@@ -17,7 +17,7 @@ export function Header() {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const logout = useAuthStore((state) => state.logOut);
   const pathName = usePathname();
-  const oldPathname = useRef<string>();
+  const oldPathname = useRef<string>(undefined);
   const toast = useToast();
 
   useEffect(() => {

@@ -6,11 +6,10 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 
-export default async function SeriePage({
-  params,
-}: {
-  params: { slug: string; tmdbId: string };
+export default async function SeriePage(props: {
+  params: Promise<{ slug: string; tmdbId: string }>;
 }) {
+  const params = await props.params;
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
     queryKey: ["tmdb-details-with-season", params.slug, params.tmdbId],

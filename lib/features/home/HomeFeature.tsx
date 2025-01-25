@@ -3,6 +3,7 @@
 import { FeaturedCarousel } from "@/components/featured-carousel";
 import { ShowCard } from "@/components/show-card";
 import { ShowCarousel } from "@/components/show-carousel";
+import { useToast } from "@/hooks/use-toast";
 import { LastWatchedSeries } from "@/lib/components/User/LastWatchedSeries";
 import TmdbService from "@/lib/services/tmdb.service";
 import UserService from "@/lib/services/user.service";
@@ -11,6 +12,7 @@ import { TmdbNetworks } from "@/lib/types/networks";
 import { useQuery } from "@tanstack/react-query";
 
 export function HomeFeature() {
+  const { toast } = useToast();
   const isAuthenticated = useAuthStore((state) => state.isLoggedIn);
   const bluTvShows = useQuery({
     queryKey: ["home", "blutv"],
@@ -33,6 +35,7 @@ export function HomeFeature() {
   return (
     <>
       <FeaturedCarousel />
+
       {isAuthenticated &&
         lastWatched.isSuccess &&
         lastWatched.data!.length > 0 && <LastWatchedSeries />}

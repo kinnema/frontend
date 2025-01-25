@@ -1,13 +1,14 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   const protectedRoutes = ["/watch", "/favorites"];
 
   if (protectedRoutes.includes(pathname)) {
-    const accessToken = cookies().get("access_token");
+    const cookie = await cookies();
+    const accessToken = cookie.get("access_token");
 
     if (!accessToken) {
       return NextResponse.redirect(

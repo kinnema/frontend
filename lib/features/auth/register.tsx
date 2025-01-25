@@ -1,5 +1,6 @@
 "use client";
 
+import { registerServerAction } from "@/app/actions/auth/registerAction";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -7,11 +8,10 @@ import {
   REGISTER_FORM_INPUTS,
   REGISTER_FORM_VALIDATION,
 } from "@/lib/forms/register.form";
-import { IRegisterResponse } from "@/lib/models";
-import { AuthService } from "@/lib/services/auth.service";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useActionState, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 export default function RegisterModule() {
@@ -25,55 +25,101 @@ export default function RegisterModule() {
   });
   const toast = useToast();
   const router = useRouter();
+  const [state, action, pending] = useActionState(registerServerAction, {
+    message: "",
+    success: false,
+  });
 
-  const mutation = useMutation<IRegisterResponse, void, REGISTER_FORM_INPUTS>({
-    mutationFn: (data) => AuthService.register(data),
-    onSuccess() {
+  useEffect(() => {
+    if (state.success) {
       toast.toast({
         title: "Kayıt başarılı",
         description: "Lütfen Giris Yapiniz, yönlendiriliyorsunuz...",
+        variant: "default",
       });
 
       setTimeout(() => {
-        router.push("/");
-      }, 2000);
-    },
-    onError() {
+        router.push("/login");
+      }, 1000);
+
+      return;
+    }
+
+    if (state.message) {
       toast.toast({
         title: "Kayıt başarısız",
-        description: "Lütfen tekrar deneyiniz",
+        description: state.message,
         variant: "destructive",
       });
-    },
-  });
+    }
+  }, [state]);
 
   const onSubmit: SubmitHandler<REGISTER_FORM_INPUTS> = async (data) => {
-    await mutation.mutateAsync(data);
+    action(data);
   };
 
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
-        {errors.username?.message}
-        <Input
-          placeholder="Kullanıcı adınız"
-          required
-          {...register("username")}
-        />
-        <Input
-          placeholder="E-Posta adresiniz"
-          required
-          {...register("email")}
-        />
-        <Input
-          placeholder="Şifreniz"
-          type="password"
-          required
-          {...register("password")}
-        />
-        <Input placeholder="Şifreniz (tekrar)" type="password" required />
+        <div id="group">
+          <Input
+            placeholder="Kullanıcı adınız"
+            required
+            {...register("username")}
+          />
+          {errors.username?.message && (
+            <p className="text-pink-800 text-xs mt-2">
+              {errors.username.message}
+            </p>
+          )}
+        </div>
+        <div id="group">
+          <Input
+            placeholder="E-Posta adresiniz"
+            required
+            {...register("email")}
+          />
+          {errors.email?.message && (
+            <p className="text-pink-800 text-xs mt-2">{errors.email.message}</p>
+          )}
+        </div>
+        <div id="group">
+          <Input
+            placeholder="Şifreniz"
+            type="password"
+            required
+            {...register("password")}
+          />
+          {errors.password?.message && (
+            <p className="text-pink-800 text-xs mt-2">
+              {errors.password.message}
+            </p>
+          )}
+        </div>
+        <div id="group">
+          <Input
+            placeholder="Şifreniz (tekrar)"
+            type="password"
+            required
+            {...register("password_confirmation")}
+          />
+          {errors.password_confirmation?.message && (
+            <p className="text-pink-800 text-xs mt-2">
+              {errors.password_confirmation.message}
+            </p>
+          )}
+        </div>
 
-        <Button type="submit">Kayıt ol</Button>
+        <Button type="submit" disabled={pending}>
+          {pending ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span>İşleniyor...</span>
+            </>
+          ) : (
+            "Kayıt ol"
+          )}
+        </Button>
       </form>
     </div>
   );

@@ -4,22 +4,39 @@ import { loginServerAction } from "@/app/actions/auth/loginAction";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { ILoginResponse, IMutationLogin } from "@/lib/models";
+import { ApiAuthLoginPost200Response } from "@/lib/api";
+import {
+  LOGIN_FORM_INPUTS,
+  LOGIN_FORM_VALIDATION,
+} from "@/lib/forms/login.form";
 import { useAuthStore } from "@/lib/stores/auth.store";
-import { useMutation } from "@tanstack/react-query";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useActionState, useEffect } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 export default function LoginModule() {
   const router = useRouter();
   const toast = useToast();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LOGIN_FORM_INPUTS>({
+    resolver: zodResolver(LOGIN_FORM_VALIDATION),
+  });
   const setUser = useAuthStore((state) => state.setUser);
-  const loginMutation = useMutation<ILoginResponse, void, IMutationLogin>({
-    mutationFn: (data) => loginServerAction(data),
-    onSuccess(data) {
-      setUser(data);
+  const [state, action, pending] = useActionState(loginServerAction, {
+    message: "",
+    success: false,
+    data: undefined,
+  });
+
+  useEffect(() => {
+    if (state.success) {
+      setUser(state.data as ApiAuthLoginPost200Response);
       toast.toast({
         title: "Giriş başarılı",
         description: "Yönlendirilliyorsunuz...",
@@ -27,69 +44,61 @@ export default function LoginModule() {
       });
 
       setTimeout(() => {
-        router.back();
-      }, 2000);
-    },
-    onError() {
+        router.push("/");
+      }, 1000);
+
+      return;
+    }
+
+    if (state.message) {
       toast.toast({
-        title: "Giriş baraşırısız",
-        description: "Lütfen e-posta adresinizi ve şifrenizi kontrol ediniz",
+        title: "Giriş başarısız",
+        description: state.message,
         variant: "destructive",
       });
-    },
-  });
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+    }
+  }, [state]);
 
-  const onLogin = useCallback(
-    async (e: any) => {
-      e.preventDefault();
-
-      if (!email || !password) {
-        toast.toast({
-          title: "Giriş baraşırısız",
-          description: "Lütfen boş alan bırakmayın",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      await loginMutation.mutateAsync({
-        email,
-        password,
-      });
-    },
-    [email, password]
-  );
+  const onSubmitForm: SubmitHandler<LOGIN_FORM_INPUTS> = (data) => {
+    action(data);
+  };
 
   return (
-    <form className="flex flex-col gap-5" onSubmit={onLogin}>
+    <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmitForm)}>
       <div id="group">
         <Input
           type="email"
           id="email"
           placeholder="selman@kinnema.com"
-          onChange={(e) => setEmail(e.target.value)}
           required
+          {...register("email")}
         />
+        <p className="text-red-500 text-xs mt-2">{errors.email?.message}</p>
       </div>
       <div id="group">
         <Input
           type="password"
           id="password"
           placeholder="******"
-          onChange={(e) => setPassword(e.target.value)}
           required
+          {...register("password")}
         />
+        <p className="text-pink-800 text-xs mt-2">{errors.password?.message}</p>
       </div>
       <div className="flex flex-row gap-5 self-end">
         <Button variant="secondary" onClick={() => router.back()}>
           Kapat
         </Button>
 
-        <Button type="submit" disabled={loginMutation.isPending}>
-          {loginMutation.isPending && <Loader2 className="animate-spin" />}
-          Giris yap
+        <Button type="submit" disabled={pending}>
+          {pending ? (
+            <>
+              <Loader2 className="animate-spin" />
+              <span>Giriş yapılıyor...</span>
+            </>
+          ) : (
+            "Giriş yap"
+          )}
         </Button>
       </div>
 
