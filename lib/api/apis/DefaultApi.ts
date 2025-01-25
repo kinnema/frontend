@@ -20,7 +20,6 @@ import type {
   ApiFavoritesGet200ResponseInner,
   ApiFavoritesPostRequest,
   ApiLastWatchedTmdbIdGet404Response,
-  ApiWatchProvidersGet200Response,
   CreateUserInputType,
   LastWatchedCreateSchemaInputType,
   LastWatchedCreateSchemaOutputType,
@@ -39,8 +38,6 @@ import {
     ApiFavoritesPostRequestToJSON,
     ApiLastWatchedTmdbIdGet404ResponseFromJSON,
     ApiLastWatchedTmdbIdGet404ResponseToJSON,
-    ApiWatchProvidersGet200ResponseFromJSON,
-    ApiWatchProvidersGet200ResponseToJSON,
     CreateUserInputTypeFromJSON,
     CreateUserInputTypeToJSON,
     LastWatchedCreateSchemaInputTypeFromJSON,
@@ -487,30 +484,6 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async apiWatchGet(requestParameters: ApiWatchGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.apiWatchGetRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     */
-    async apiWatchProvidersGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ApiWatchProvidersGet200Response>> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/api/watch/providers`,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => ApiWatchProvidersGet200ResponseFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async apiWatchProvidersGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ApiWatchProvidersGet200Response> {
-        const response = await this.apiWatchProvidersGetRaw(initOverrides);
-        return await response.value();
     }
 
     /**

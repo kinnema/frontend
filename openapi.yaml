@@ -3,6 +3,11 @@ info:
   title: Kinnema
   version: 1.0.0
 components:
+  securitySchemes:
+    Authorization:
+      type: apiKey
+      name: Authorization
+      in: header
   schemas:
     def-0:
       type: object
@@ -286,6 +291,34 @@ components:
         atSecond:
           type: number
           nullable: true
+    def-13:
+      type: object
+      title: WatchProvidersSchema
+      properties:
+        providers:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              priority:
+                type: number
+              isEnabled:
+                type: boolean
+            title: "#WatchProviderInnerSchema"
+      required:
+        - providers
+    def-14:
+      type: object
+      properties:
+        name:
+          type: string
+        priority:
+          type: number
+        isEnabled:
+          type: boolean
+      title: "#WatchProviderInnerSchema"
 paths:
   /api/auth/:
     get:
@@ -807,27 +840,6 @@ paths:
       responses:
         "200":
           description: Default Response
-  /api/watch/providers:
-    get:
-      responses:
-        "200":
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  providers:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        name:
-                          type: string
-                        priority:
-                          type: number
-                        isEnabled:
-                          type: boolean
   /api/watch/:
     get:
       parameters:

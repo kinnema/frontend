@@ -6,13 +6,13 @@ models/ApiAuthLoginPostRequest.ts
 models/ApiFavoritesGet200ResponseInner.ts
 models/ApiFavoritesPostRequest.ts
 models/ApiLastWatchedTmdbIdGet404Response.ts
-models/ApiWatchProvidersGet200Response.ts
-models/ApiWatchProvidersGet200ResponseProvidersInner.ts
 models/CreateUserInputType.ts
 models/Def1.ts
 models/Def10.ts
 models/Def11.ts
 models/Def12.ts
+models/Def13.ts
+models/Def14.ts
 models/Def2.ts
 models/Def3.ts
 models/Def4.ts
@@ -25,5 +25,6 @@ models/LastWatchedPatchSchemaInputType.ts
 models/LastWatchedPatchSchemaOutputType.ts
 models/LastWatchedSchemaOutputType.ts
 models/UserSchema.ts
+models/WatchProviderInnerSchema.ts
 models/index.ts
 runtime.ts

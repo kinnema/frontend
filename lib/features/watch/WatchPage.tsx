@@ -10,7 +10,6 @@ import {
 import { Loading } from "@/lib/components/Loading";
 import { Providers } from "@/lib/components/Providers";
 import { ILastWatched, ILastWatchedMutation } from "@/lib/models";
-import AppService from "@/lib/services/app.service";
 import TmdbService from "@/lib/services/tmdb.service";
 import UserService from "@/lib/services/user.service";
 import { useAuthStore } from "@/lib/stores/auth.store";
@@ -42,10 +41,15 @@ export default function ChapterPage({ params }: IProps) {
   const searchParams = useSearchParams();
   const videoPlayerRef = useRef<ReactHlsPlayer>(null);
   const router = useRouter();
-  const watchLinks = useWatchStore((state) => state.links);
   const clear = useWatchStore((state) => state.clear);
   const selectedWatchLink = useWatchStore((state) => state.selectedWatchLink);
   const toast = useToast();
+
+  useEffect(() => {
+    return () => {
+      clear();
+    };
+  }, []);
 
   const tmdbData = useQuery<ITmdbSerieDetails>({
     queryKey: ["tmdb-details-with-season", params.slug, params.tmdbId],
@@ -124,14 +128,6 @@ export default function ChapterPage({ params }: IProps) {
       setIsPlaying(true);
     }
   }, [isTurkishProvider]);
-
-  useEffect(() => {
-    AppService.fetchSeries(params.slug, season, chapter);
-
-    return () => {
-      clear();
-    };
-  }, []);
 
   const handleProgress = async (state: { playedSeconds: number }) => {
     if (!isAuthenticated || !tmdbData.data) return;
@@ -214,10 +210,16 @@ export default function ChapterPage({ params }: IProps) {
           ) : (
             <>
               {!selectedWatchLink ? (
-                <Providers data={watchLinks} />
+                <Providers
+                  params={{
+                    slug: params.slug,
+                    season,
+                    chapter,
+                  }}
+                />
               ) : (
                 <ReactHlsPlayer
-                  url={selectedWatchLink?.url}
+                  url={selectedWatchLink.url}
                   width={"100%"}
                   height={"100%"}
                   stopOnUnmount

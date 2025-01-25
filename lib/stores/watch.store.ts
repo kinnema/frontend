@@ -1,33 +1,17 @@
 import { create } from "zustand";
-import { IWatchResult } from "../models";
+import { IWatchEventProviderSuccessData } from "../types/watch";
 
 interface WatchStore {
-  isPending: boolean;
-  links: IWatchResult[];
-  addLink: (link: IWatchResult) => void;
-  removeLink: (id: string) => void;
-  clear: () => void;
-  selectedWatchLink: IWatchResult | null;
-  setSelectedWatchLink: (link: IWatchResult) => void;
-  setIsPending: (isPending: boolean) => void;
+  selectedWatchLink: IWatchEventProviderSuccessData | null;
 }
 
-export const useWatchStore = create<WatchStore>((set) => ({
-  links: [],
-  isPending: true,
+interface WatchStoreActions {
+  setSelectedWatchLink: (link: IWatchEventProviderSuccessData | null) => void;
+  clear: () => void;
+}
+
+export const useWatchStore = create<WatchStore & WatchStoreActions>((set) => ({
   selectedWatchLink: null,
-  addLink: (link) =>
-    set((state) => ({
-      links: [...state.links, link],
-    })),
-
-  removeLink: (provider) =>
-    set((state) => ({
-      links: state.links.filter((link) => link.provider !== provider),
-    })),
-
-  clear: () => set({ links: [], selectedWatchLink: null, isPending: true }),
-
   setSelectedWatchLink: (link) => set({ selectedWatchLink: link }),
-  setIsPending: (isPending) => set({ isPending }),
+  clear: () => set({ selectedWatchLink: null }),
 }));
