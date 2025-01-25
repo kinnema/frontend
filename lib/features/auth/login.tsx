@@ -14,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect } from "react";
+import { startTransition, useActionState, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 export default function LoginModule() {
@@ -44,7 +44,7 @@ export default function LoginModule() {
       });
 
       setTimeout(() => {
-        router.push("/");
+        router.back();
       }, 1000);
 
       return;
@@ -60,7 +60,9 @@ export default function LoginModule() {
   }, [state]);
 
   const onSubmitForm: SubmitHandler<LOGIN_FORM_INPUTS> = (data) => {
-    action(data);
+    startTransition(() => {
+      action(data);
+    });
   };
 
   return (

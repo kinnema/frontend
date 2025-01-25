@@ -1,5 +1,5 @@
 import { Loading } from "@/lib/components/Loading";
 
-export default function _Loading() {
+export default () => {
   return <Loading fullscreen />;
-}
+};
