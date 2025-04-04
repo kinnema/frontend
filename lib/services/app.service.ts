@@ -1,4 +1,4 @@
-import { EventEmitter } from "node:events";
+import { EventEmitter } from "events";
 import type TypedEmitter from "typed-emitter";
 import { Configuration, DefaultApi, RequestContext } from "../api";
 import { BASE_URL } from "../constants";
