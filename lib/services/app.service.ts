@@ -40,12 +40,12 @@ export default class AppService {
   static serieEventEmitter =
     new EventEmitter() as TypedEmitter<IWatchEventEmitter>;
   static fetchSeries = (
-    serie: string,
+    id: string,
     season: number,
     chapter: number
   ): (() => void) => {
     const response = new EventSource(
-      `${BASE_URL}/api/watch/?serie_name=${serie}&season_number=${season}&episode_number=${chapter}`
+      `${BASE_URL}/api/watch/?id=${id}&season_number=${season}&episode_number=${chapter}`
     );
 
     const eventHandler = (event: MessageEvent) => {

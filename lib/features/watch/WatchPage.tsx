@@ -9,6 +9,7 @@ import {
 } from "@/lib/api";
 import { Loading } from "@/lib/components/Loading";
 import { Providers } from "@/lib/components/Providers";
+import { OpenInExternalPlayer } from "@/lib/components/Watch/OpenInExternalPlayer";
 import { ILastWatched, ILastWatchedMutation } from "@/lib/models";
 import TmdbService from "@/lib/services/tmdb.service";
 import UserService from "@/lib/services/user.service";
@@ -196,51 +197,72 @@ export default function ChapterPage({ params }: IProps) {
     }
   }
 
+  function openInExternalPlayer(url: string) {
+    // List of common video player protocols
+    var protocols = ["vlc://", "potplayer://", "mpc-hc://", "wmplayer://"];
+
+    // Try to open the URL with each protocol
+    var success = false;
+    for (var i = 0; i < protocols.length; i++) {
+      try {
+        window.open(protocols[i] + url, "_blank");
+        success = true;
+        break;
+      } catch (e) {
+        // Protocol not supported, try the next one
+      }
+    }
+
+    if (!success) {
+      // If no protocols worked, open the URL directly
+      window.open(url, "_blank");
+    }
+  }
+
   return (
     <div className="fixed inset-0 bg-black/95 z-50">
       <div className="relative h-full">
         <div className="w-full h-full flex">
-          {!isTurkishProvider ? (
-            <iframe
-              className="w-full h-full"
-              src={`https://vidsrc.to/embed/tv/${tmdbData.data.id}/${season}/${chapter}`}
-              allowFullScreen
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            />
-          ) : (
-            <>
-              {!selectedWatchLink ? (
-                <Providers
-                  params={{
-                    slug: params.slug,
-                    season,
-                    chapter,
-                  }}
-                />
-              ) : (
-                <ReactHlsPlayer
-                  url={selectedWatchLink.url}
-                  width={"100%"}
-                  height={"100%"}
-                  stopOnUnmount
-                  playing
-                  ref={videoPlayerRef}
-                  style={{
-                    backgroundColor: "black",
-                    width: "100%",
-                    height: "100%",
-                  }}
-                  light={`https://image.tmdb.org/t/p/original/${tmdbEpisodeData.data.still_path}`}
-                  controls
-                  onPlay={onPlay}
-                  onPause={onPause}
-                  onProgress={handleProgress}
-                  onStart={onStart}
-                  pip={true}
-                />
-              )}
-            </>
-          )}
+          <>
+            {!selectedWatchLink ? (
+              <Providers
+                params={{
+                  id: isTurkishProvider
+                    ? params.slug
+                    : tmdbData.data.id.toString(),
+                  season,
+                  chapter,
+                }}
+              />
+            ) : (
+              <>
+                {isTurkishProvider ? (
+                  <ReactHlsPlayer
+                    url={"selectedWatchLink.url"}
+                    width={"100%"}
+                    height={"100%"}
+                    stopOnUnmount
+                    playing
+                    ref={videoPlayerRef}
+                    style={{
+                      backgroundColor: "black",
+                      width: "100%",
+                      height: "100%",
+                    }}
+                    light={`https://image.tmdb.org/t/p/original/${tmdbEpisodeData.data.still_path}`}
+                    controls
+                    onPlay={onPlay}
+                    onPause={onPause}
+                    onProgress={handleProgress}
+                    onStart={onStart}
+                    pip={true}
+                  />
+                ) : (
+                  <OpenInExternalPlayer url={selectedWatchLink.url} />
+                )}
+              </>
+            )}
+          </>
         </div>
         <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
           <Button

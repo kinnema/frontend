@@ -13,7 +13,7 @@ const MotionCard = motion.create(Card);
 export const Providers = ({
   params,
 }: {
-  params: { slug: string; season: number; chapter: number };
+  params: { id: string; season: number; chapter: number };
 }) => {
   const [providers, setProviders] = useState<WatchProviderInnerSchema[]>([]);
   const [data, setData] = useState<IWatchEvent[]>([]);
@@ -24,7 +24,7 @@ export const Providers = ({
 
   useEffect(() => {
     const unsubscribe = AppService.fetchSeries(
-      params.slug,
+      params.id,
       params.season,
       params.chapter
     );
@@ -112,15 +112,14 @@ export const Providers = ({
           .map(({ provider, event, hasError, isLoading, isSuccess }) => (
             <MotionCard
               key={provider.name}
-              className={`p-4 flex items-center justify-between cursor-pointer ${
-                hasError
+              className={`p-4 flex items-center justify-between cursor-pointer ${hasError
                   ? "border-red-500 opacity-40"
                   : isSuccess
-                  ? "border-green-500"
-                  : isLoading
-                  ? "border-blue-500"
-                  : "border-gray-500 opacity-40"
-              } ${isSuccess || isLoading ? "" : "hover:opacity-100"}`}
+                    ? "border-green-500"
+                    : isLoading
+                      ? "border-blue-500"
+                      : "border-gray-500 opacity-40"
+                } ${isSuccess || isLoading ? "" : "hover:opacity-100"}`}
               whileHover={{ scale: isSuccess || isLoading ? 1.02 : 1 }}
               whileTap={{ scale: isSuccess || isLoading ? 0.98 : 1 }}
               onClick={() => {
@@ -138,15 +137,14 @@ export const Providers = ({
             >
               <div className="flex items-center gap-3">
                 <div
-                  className={`w-2 h-2 rounded-full ${
-                    hasError
+                  className={`w-2 h-2 rounded-full ${hasError
                       ? "bg-red-500"
                       : isSuccess
-                      ? "bg-green-500"
-                      : isLoading
-                      ? "bg-blue-500"
-                      : "bg-gray-500"
-                  }`}
+                        ? "bg-green-500"
+                        : isLoading
+                          ? "bg-blue-500"
+                          : "bg-gray-500"
+                    }`}
                 />
                 <span className="font-medium">{provider.name}</span>
               </div>
@@ -154,10 +152,10 @@ export const Providers = ({
                 {hasError
                   ? "Hata oluştu"
                   : isSuccess
-                  ? "Video bulundu"
-                  : isLoading
-                  ? "Video aranıyor..."
-                  : "Video bulunamadı"}
+                    ? "Video bulundu"
+                    : isLoading
+                      ? "Video aranıyor..."
+                      : "Video bulunamadı"}
               </span>
             </MotionCard>
           ))}
