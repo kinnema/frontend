@@ -74,42 +74,23 @@ export const Providers = ({
         tiklamaniz yeterlidir.
       </p>
       <div className="mt-10 flex flex-col gap-3">
-        {providers
-          ?.map((provider) => {
-            // Find the latest event for this provider
-            const event = [...data]
-              .reverse()
-              .find(
-                (d) =>
-                  (d.type === "trying_provider" && d.data === provider.name) ||
-                  (d.type === "provider_failed" && d.data === provider.name) ||
-                  (d.type === "provider_success" &&
-                    d.data.provider === provider.name)
-              );
+        {providers.map((provider) => {
+          // Find the latest event for this provider
+          const event = [...data]
+            .reverse()
+            .find(
+              (d) =>
+                (d.type === "trying_provider" && d.data === provider.name) ||
+                (d.type === "provider_failed" && d.data === provider.name) ||
+                (d.type === "provider_success" &&
+                  d.data.provider === provider.name)
+            );
 
-            const hasError = event?.type === "provider_failed";
-            const isLoading = event?.type === "trying_provider";
-            const isSuccess = event?.type === "provider_success";
+          const hasError = event?.type === "provider_failed";
+          const isLoading = event?.type === "trying_provider";
+          const isSuccess = event?.type === "provider_success";
 
-            return {
-              provider,
-              event,
-              hasError,
-              isLoading,
-              isSuccess,
-            };
-          })
-          .sort((a, b) => {
-            // Sort by status: success first, then loading, then no status, then errors
-            if (a.isSuccess && !b.isSuccess) return -1;
-            if (!a.isSuccess && b.isSuccess) return 1;
-            if (a.isLoading && !b.isLoading) return -1;
-            if (!a.isLoading && b.isLoading) return 1;
-            if (a.hasError && !b.hasError) return 1;
-            if (!a.hasError && b.hasError) return -1;
-            return 0;
-          })
-          .map(({ provider, event, hasError, isLoading, isSuccess }) => (
+          return (
             <MotionCard
               key={provider.name}
               className={`p-4 flex items-center justify-between cursor-pointer ${hasError
@@ -124,14 +105,11 @@ export const Providers = ({
               whileTap={{ scale: isSuccess || isLoading ? 0.98 : 1 }}
               onClick={() => {
                 if (isSuccess && event?.type === "provider_success") {
-                  console.log("Event data:", event.data);
                   const watchData = {
                     provider: event.data.provider,
                     url: event.data.url,
                   };
-                  console.log("Setting watch data:", watchData);
                   setSelectedWatchLink(watchData);
-                  console.log("Store after update:", useWatchStore.getState());
                 }
               }}
             >
@@ -155,10 +133,11 @@ export const Providers = ({
                     ? "Video bulundu"
                     : isLoading
                       ? "Video aranıyor..."
-                      : "Video bulunamadı"}
+                      : "Bekleniyor..."}
               </span>
             </MotionCard>
-          ))}
+          );
+        })}
       </div>
     </div>
   );
