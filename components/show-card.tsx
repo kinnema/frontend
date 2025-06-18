@@ -25,11 +25,7 @@ export function ShowCard({
 }: ShowCardProps) {
   return (
     <>
-      <Link
-        href={href ?? `/dizi/${slugify(show.title)}/${show.id}`}
-        passHref
-        legacyBehavior
-      >
+      <Link href={href ?? `/dizi/${slugify(show.title)}/${show.id}`} passHref>
         <div className="relative block aspect-[2/3] w-40 rounded-lg overflow-hidden group cursor-pointer">
           {onRemove && (
             <Button
