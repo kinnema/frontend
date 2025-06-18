@@ -88,7 +88,7 @@ export default function LoginModule() {
         <p className="text-pink-800 text-xs mt-2">{errors.password?.message}</p>
       </div>
       <div className="flex flex-row gap-5 self-end">
-        <Button variant="secondary" onClick={() => router.back()}>
+        <Button type="button" variant="secondary" onClick={() => router.back()}>
           Kapat
         </Button>
 
@@ -107,7 +107,9 @@ export default function LoginModule() {
       <hr />
       <span className="text-center">veya...</span>
       <Link href="/register" passHref legacyBehavior>
-        <Button className="mb-5">Kayit olun</Button>
+        <Button className="mb-5" type="button">
+          Kayit olun
+        </Button>
       </Link>
     </form>
   );
