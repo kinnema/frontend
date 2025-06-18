@@ -846,7 +846,7 @@ paths:
         - schema:
             type: string
           in: query
-          name: serie_name
+          name: id
           required: false
         - schema:
             type: number

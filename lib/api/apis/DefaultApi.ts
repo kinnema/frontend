@@ -86,7 +86,7 @@ export interface ApiLastWatchedTmdbIdGetRequest {
 }
 
 export interface ApiWatchGetRequest {
-    serieName?: string;
+    id?: string;
     seasonNumber?: number;
     episodeNumber?: number;
 }
@@ -456,8 +456,8 @@ export class DefaultApi extends runtime.BaseAPI {
     async apiWatchGetRaw(requestParameters: ApiWatchGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         const queryParameters: any = {};
 
-        if (requestParameters['serieName'] != null) {
-            queryParameters['serie_name'] = requestParameters['serieName'];
+        if (requestParameters['id'] != null) {
+            queryParameters['id'] = requestParameters['id'];
         }
 
         if (requestParameters['seasonNumber'] != null) {
