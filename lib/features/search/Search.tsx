@@ -48,7 +48,11 @@ export function SearchFeature() {
   );
 
   useEffect(() => {
-    if (!search) return;
+    // If search is empty, clear the search params
+    if (search.length === 0) {
+      router.push("/search");
+      return;
+    }
 
     const searchParams = createQueryString("q", search);
     router.push("/search?" + searchParams);
