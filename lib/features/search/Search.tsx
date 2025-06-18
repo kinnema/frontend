@@ -2,18 +2,21 @@
 
 import { ShowCard } from "@/components/show-card";
 import { Input } from "@/components/ui/input";
+import { useSearchStore } from "@/lib/stores/search.store";
 import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Loading } from "../../components/Loading";
 import TmdbService from "../../services/tmdb.service";
-import { ITmdbSearchResults } from "../../types/tmdb";
+import { ITmdbSearchResults, Result } from "../../types/tmdb";
 
 export function SearchFeature() {
   const [search, setSearch] = useState<string>("");
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchParams = useSearchParams();
+  const patchSearches = useSearchStore((state) => state.patchSearches);
+  const lastSearches = useSearchStore((state) => state.searches);
   const router = useRouter();
 
   const { data, isPending, isFetched } = useQuery<ITmdbSearchResults>({
@@ -51,6 +54,13 @@ export function SearchFeature() {
     router.push("/search?" + searchParams);
   }, [search]);
 
+  const onClickShow = useCallback(
+    (show: Result) => {
+      patchSearches(show);
+    },
+    [router]
+  );
+
   return (
     <>
       <main className="pt-24 pb-16">
@@ -69,16 +79,35 @@ export function SearchFeature() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {search.length > 0 && isPending ? (
               <Loading />
+            ) : !search.length && lastSearches.length > 0 ? (
+              lastSearches.map((show) => (
+                <div key={show.id} onClick={() => onClickShow(show)}>
+                  <ShowCard
+                    show={{
+                      id: show.id,
+                      title: show.name,
+                      image: show.poster_path,
+                      subTitle: show.first_air_date,
+                    }}
+                  />
+                </div>
+              ))
+            ) : isFetched && data?.results.length === 0 ? (
+              <div className="col-span-5 text-center text-gray-500">
+                Arama sonuç bulunamadı.
+              </div>
             ) : (
               data?.results.map((show) => (
-                <ShowCard
-                  key={show.name}
-                  show={{
-                    id: show.id,
-                    title: show.name,
-                    image: show.poster_path,
-                  }}
-                />
+                <div key={show.id} onClick={() => onClickShow(show)}>
+                  <ShowCard
+                    show={{
+                      id: show.id,
+                      title: show.name,
+                      image: show.poster_path,
+                      subTitle: show.first_air_date,
+                    }}
+                  />
+                </div>
               ))
             )}
           </div>
