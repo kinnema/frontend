@@ -38,6 +38,7 @@ export default function ChapterPage({ params }: IProps) {
   const season = parseInt(params.season.replace("sezon-", ""));
   const chapter = parseInt(params.chapter.replace("bolum-", ""));
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isLoggedIn);
   const searchParams = useSearchParams();
   const videoPlayerRef = useRef<ReactHlsPlayer>(null);
@@ -47,6 +48,10 @@ export default function ChapterPage({ params }: IProps) {
   const toast = useToast();
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsMobile(window.innerWidth < 768);
+    }
+
     return () => {
       clear();
     };
@@ -258,7 +263,18 @@ export default function ChapterPage({ params }: IProps) {
                     pip={true}
                   />
                 ) : (
-                  <OpenInExternalPlayer url={selectedWatchLink.url} />
+                  <>
+                    {isMobile ? (
+                      <OpenInExternalPlayer url={selectedWatchLink.url} />
+                    ) : (
+                      <iframe
+                        className="w-full h-full"
+                        src={`https://vidsrc.to/embed/tv/${tmdbData.data.id}/${season}/${chapter}`}
+                        allowFullScreen
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      />
+                    )}
+                  </>
                 )}
               </>
             )}
