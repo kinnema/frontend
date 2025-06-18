@@ -83,6 +83,8 @@ export function SerieDialogFeature({ params, isClient }: IProps) {
           width={600}
           height={500}
           priority
+          loading="eager"
+
         />
         {isClient && (
           <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
@@ -147,7 +149,7 @@ export function SerieDialogFeature({ params, isClient }: IProps) {
         <TabsContent value={activeSeasonTab.toString()} className="mt-0">
           <div className="p-6">
             <div className="space-y-4">
-              <ScrollArea className="h-[26vh]">{renderSeasonTab()}</ScrollArea>
+              <ScrollArea className="h-[26vh]" >{renderSeasonTab()}</ScrollArea>
             </div>
           </div>
         </TabsContent>

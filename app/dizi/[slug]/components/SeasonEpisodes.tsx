@@ -69,6 +69,7 @@ export default function SeasonEpisodes({
                   alt={episode.name}
                   fill
                   className="object-cover"
+                  loading="lazy"
                 />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="w-12 h-12 rounded-full bg-black/50 flex items-center justify-center">
