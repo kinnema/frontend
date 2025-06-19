@@ -31,6 +31,11 @@ export default function RootLayout({
           name="viewport"
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
         />
+        <script
+          defer
+          src="https://cloud.umami.is/script.js"
+          data-website-id="b66faec6-dc9c-4525-8897-fbb5311799cc"
+        ></script>
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
 
