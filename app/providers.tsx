@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { useAppStore } from "@/lib/stores/app.store";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { PropsWithChildren, useEffect } from "react";
 import { getAccessToken } from "./actions/auth/getAccessToken";
@@ -114,6 +115,7 @@ export function Providers({ children }: PropsWithChildren) {
         <Toaster />
       </div>
       <SpeedInsights />
+      <Analytics />
     </QueryClientProvider>
   );
 }
