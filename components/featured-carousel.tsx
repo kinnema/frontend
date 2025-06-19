@@ -1,6 +1,5 @@
 "use client";
 
-import Loading from "@/app/loading";
 import { Button } from "@/components/ui/button";
 import { slugify, tmdbPoster } from "@/lib/helpers";
 import TmdbService from "@/lib/services/tmdb.service";
@@ -21,8 +20,6 @@ export function FeaturedCarousel() {
     () => data?.popular.results.slice(0, 5),
     [data]
   );
-
-  if (isPending) return <Loading />;
 
   if (isError) return <div>Error</div>;
 
@@ -54,6 +51,8 @@ export function FeaturedCarousel() {
                     height={768}
                     className="object-cover w-full h-full"
                     priority={item.id === featuredItems[0]?.id}
+                    placeholder="blur"
+                    blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR42mP8//8/AwAI/wH+9QAAAABJRU5ErkJggg=="
                   />
                 </div>
 

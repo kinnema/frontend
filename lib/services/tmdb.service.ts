@@ -55,12 +55,12 @@ class TmdbService {
   static fetchHomeData = async (): Promise<IHomeResults> => {
     const responses = await Promise.all([
       this.fetchHomePopular(),
-      this.fetchHomeTrending(),
-      this.fetchAiringToday(),
+      //this.fetchHomeTrending(),
+      //this.fetchAiringToday(),
     ]);
 
-    const [popular, trending, airToday] = responses;
-    return { popular, trending, airToday };
+    const [popular] = responses;
+    return { popular };
   };
 
   static fetchNetworkSeries = (

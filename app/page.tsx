@@ -26,6 +26,11 @@ export default async function Home() {
     queryFn: () => TmdbService.fetchNetworkSeries(TmdbNetworks.EXXEN),
   });
 
+  await queryClient.prefetchQuery({
+    queryKey: ["home-data"],
+    queryFn: () => TmdbService.fetchHomeData(),
+  });
+
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Suspense>

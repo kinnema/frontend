@@ -7,9 +7,9 @@ import {
 import { ITmdbSearchResults } from "./types/tmdb";
 
 export interface IHomeResults {
-  trending: ITmdbSearchResults;
+  //trending: ITmdbSearchResults;
   popular: ITmdbSearchResults;
-  airToday: ITmdbSearchResults;
+  //airToday: ITmdbSearchResults;
 }
 
 export interface IResult<T> {
