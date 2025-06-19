@@ -243,7 +243,7 @@ export default function ChapterPage({ params }: IProps) {
               <>
                 {isTurkishProvider ? (
                   <ReactHlsPlayer
-                    url={"selectedWatchLink.url"}
+                    url={selectedWatchLink.url}
                     width={"100%"}
                     height={"100%"}
                     stopOnUnmount
