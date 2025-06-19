@@ -1,9 +1,6 @@
 "use client";
 
-import "swiper/css/autoplay";
-import "swiper/css/free-mode";
-import { Autoplay, FreeMode } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/react";
+import { Carousel, CarouselContent, CarouselItem } from "./ui/carousel";
 
 interface ShowCarouselProps {
   title: string;
@@ -21,33 +18,18 @@ export function ShowCarousel({ title, shows }: ShowCarouselProps) {
       <div className=" md:px-6">
         <h2 className="text-xl md:text-2xl font-bold mb-6">{title}</h2>
         <div className="relative">
-          <Swiper
-            slidesPerView={2}
-            spaceBetween={150}
-            freeMode
-            modules={[FreeMode, Autoplay]}
-            breakpoints={{
-              320: {
-                slidesPerView: 2,
-                spaceBetween: 20,
-              },
-              480: {
-                slidesPerView: 5,
-
-                spaceBetween: 30,
-              },
-              640: {
-                slidesPerView: 8,
-                spaceBetween: 40,
-              },
-            }}
-          >
-            {shows.map((show, index) => (
-              <SwiperSlide key={index} className="!w-auto">
-                {show}
-              </SwiperSlide>
-            ))}
-          </Swiper>
+          <Carousel className="w-full max-w-s">
+            <CarouselContent>
+              {shows.map((show, index) => (
+                <CarouselItem
+                  key={index}
+                  className="lg:basis-56 sm:basis-1/4 basis-1/2"
+                >
+                  {show}
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
         </div>
       </div>
     </section>

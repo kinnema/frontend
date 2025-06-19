@@ -5,8 +5,8 @@ import { useAppStore } from "@/lib/stores/app.store";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PropsWithChildren, useEffect } from "react";
-import "swiper/css";
 import { getAccessToken } from "./actions/auth/getAccessToken";
+
 function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
@@ -54,7 +54,7 @@ export function Providers({ children }: PropsWithChildren) {
 
     const scheduleNextCheck = () => {
       // Only schedule next check if page is visible
-      if (document.visibilityState === 'visible') {
+      if (document.visibilityState === "visible") {
         timeoutId = setTimeout(async () => {
           await checkToken();
           scheduleNextCheck();
@@ -68,7 +68,7 @@ export function Providers({ children }: PropsWithChildren) {
 
     // Check when tab becomes visible
     const visibilityHandler = () => {
-      if (document.visibilityState === 'visible') {
+      if (document.visibilityState === "visible") {
         checkToken();
         scheduleNextCheck();
       } else {
@@ -82,12 +82,12 @@ export function Providers({ children }: PropsWithChildren) {
       checkToken();
     };
 
-    document.addEventListener('visibilitychange', visibilityHandler);
-    window.addEventListener('focus', focusHandler);
+    document.addEventListener("visibilitychange", visibilityHandler);
+    window.addEventListener("focus", focusHandler);
 
     return () => {
-      document.removeEventListener('visibilitychange', visibilityHandler);
-      window.removeEventListener('focus', focusHandler);
+      document.removeEventListener("visibilitychange", visibilityHandler);
+      window.removeEventListener("focus", focusHandler);
       clearTimeout(timeoutId);
     };
   }, [isLoggedIn, logOut]);
