@@ -3,6 +3,7 @@ import TmdbService from "@/lib/services/tmdb.service";
 import { TmdbNetworks } from "@/lib/types/networks";
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { CollectionSeries } from "./series";
 
 interface IProps {
@@ -30,7 +31,9 @@ export default async function Page(props: IProps) {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <CollectionSeries network={network} />
+      <Suspense>
+        <CollectionSeries network={network} />
+      </Suspense>
     </HydrationBoundary>
   );
 }

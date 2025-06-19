@@ -6,6 +6,7 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
+import { Suspense } from "react";
 
 interface IProps {
   params: Promise<{
@@ -42,7 +43,9 @@ export default async function ChapterPage(props: IProps) {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <WatchPage params={params} />
+      <Suspense>
+        <WatchPage params={params} />
+      </Suspense>
     </HydrationBoundary>
   );
 }

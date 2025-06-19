@@ -1,12 +1,20 @@
 "use client";
 
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { Loading } from "@/lib/components/Loading";
 import { slugify, tmdbPoster } from "@/lib/helpers";
 import TmdbService from "@/lib/services/tmdb.service";
 import { TmdbNetworks } from "@/lib/types/networks";
 import { useQuery } from "@tanstack/react-query";
 import classNames from "classnames";
+import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
@@ -23,13 +31,11 @@ export function CollectionSeries({ network }: IProps) {
     queryFn: () => TmdbService.fetchNetworkSeries(network, page),
   });
 
-
   if (isPending) return <Loading fullscreen />;
 
   if (isError) return <div>Error</div>;
 
   const totalPages = Math.ceil((data?.total_results ?? 0) / 20);
-
 
   return (
     <section className="p-4 md:p-10">
@@ -59,10 +65,13 @@ export function CollectionSeries({ network }: IProps) {
                 </div>
               </div>
 
-              <img
+              <Image
                 src={tmdbPoster(serie.poster_path ?? "")}
                 className="h-full w-full object-cover"
                 alt={serie.original_name}
+                width={300}
+                height={450}
+                loading="lazy"
               />
             </div>
           </Link>
@@ -75,14 +84,22 @@ export function CollectionSeries({ network }: IProps) {
             <PaginationContent className="flex-wrap">
               <PaginationItem>
                 <PaginationPrevious
-                  href={page > 1 ? `/collection/${TmdbNetworks[network].toLowerCase()}?page=${page - 1}` : "#"}
+                  href={
+                    page > 1
+                      ? `/collection/${TmdbNetworks[
+                          network
+                        ].toLowerCase()}?page=${page - 1}`
+                      : "#"
+                  }
                   className={page === 1 ? "pointer-events-none opacity-50" : ""}
                 />
               </PaginationItem>
 
               <PaginationItem>
                 <PaginationLink
-                  href={`/collection/${TmdbNetworks[network].toLowerCase()}?page=1`}
+                  href={`/collection/${TmdbNetworks[
+                    network
+                  ].toLowerCase()}?page=1`}
                   isActive={page === 1}
                 >
                   1
@@ -97,7 +114,9 @@ export function CollectionSeries({ network }: IProps) {
                   return (
                     <PaginationItem key={pageNumber}>
                       <PaginationLink
-                        href={`/collection/${TmdbNetworks[network].toLowerCase()}?page=${pageNumber}`}
+                        href={`/collection/${TmdbNetworks[
+                          network
+                        ].toLowerCase()}?page=${pageNumber}`}
                         isActive={pageNumber === page}
                       >
                         {pageNumber}
@@ -113,7 +132,9 @@ export function CollectionSeries({ network }: IProps) {
               {totalPages > 1 && (
                 <PaginationItem>
                   <PaginationLink
-                    href={`/collection/${TmdbNetworks[network].toLowerCase()}?page=${totalPages}`}
+                    href={`/collection/${TmdbNetworks[
+                      network
+                    ].toLowerCase()}?page=${totalPages}`}
                     isActive={page === totalPages}
                   >
                     {totalPages}
@@ -123,8 +144,16 @@ export function CollectionSeries({ network }: IProps) {
 
               <PaginationItem>
                 <PaginationNext
-                  href={page < totalPages ? `/collection/${TmdbNetworks[network].toLowerCase()}?page=${page + 1}` : "#"}
-                  className={page === totalPages ? "pointer-events-none opacity-50" : ""}
+                  href={
+                    page < totalPages
+                      ? `/collection/${TmdbNetworks[
+                          network
+                        ].toLowerCase()}?page=${page + 1}`
+                      : "#"
+                  }
+                  className={
+                    page === totalPages ? "pointer-events-none opacity-50" : ""
+                  }
                 />
               </PaginationItem>
             </PaginationContent>
