@@ -1,3 +1,5 @@
+"use client";
+
 import { PluginRegistry } from "@/lib/plugins/pluginRegistery";
 import { IPlugin } from "@/lib/types/plugin.type";
 import { useEffect, useMemo, useState } from "react";

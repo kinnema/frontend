@@ -5,7 +5,9 @@ export class PluginRegistry {
   private plugins: IPlugin[] = [];
 
   constructor() {
-    this.loadPluginsFromLocalStorage();
+    if (typeof window !== "undefined") {
+      this.loadPluginsFromLocalStorage();
+    }
   }
 
   async registerPlugin(url: string) {
