@@ -80,6 +80,12 @@ export function Header() {
                 <Button>Giriş Yap</Button>
               </Link>
             )}
+            <Link
+              href="/plugins"
+              className="text-sm font-medium transition-colors hover:text-white/70"
+            >
+              Eklentiler
+            </Link>
             <Link href="/search">
               <Button
                 variant="ghost"

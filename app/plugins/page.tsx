@@ -1,8 +1,17 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { usePlugins } from "@/hooks/use-plugins";
+import { Loader2Icon } from "lucide-react";
 import { useState } from "react";
 
 export default function PluginManager() {
@@ -19,44 +28,56 @@ export default function PluginManager() {
       await registerPlugin(pluginUrl);
       setPluginUrl("");
     } catch (err: any) {
-      setError(err?.message || "Failed to add plugin");
+      setError("Eklenti eklenirken bir hata oluştu");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div>
-      <h2>Plugin Manager</h2>
-      <form onSubmit={handleAddPlugin} style={{ marginBottom: 16 }}>
+    <div className="p-10">
+      <h1 className="font-semibold text-2xl">Eklenti Yöneticisi</h1>
+      <form
+        onSubmit={handleAddPlugin}
+        className="flex items-center mb-4 gap-10"
+      >
         <Input
+          className="my-5"
           type="url"
-          placeholder="Plugin URL"
+          placeholder="Eklenti URL'si"
           value={pluginUrl}
           onChange={(e) => setPluginUrl(e.target.value)}
           required
-          style={{ marginRight: 8 }}
         />
-        <button type="submit" disabled={loading}>
-          {loading ? "Adding..." : "Add Plugin"}
-        </button>
+        <Button type="submit" disabled={loading}>
+          {loading && <Loader2Icon className="animate-spin mr-2" />}
+          {loading ? "Ekleniyor" : "Eklenti Ekle"}
+        </Button>
       </form>
-      {error && <div style={{ color: "red" }}>{error}</div>}
-      <ul>
-        {Object.values(plugins).length === 0 && <li>No plugins registered.</li>}
+      {error && <div className="text-red-500 my-5">{error}</div>}
+      <ul className="flex ">
+        {Object.values(plugins).length === 0 && (
+          <li>Herhangi bir eklenti bulunamadi</li>
+        )}
         {Object.values(plugins).map((plugin) => (
-          <li key={plugin.name} style={{ marginBottom: 8 }}>
-            <strong>{plugin.name}</strong> <br />
-            <span>{plugin.manifest.description}</span>
-            <br />
-            <span>{plugin.manifest.version}</span>
-            <br />
-            <Button
-              style={{ marginLeft: 8 }}
-              onClick={() => unregisterPlugin(plugin.name)}
-            >
-              Remove
-            </Button>
+          <li key={plugin.name}>
+            <Card>
+              <CardHeader>
+                <CardTitle>{plugin.name}</CardTitle>
+                <CardDescription>{plugin.manifest.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p>Versiyon: {plugin.manifest.version}</p>
+              </CardContent>
+              <CardFooter>
+                <Button
+                  style={{ marginLeft: 8 }}
+                  onClick={() => unregisterPlugin(plugin.name)}
+                >
+                  Kaldir
+                </Button>
+              </CardFooter>
+            </Card>
           </li>
         ))}
       </ul>
