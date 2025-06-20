@@ -18,12 +18,10 @@ export function usePlugins() {
     return pluginRegistry.getPluginsByType(type);
   }
 
-  function fetchSerieByPlugin() {}
-
   const registerPlugin = async (url: string): Promise<IPlugin> => {
     try {
       const plugin = await pluginRegistry.registerPlugin(url);
-      setPlugins((prev) => ({ ...prev, [plugin.name]: plugin }));
+      setPlugins(pluginRegistry.getAllPlugins());
       return plugin;
     } catch (error) {
       console.error("Failed to register plugin:", error);
