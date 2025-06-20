@@ -91,7 +91,7 @@ export const Providers = ({
                     provider: event.data.pluginId,
                     url: event.data.url,
                   };
-                  setSelectedWatchLink(watchData);
+                  setSelectedWatchLink(watchData.url);
                 }
               }}
             >

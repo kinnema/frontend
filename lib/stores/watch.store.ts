@@ -1,12 +1,11 @@
 import { create } from "zustand";
-import { IWatchEventProviderSuccessData } from "../types/watch";
 
 interface WatchStore {
-  selectedWatchLink: IWatchEventProviderSuccessData | null;
+  selectedWatchLink: string | null;
 }
 
 interface WatchStoreActions {
-  setSelectedWatchLink: (link: IWatchEventProviderSuccessData | null) => void;
+  setSelectedWatchLink: (link: string | null) => void;
   clear: () => void;
 }
 

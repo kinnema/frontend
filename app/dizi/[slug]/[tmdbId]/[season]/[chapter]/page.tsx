@@ -1,5 +1,4 @@
 import WatchPage from "@/lib/features/watch/WatchPage";
-import AppService from "@/lib/services/app.service";
 import TmdbService from "@/lib/services/tmdb.service";
 import {
   dehydrate,
@@ -30,15 +29,6 @@ export default async function ChapterPage(props: IProps) {
 
       return tmdbData;
     },
-  });
-
-  await queryClient.prefetchQuery({
-    networkMode: "offlineFirst",
-    queryKey: ["dizi-watch", params.slug, season, chapter],
-    queryFn: async () => {
-      return AppService.fetchSeries(params.slug, season, chapter);
-    },
-    retry: 1,
   });
 
   return (

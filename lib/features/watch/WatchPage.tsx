@@ -241,7 +241,7 @@ export default function ChapterPage({ params }: IProps) {
               <>
                 {isTurkishProvider ? (
                   <ReactHlsPlayer
-                    url={selectedWatchLink.url}
+                    url={selectedWatchLink}
                     width={"100%"}
                     height={"100%"}
                     stopOnUnmount
@@ -263,7 +263,7 @@ export default function ChapterPage({ params }: IProps) {
                 ) : (
                   <>
                     {isMobile ? (
-                      <OpenInExternalPlayer url={selectedWatchLink.url} />
+                      <OpenInExternalPlayer url={selectedWatchLink} />
                     ) : (
                       <iframe
                         className="w-full h-full"
