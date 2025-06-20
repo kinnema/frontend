@@ -3,14 +3,20 @@ import { IPlugin } from "@/lib/types/plugin.type";
 import { useEffect, useMemo, useState } from "react";
 
 export function usePlugins() {
-  const [plugins, setPlugins] = useState<Record<string, IPlugin>>({});
+  const [plugins, setPlugins] = useState<IPlugin[]>([]);
   const pluginRegistry = useMemo(() => new PluginRegistry(), []);
-  // Initialize plugins from local storage
+
   useEffect(() => {
     console.log("Initializing plugins from local storage...");
     console.log("PluginRegistry instance:", pluginRegistry.getAllPlugins());
     setPlugins(pluginRegistry.getAllPlugins());
   }, []);
+
+  function getPluginsByType(type: "series" | "movie"): IPlugin[] {
+    return pluginRegistry.getPluginsByType(type);
+  }
+
+  function fetchSerieByPlugin() {}
 
   const registerPlugin = async (url: string): Promise<IPlugin> => {
     try {
@@ -26,10 +32,7 @@ export function usePlugins() {
   const unregisterPlugin = (name: string): void => {
     try {
       pluginRegistry.unregisterPlugin(name);
-      setPlugins((prev) => {
-        const { [name]: _, ...rest } = prev;
-        return rest;
-      });
+      setPlugins((prev) => prev.filter((p) => p.name !== name));
     } catch (error) {
       console.error("Failed to unregister plugin:", error);
       throw error;
@@ -40,5 +43,6 @@ export function usePlugins() {
     plugins,
     registerPlugin,
     unregisterPlugin,
+    getPluginsByType,
   };
 }

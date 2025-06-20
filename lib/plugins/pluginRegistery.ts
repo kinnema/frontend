@@ -1,7 +1,8 @@
+import { v4 as uuidv4 } from "uuid";
 import { IPlugin, IPluginManifest } from "../types/plugin.type";
 
 export class PluginRegistry {
-  private plugins: Record<string, IPlugin> = {};
+  private plugins: IPlugin[] = [];
 
   constructor() {
     this.loadPluginsFromLocalStorage();
@@ -9,17 +10,19 @@ export class PluginRegistry {
 
   async registerPlugin(url: string) {
     const manifest = await this.fetchPluginManifest(url);
-    if (this.plugins[manifest.name]) {
+
+    if (this.plugins.some((p) => p.name === plugin.name)) {
       throw new Error(`Plugin ${manifest.name} is already registered.`);
     }
 
     const plugin: IPlugin = {
+      id: uuidv4(),
       name: manifest.name,
       url: url,
       manifest: manifest,
     };
 
-    this.plugins[manifest.name] = plugin;
+    this.plugins.push(plugin);
     this.savePluginsToLocalStorage();
     console.log(`Plugin ${manifest.name} registered successfully.`);
     return plugin;
@@ -45,16 +48,18 @@ export class PluginRegistry {
   }
 
   unregisterPlugin(name: string) {
-    if (!this.plugins[name]) {
+    const index = this.plugins.findIndex((p) => p.name === name);
+    if (index === -1) {
       throw new Error(`Plugin ${name} is not registered.`);
     }
-    delete this.plugins[name];
+    this.plugins.splice(index, 1);
+    console.log(`Plugin ${name} unregistered successfully.`);
     this.savePluginsToLocalStorage();
   }
 
   private async fetchPluginManifest(url: string): Promise<IPluginManifest> {
     try {
-      const response = await fetch(url);
+      const response = await fetch(url + "/manifest.json");
       if (!response.ok) {
         throw new Error(`Failed to fetch plugin manifest from ${url}`);
       }
@@ -69,8 +74,18 @@ export class PluginRegistry {
     }
   }
 
-  getPlugin(name: string) {
-    return this.plugins[name];
+  getPlugin(id: string) {
+    const plugin = this.plugins.find((p) => p.id === id);
+    if (!plugin) {
+      throw new Error(`Plugin ${id} is not registered.`);
+    }
+    return plugin;
+  }
+
+  getPluginsByType(type: "series" | "movie") {
+    return this.plugins.filter((plugin) =>
+      plugin.manifest.supportedTypes.some((t) => t === type)
+    );
   }
 
   getAllPlugins() {

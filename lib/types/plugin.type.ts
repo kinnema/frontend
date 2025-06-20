@@ -1,4 +1,5 @@
 export interface IPlugin {
+  id: string;
   name: string;
   url: string;
   manifest: IPluginManifest;
@@ -7,8 +8,29 @@ export interface IPlugin {
 export interface IPluginManifest {
   name: string;
   version: string;
-  description?: string;
-  author?: string;
-  homepage?: string;
+  description: string;
+  author: string;
+  homepage: string;
   license?: string;
+  supportedTypes: string[]; // e.g., ["movie", "series"]
+  endpoints: {
+    movie?: string;
+    series?: string;
+    search?: string;
+    details?: string;
+    [key: string]: string | undefined;
+  };
+}
+
+export interface IPluginEndpointResponse {
+  type: "movie" | "series";
+  data: IPluginEndpointPayload;
+}
+
+export interface IPluginEndpointPayload {
+  url: string;
+  type: "movie" | "series";
+  id: string;
+  season?: number;
+  episode?: number;
 }

@@ -232,9 +232,7 @@ export default function ChapterPage({ params }: IProps) {
             {!selectedWatchLink ? (
               <Providers
                 params={{
-                  id: isTurkishProvider
-                    ? params.slug
-                    : tmdbData.data.id.toString(),
+                  id: tmdbData.data.id.toString(),
                   season,
                   chapter,
                 }}
