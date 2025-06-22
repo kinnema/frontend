@@ -37,6 +37,11 @@ export class PluginManager {
       throw new Error(`Plugin ${pluginId} is not registered.`);
     }
 
+    if (!plugin.enabled) {
+      console.log(`Skipping plugin ${pluginId} is not enabled.`);
+      return;
+    }
+
     const endpoint =
       plugin.manifest.endpoints.series || plugin.manifest.endpoints.movie;
 

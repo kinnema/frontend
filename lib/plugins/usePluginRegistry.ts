@@ -73,9 +73,9 @@ export const usePluginRegistry = create<PluginRegistryState>()(
         return get().plugins.find((p) => p.id === id);
       },
       getPluginsByType: (type: "series" | "movie") => {
-        return get().plugins.filter((p) =>
-          p.manifest.supportedTypes?.includes(type)
-        );
+        const plugins = get().plugins.filter((p) => p.enabled);
+
+        return plugins.filter((p) => p.manifest.supportedTypes?.includes(type));
       },
     }),
     {

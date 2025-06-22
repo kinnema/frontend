@@ -140,7 +140,6 @@ export default function ChapterPage({ params }: IProps) {
   }, []);
 
   useEffect(() => {
-    console.log("isTurkishProvider", isTurkishProvider);
     if (!isTurkishProvider) {
       setIsPlaying(true);
     }
