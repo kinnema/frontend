@@ -71,7 +71,7 @@ export default function PluginManager() {
         </Button>
       </form>
       {error && <div className="text-red-500 my-5">{error}</div>}
-      <ul className="flex gap-5">
+      <ul className="flex md:flex-row flex-col gap-5">
         {Object.values(plugins).length === 0 && (
           <li>Herhangi bir eklenti bulunamadi</li>
         )}

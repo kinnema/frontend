@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import {
   ApiLastWatchedIdPatchRequest,
@@ -19,7 +18,6 @@ import { useWatchStore } from "@/lib/stores/watch.store";
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { Episode, ITmdbSerieDetails } from "@/lib/types/tmdb";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ReactHlsPlayer from "react-player";
@@ -264,16 +262,6 @@ export default function ChapterPage({ params }: IProps) {
               </>
             )}
           </>
-        </div>
-        <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
-          <Button
-            onClick={onClickClose}
-            variant="ghost"
-            size="icon"
-            className="hover:bg-white/10 text-white"
-          >
-            <X className="h-6 w-6" />
-          </Button>
         </div>
 
         <div

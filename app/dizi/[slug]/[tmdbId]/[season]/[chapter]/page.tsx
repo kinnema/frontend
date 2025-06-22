@@ -19,8 +19,6 @@ interface IProps {
 export default async function ChapterPage(props: IProps) {
   const params = await props.params;
   const queryClient = new QueryClient();
-  const season = parseInt(params.season.replace("sezon-", ""));
-  const chapter = parseInt(params.chapter.replace("bolum-", ""));
 
   await queryClient.prefetchQuery({
     queryKey: ["tmdb-details-with-season", params.slug, params.tmdbId],
