@@ -122,7 +122,7 @@ export function SerieDialogFeature({ params }: IProps) {
         <TabsList className="w-full justify-start h-16 rounded-none border-b border-zinc-800 bg-black">
           {tmdbDetailsData.data.seasons.map((season) => (
             <TabsTrigger
-              value={season?.season_number.toString() ?? 1}
+              value={season?.season_number.toString()}
               className="data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-emerald-400"
             >
               {season.name}
