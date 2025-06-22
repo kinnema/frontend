@@ -38,31 +38,17 @@ export default function ChapterPage({ params }: IProps) {
   const season = parseInt(params.season.replace("sezon-", ""));
   const chapter = parseInt(params.chapter.replace("bolum-", ""));
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isLoggedIn);
   const searchParams = useSearchParams();
   const videoPlayerRef = useRef<ReactHlsPlayer>(null);
   const router = useRouter();
   const clear = useWatchStore((state) => state.clear);
   const selectedWatchLink = useWatchStore((state) => state.selectedWatchLink);
-  const notExternalLink = useWatchStore((state) => state.notExternalLink);
 
   const toast = useToast();
 
-  const handleResize = () => {
-    setIsMobile(window.innerWidth < 768);
-  };
-
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", handleResize);
-
-      setIsMobile(window.innerWidth < 768);
-    }
-
     return () => {
-      if (typeof window !== "undefined")
-        window.removeEventListener("resize", handleResize);
       clear();
     };
   }, []);
@@ -272,16 +258,7 @@ export default function ChapterPage({ params }: IProps) {
                   />
                 ) : (
                   <>
-                    {isMobile && !notExternalLink ? (
-                      <OpenInExternalPlayer url={selectedWatchLink} />
-                    ) : (
-                      <iframe
-                        className="w-full h-full"
-                        src={`https://vidsrc.to/embed/tv/${tmdbData.data.id}/${season}/${chapter}`}
-                        allowFullScreen
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      />
-                    )}
+                    <OpenInExternalPlayer url={selectedWatchLink} />
                   </>
                 )}
               </>

@@ -1,10 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { useWatchStore } from "@/lib/stores/watch.store";
 
 enum PlayerType {
   VLC = "vlc",
   MPV = "mpv",
-  Other = "other",
 }
 
 const players = [
@@ -18,11 +16,6 @@ const players = [
     name: "MPV",
     className: "bg-blue-500 hover:bg-blue-600",
   },
-  {
-    key: PlayerType.Other,
-    name: "Reklam",
-    className: "bg-gray-500 hover:bg-gray-600",
-  },
 ];
 
 interface OpenInExternalPlayerProps {
@@ -30,7 +23,6 @@ interface OpenInExternalPlayerProps {
 }
 
 export function OpenInExternalPlayer({ url }: OpenInExternalPlayerProps) {
-  const setNotExternalLink = useWatchStore((state) => state.setNotExternalLink);
   const handleExternalPlayer = (player: PlayerType, url: string) => {
     switch (player) {
       case PlayerType.VLC:
@@ -39,10 +31,6 @@ export function OpenInExternalPlayer({ url }: OpenInExternalPlayerProps) {
         break;
       case PlayerType.MPV:
         window.open("mpv://" + url, "_blank");
-        break;
-      case PlayerType.Other:
-        setNotExternalLink(true);
-        console.warn("No specific handler for player:", player);
         break;
 
       default:
