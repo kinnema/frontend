@@ -1,4 +1,6 @@
 "use client";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircleIcon } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { Card } from "../../components/ui/card";
@@ -53,6 +55,18 @@ export const Providers = ({
         tiklamaniz yeterlidir.
       </p>
       <div className="mt-10 flex flex-col gap-3">
+        {providers.length === 0 && (
+          <Alert variant="default">
+            <AlertCircleIcon />
+
+            <AlertTitle>Kaynak bulunamadı</AlertTitle>
+            <AlertDescription className="text text-muted-foreground">
+              Şu anda bu seri için mevcut kaynak bulunmamaktadır. Mevcut
+              kaynakları bulabilmek için lütfen bir eklenti yükleyin.
+            </AlertDescription>
+          </Alert>
+        )}
+
         {providers.map((provider) => {
           const event = [...data]
             .reverse()
