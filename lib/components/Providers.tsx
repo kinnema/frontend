@@ -1,9 +1,9 @@
 "use client";
-import { usePlugins } from "@/hooks/use-plugins";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { Card } from "../../components/ui/card";
 import { pluginManager } from "../plugins/pluginManager";
+import { usePluginRegistry } from "../plugins/usePluginRegistry";
 import { useWatchStore } from "../stores/watch.store";
 import { IPlugin } from "../types/plugin.type";
 import { IPluginEvent } from "../types/pluginEvents.type";
@@ -15,12 +15,11 @@ export const Providers = ({
 }: {
   params: { id: string; season: number; chapter: number };
 }) => {
-  const selectedWatchLink = useWatchStore((state) => state.selectedWatchLink);
   const setSelectedWatchLink = useWatchStore(
     (state) => state.setSelectedWatchLink
   );
   const [providers, setProviders] = useState<IPlugin[]>([]);
-  const { getPluginsByType } = usePlugins();
+  const { getPluginsByType } = usePluginRegistry();
   const [data, setData] = useState<IPluginEvent[]>([]);
 
   // Fetch providers and events from the store

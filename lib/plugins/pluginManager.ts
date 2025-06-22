@@ -2,15 +2,15 @@ import EventEmitter from "events";
 import TypedEventEmitter from "typed-emitter";
 import { IPluginEndpointResponse } from "../types/plugin.type";
 import { IPluginEventEmitter } from "../types/pluginEvents.type";
-import { PluginRegistry, pluginRegistry } from "./pluginRegistery";
+import { usePluginRegistry } from "./usePluginRegistry";
 
 export class PluginManager {
-  pluginRegistry: PluginRegistry = pluginRegistry;
   eventEmitter = new EventEmitter() as TypedEventEmitter<IPluginEventEmitter>;
-
+  pluginRegistry = usePluginRegistry;
   async fetchSource(params: { id: string; season?: number; chapter?: number }) {
     try {
-      const plugins = this.pluginRegistry.getAllPlugins();
+      const plugins = this.pluginRegistry.getState().plugins;
+
       if (plugins.length === 0) {
         throw new Error("No plugins registered.");
       }
@@ -29,18 +29,19 @@ export class PluginManager {
   }
 
   async fetchSourceByPlugin(
-    pluginName: string,
+    pluginId: string,
     params: { id: string; season?: number; chapter?: number }
   ) {
-    const plugin = this.pluginRegistry.getPlugin(pluginName);
+    const plugin = this.pluginRegistry.getState().getPlugin(pluginId);
     if (!plugin) {
-      throw new Error(`Plugin ${pluginName} is not registered.`);
+      throw new Error(`Plugin ${pluginId} is not registered.`);
     }
 
     const endpoint =
       plugin.manifest.endpoints.series || plugin.manifest.endpoints.movie;
+
     if (!endpoint) {
-      throw new Error(`No endpoint defined for plugin ${pluginName}.`);
+      throw new Error(`No endpoint defined for plugin ${pluginId}.`);
     }
 
     const url = new URL(plugin.url + endpoint);
@@ -67,7 +68,7 @@ export class PluginManager {
           pluginId: plugin.id,
         },
       });
-      throw new Error(`Serie not found ${pluginName}`);
+      throw new Error(`Serie not found ${pluginId}`);
     }
 
     if (response.status !== 200) {
@@ -77,7 +78,7 @@ export class PluginManager {
           pluginId: plugin.id,
         },
       });
-      throw new Error(`Serie not found ${pluginName}`);
+      throw new Error(`Serie not found ${pluginId}`);
     }
 
     const { data, type } = (await response.json()) as IPluginEndpointResponse;

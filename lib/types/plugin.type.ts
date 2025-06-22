@@ -1,5 +1,6 @@
 export interface IPlugin {
   id: string;
+  enabled: boolean;
   name: string;
   url: string;
   manifest: IPluginManifest;
@@ -7,6 +8,7 @@ export interface IPlugin {
 
 export interface IPluginManifest {
   name: string;
+  bundle?: string[];
   version: string;
   description: string;
   author: string;

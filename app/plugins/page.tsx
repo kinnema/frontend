@@ -10,12 +10,20 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { usePlugins } from "@/hooks/use-plugins";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { usePluginRegistry } from "@/lib/plugins/usePluginRegistry";
 import { Loader2Icon } from "lucide-react";
 import { useState } from "react";
 
 export default function PluginManager() {
-  const { plugins, registerPlugin, unregisterPlugin } = usePlugins();
+  const {
+    plugins,
+    registerPlugin,
+    unregisterPlugin,
+    disablePlugin,
+    enablePlugin,
+  } = usePluginRegistry();
   const [pluginUrl, setPluginUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,6 +39,14 @@ export default function PluginManager() {
       setError("Eklenti eklenirken bir hata oluştu");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleTogglePlugin = (pluginId: string, enabled: boolean) => {
+    if (enabled) {
+      enablePlugin(pluginId);
+    } else {
+      disablePlugin(pluginId);
     }
   };
 
@@ -63,19 +79,33 @@ export default function PluginManager() {
           <li key={plugin.name}>
             <Card>
               <CardHeader>
-                <CardTitle>{plugin.name}</CardTitle>
+                <CardTitle className={!plugin.enabled ? "text-gray-500" : ""}>
+                  {plugin.name}
+                </CardTitle>
                 <CardDescription>{plugin.manifest.description}</CardDescription>
               </CardHeader>
               <CardContent>
                 <p>Versiyon: {plugin.manifest.version}</p>
               </CardContent>
               <CardFooter>
-                <Button
-                  style={{ marginLeft: 8 }}
-                  onClick={() => unregisterPlugin(plugin.name)}
-                >
-                  Kaldir
-                </Button>
+                <div className="flex justify-between items-center gap-4">
+                  <Button
+                    style={{ marginLeft: 8 }}
+                    onClick={() => unregisterPlugin(plugin.id)}
+                  >
+                    Kaldir
+                  </Button>
+                  <Switch
+                    id={`enable-plugin-${plugin.id}`}
+                    defaultChecked={plugin.enabled}
+                    onCheckedChange={(checked) =>
+                      handleTogglePlugin(plugin.id, checked)
+                    }
+                  />
+                  <Label htmlFor={`enable-plugin-${plugin.id}`}>
+                    Eklenti Durumu
+                  </Label>
+                </div>
               </CardFooter>
             </Card>
           </li>
