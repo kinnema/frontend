@@ -45,14 +45,24 @@ export default function ChapterPage({ params }: IProps) {
   const router = useRouter();
   const clear = useWatchStore((state) => state.clear);
   const selectedWatchLink = useWatchStore((state) => state.selectedWatchLink);
+  const notExternalLink = useWatchStore((state) => state.notExternalLink);
+
   const toast = useToast();
+
+  const handleResize = () => {
+    setIsMobile(window.innerWidth < 768);
+  };
 
   useEffect(() => {
     if (typeof window !== "undefined") {
+      window.addEventListener("resize", handleResize);
+
       setIsMobile(window.innerWidth < 768);
     }
 
     return () => {
+      if (typeof window !== "undefined")
+        window.removeEventListener("resize", handleResize);
       clear();
     };
   }, []);
@@ -130,6 +140,7 @@ export default function ChapterPage({ params }: IProps) {
   }, []);
 
   useEffect(() => {
+    console.log("isTurkishProvider", isTurkishProvider);
     if (!isTurkishProvider) {
       setIsPlaying(true);
     }
@@ -262,7 +273,7 @@ export default function ChapterPage({ params }: IProps) {
                   />
                 ) : (
                   <>
-                    {isMobile ? (
+                    {isMobile && !notExternalLink ? (
                       <OpenInExternalPlayer url={selectedWatchLink} />
                     ) : (
                       <iframe
