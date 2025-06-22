@@ -1,7 +1,6 @@
 "use client";
 
 import SeasonEpisodes from "@/app/dizi/[slug]/components/SeasonEpisodes";
-import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loading } from "@/lib/components/Loading";
@@ -12,9 +11,7 @@ import { useAuthStore } from "@/lib/stores/auth.store";
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { ITmdbSerieDetails } from "@/lib/types/tmdb";
 import { useQuery } from "@tanstack/react-query";
-import { X } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 
 interface IProps {
@@ -22,11 +19,9 @@ interface IProps {
     slug: string;
     tmdbId: number;
   };
-  isClient?: boolean;
 }
 
-export function SerieDialogFeature({ params, isClient }: IProps) {
-  const router = useRouter();
+export function SerieDialogFeature({ params }: IProps) {
   const isAuthenticated = useAuthStore((state) => state.isLoggedIn);
 
   const tmdbDetailsData = useQuery<ITmdbSerieDetails>({
@@ -84,20 +79,8 @@ export function SerieDialogFeature({ params, isClient }: IProps) {
           height={500}
           priority
           loading="eager"
-
         />
-        {isClient && (
-          <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hover:bg-white/10 text-white"
-              onClick={() => router.back()}
-            >
-              <X className="h-6 w-6" />
-            </Button>
-          </div>
-        )}
+
         <div className="absolute bottom-6 left-6 z-20">
           <span className="text-emerald-400 text-sm mb-2 gap-1 flex ">
             {tmdbDetailsData.data.networks.map((network) => (
@@ -139,7 +122,7 @@ export function SerieDialogFeature({ params, isClient }: IProps) {
         <TabsList className="w-full justify-start h-16 rounded-none border-b border-zinc-800 bg-black">
           {tmdbDetailsData.data.seasons.map((season) => (
             <TabsTrigger
-              value={season?.season_number.toString() ?? 1}
+              value={season?.season_number.toString()}
               className="data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-emerald-400"
             >
               {season.name}
@@ -149,7 +132,7 @@ export function SerieDialogFeature({ params, isClient }: IProps) {
         <TabsContent value={activeSeasonTab.toString()} className="mt-0">
           <div className="p-6">
             <div className="space-y-4">
-              <ScrollArea className="h-[26vh]" >{renderSeasonTab()}</ScrollArea>
+              <ScrollArea className="h-[26vh]">{renderSeasonTab()}</ScrollArea>
             </div>
           </div>
         </TabsContent>

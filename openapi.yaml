@@ -11,7 +11,7 @@ components:
   schemas:
     def-0:
       type: object
-      title: url/auth
+      title: undefined/auth
     def-1:
       type: object
       properties:
@@ -75,10 +75,10 @@ components:
         - username
     def-5:
       type: object
-      title: url/favorite
+      title: undefined/favorite
     def-6:
       type: object
-      title: url/last_watched
+      title: undefined/last_watched
     def-7:
       type: object
       title: lastWatchedSchemaOutputType
@@ -291,34 +291,6 @@ components:
         atSecond:
           type: number
           nullable: true
-    def-13:
-      type: object
-      title: WatchProvidersSchema
-      properties:
-        providers:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-              priority:
-                type: number
-              isEnabled:
-                type: boolean
-            title: "#WatchProviderInnerSchema"
-      required:
-        - providers
-    def-14:
-      type: object
-      properties:
-        name:
-          type: string
-        priority:
-          type: number
-        isEnabled:
-          type: boolean
-      title: "#WatchProviderInnerSchema"
 paths:
   /api/auth/:
     get:
@@ -837,27 +809,6 @@ paths:
           description: Default Response
   /openapi.yaml/:
     get:
-      responses:
-        "200":
-          description: Default Response
-  /api/watch/:
-    get:
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: id
-          required: false
-        - schema:
-            type: number
-          in: query
-          name: season_number
-          required: false
-        - schema:
-            type: number
-          in: query
-          name: episode_number
-          required: false
       responses:
         "200":
           description: Default Response

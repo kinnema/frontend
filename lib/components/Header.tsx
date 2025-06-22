@@ -50,7 +50,7 @@ export function Header() {
   return (
     <>
       <header className="fixed top-0 w-full z-50 bg-gradient-to-b from-black/80 to-black/0">
-        <div className="px-4 md:px-6 flex items-center justify-between py-4">
+        <div className="px-4 md:px-6 flex items-center justify-between gap-10 py-4">
           <div className="flex items-center gap-4 md:gap-8">
             <Link href="/" className="flex items-center gap-2">
               <div className="w-8 h-8">
@@ -80,6 +80,12 @@ export function Header() {
                 <Button>Giriş Yap</Button>
               </Link>
             )}
+            <Link
+              href="/plugins"
+              className="text-sm font-medium transition-colors hover:text-white/70"
+            >
+              Eklentiler
+            </Link>
             <Link href="/search">
               <Button
                 variant="ghost"

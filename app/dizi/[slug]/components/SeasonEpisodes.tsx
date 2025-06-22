@@ -44,50 +44,49 @@ export default function SeasonEpisodes({
   if (isPending) {
     return <Loading />;
   }
+  if (!data || !data.episodes) {
+    return <div>No episodes found</div>;
+  }
 
   return (
     <>
       {data.episodes?.map((episode) => {
-        if (episode.runtime !== null) {
-          let episodeHref = `/dizi/${slugify(
-            serie_name
-          )}/${id}/sezon-${season}/bolum-${episode.episode_number}`;
+        let episodeHref = `/dizi/${slugify(
+          serie_name
+        )}/${id}/sezon-${season}/bolum-${episode.episode_number}`;
 
-          if (isTurkishProvider) {
-            episodeHref += `?network=${serieNetwork?.at(network)}`;
-          }
-
-          return (
-            <Link
-              key={episode.id}
-              href={episodeHref}
-              className="flex w-full gap-4 p-4 hover:bg-white/5 rounded-lg transition-colors text-left"
-            >
-              <div className="relative w-40 aspect-video rounded-lg overflow-hidden">
-                <Image
-                  src={tmdbPoster(episode.still_path)}
-                  alt={episode.name}
-                  fill
-                  className="object-cover"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-12 h-12 rounded-full bg-black/50 flex items-center justify-center">
-                    <div className="w-0 h-0 border-t-8 border-t-transparent border-l-12 border-l-white border-b-8 border-b-transparent ml-1" />
-                  </div>
-                </div>
-              </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold mb-2">{episode.name}</h3>
-                <p className="text-sm text-gray-400 line-clamp-2">
-                  {episode.overview}
-                </p>
-              </div>
-            </Link>
-          );
+        if (isTurkishProvider) {
+          episodeHref += `?network=${serieNetwork?.at(network)}`;
         }
 
-        return null;
+        return (
+          <Link
+            key={episode.id}
+            href={episodeHref}
+            className="flex w-full gap-4 p-4 hover:bg-white/5 rounded-lg transition-colors text-left"
+          >
+            <div className="relative w-40 aspect-video rounded-lg overflow-hidden">
+              <Image
+                src={tmdbPoster(episode.still_path)}
+                alt={episode.name}
+                fill
+                className="object-cover"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-full bg-black/50 flex items-center justify-center">
+                  <div className="w-0 h-0 border-t-8 border-t-transparent border-l-12 border-l-white border-b-8 border-b-transparent ml-1" />
+                </div>
+              </div>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold mb-2">{episode.name}</h3>
+              <p className="text-sm text-gray-400 line-clamp-2">
+                {episode.overview}
+              </p>
+            </div>
+          </Link>
+        );
       })}
     </>
   );

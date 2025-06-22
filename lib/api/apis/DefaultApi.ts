@@ -85,12 +85,6 @@ export interface ApiLastWatchedTmdbIdGetRequest {
     tmdbId: number;
 }
 
-export interface ApiWatchGetRequest {
-    id?: string;
-    seasonNumber?: number;
-    episodeNumber?: number;
-}
-
 /**
  * 
  */
@@ -449,41 +443,6 @@ export class DefaultApi extends runtime.BaseAPI {
     async apiLastWatchedTmdbIdGet(requestParameters: ApiLastWatchedTmdbIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LastWatchedSchemaOutputType> {
         const response = await this.apiLastWatchedTmdbIdGetRaw(requestParameters, initOverrides);
         return await response.value();
-    }
-
-    /**
-     */
-    async apiWatchGetRaw(requestParameters: ApiWatchGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        const queryParameters: any = {};
-
-        if (requestParameters['id'] != null) {
-            queryParameters['id'] = requestParameters['id'];
-        }
-
-        if (requestParameters['seasonNumber'] != null) {
-            queryParameters['season_number'] = requestParameters['seasonNumber'];
-        }
-
-        if (requestParameters['episodeNumber'] != null) {
-            queryParameters['episode_number'] = requestParameters['episodeNumber'];
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/api/watch/`,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     */
-    async apiWatchGet(requestParameters: ApiWatchGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.apiWatchGetRaw(requestParameters, initOverrides);
     }
 
     /**

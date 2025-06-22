@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import {
   ApiLastWatchedIdPatchRequest,
@@ -19,7 +18,6 @@ import { useWatchStore } from "@/lib/stores/watch.store";
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { Episode, ITmdbSerieDetails } from "@/lib/types/tmdb";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ReactHlsPlayer from "react-player";
@@ -38,20 +36,16 @@ export default function ChapterPage({ params }: IProps) {
   const season = parseInt(params.season.replace("sezon-", ""));
   const chapter = parseInt(params.chapter.replace("bolum-", ""));
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isLoggedIn);
   const searchParams = useSearchParams();
   const videoPlayerRef = useRef<ReactHlsPlayer>(null);
   const router = useRouter();
   const clear = useWatchStore((state) => state.clear);
   const selectedWatchLink = useWatchStore((state) => state.selectedWatchLink);
+
   const toast = useToast();
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setIsMobile(window.innerWidth < 768);
-    }
-
     return () => {
       clear();
     };
@@ -232,9 +226,7 @@ export default function ChapterPage({ params }: IProps) {
             {!selectedWatchLink ? (
               <Providers
                 params={{
-                  id: isTurkishProvider
-                    ? params.slug
-                    : tmdbData.data.id.toString(),
+                  id: tmdbData.data.id.toString(),
                   season,
                   chapter,
                 }}
@@ -243,7 +235,7 @@ export default function ChapterPage({ params }: IProps) {
               <>
                 {isTurkishProvider ? (
                   <ReactHlsPlayer
-                    url={selectedWatchLink.url}
+                    url={selectedWatchLink}
                     width={"100%"}
                     height={"100%"}
                     stopOnUnmount
@@ -264,31 +256,12 @@ export default function ChapterPage({ params }: IProps) {
                   />
                 ) : (
                   <>
-                    {isMobile ? (
-                      <OpenInExternalPlayer url={selectedWatchLink.url} />
-                    ) : (
-                      <iframe
-                        className="w-full h-full"
-                        src={`https://vidsrc.to/embed/tv/${tmdbData.data.id}/${season}/${chapter}`}
-                        allowFullScreen
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      />
-                    )}
+                    <OpenInExternalPlayer url={selectedWatchLink} />
                   </>
                 )}
               </>
             )}
           </>
-        </div>
-        <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
-          <Button
-            onClick={onClickClose}
-            variant="ghost"
-            size="icon"
-            className="hover:bg-white/10 text-white"
-          >
-            <X className="h-6 w-6" />
-          </Button>
         </div>
 
         <div
