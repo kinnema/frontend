@@ -1,6 +1,6 @@
 # Kinnema
 
-Kinnema is a modern movie application that leverages the VidSrc API to provide users with a seamless experience for discovering, searching, and watching movies and TV series. Built with Next.js, TypeScript, and Tailwind CSS, Kinnema offers a fast, responsive, and user-friendly interface.
+Kinnema is a modern movie application that provide users with a seamless experience for discovering, searching, and watching movies and TV series. Built with Next.js, TypeScript, and Tailwind CSS, Kinnema offers a fast, responsive, and user-friendly interface.
 
 [Live Demo](https://kinnema.vercel.app)
 
@@ -13,8 +13,7 @@ Kinnema is a modern movie application that leverages the VidSrc API to provide u
 - **Favorites:** Add movies and series to your favorites list.
 - **Continue Watching:** Resume watching from where you left off.
 - **Responsive UI:** Optimized for all devices with a clean, modern design.
-- **PWA Support:** Installable as a Progressive Web App for offline access.
-- **API Integration:** Powered by VidSrc and TMDB for rich metadata and streaming links.
+- **API Integration:** Powered by TMDB for rich metadata and streaming links.
 
 ## Tech Stack
 
@@ -72,7 +71,6 @@ Kinnema is a modern movie application that leverages the VidSrc API to provide u
 ## Configuration
 
 - **API Endpoints:** Configure API URLs and keys in the `.env` file.
-- **PWA:** Manifest is defined in `app/manifest.ts`.
 
 ## Contributing
 
