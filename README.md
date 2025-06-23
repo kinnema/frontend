@@ -21,7 +21,7 @@ Kinnema is a modern movie application that leverages the VidSrc API to provide u
 - **Framework:** [Next.js](https://nextjs.org/)
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS
-- **API:** VidSrc, TMDB
+- **API:** TMDB
 - **State Management:** Custom hooks and stores
 - **Icons:** Lucide-react
 - **PWA:** Manifest and service worker support
