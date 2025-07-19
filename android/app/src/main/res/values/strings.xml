@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">kinnema</string>
+    <string name="title_activity_main">kinnema</string>
+    <string name="package_name">com.kinnema.app</string>
+    <string name="custom_url_scheme">com.kinnema.app</string>
+</resources>

@@ -8,7 +8,6 @@ import {
 } from "@/lib/api";
 import { Loading } from "@/lib/components/Loading";
 import { Providers } from "@/lib/components/Providers";
-import { OpenInExternalPlayer } from "@/lib/components/Watch/OpenInExternalPlayer";
 import { ILastWatched, ILastWatchedMutation } from "@/lib/models";
 import TmdbService from "@/lib/services/tmdb.service";
 import UserService from "@/lib/services/user.service";
@@ -18,10 +17,9 @@ import { useWatchStore } from "@/lib/stores/watch.store";
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { Episode, ITmdbSerieDetails } from "@/lib/types/tmdb";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Hls from "hls.js";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import ReactHlsPlayer from "react-player";
-
 interface IProps {
   params: {
     slug: string;
@@ -31,6 +29,26 @@ interface IProps {
   };
 }
 
+class ResponseUrlFixLoader extends Hls.DefaultConfig.loader {
+  load(context: any, config: any, callbacks: any) {
+    const originalSuccess = callbacks.onSuccess;
+
+    callbacks.onSuccess = (
+      response: any,
+      stats: any,
+      context: any,
+      networkDetails: any
+    ) => {
+      console.log(response.url, context.url);
+      response.url = context.url;
+      originalSuccess(response, stats, context, networkDetails);
+    };
+
+    super.load(context, config, callbacks);
+  }
+}
+const src = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8";
+
 export default function ChapterPage({ params }: IProps) {
   const queryClient = useQueryClient();
   const season = parseInt(params.season.replace("sezon-", ""));
@@ -38,18 +56,51 @@ export default function ChapterPage({ params }: IProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isLoggedIn);
   const searchParams = useSearchParams();
-  const videoPlayerRef = useRef<ReactHlsPlayer>(null);
   const router = useRouter();
   const clear = useWatchStore((state) => state.clear);
   const selectedWatchLink = useWatchStore((state) => state.selectedWatchLink);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   const toast = useToast();
 
   useEffect(() => {
+    const el = videoRef.current;
+    console.log("video not element found", el);
+
+    if (!el || !selectedWatchLink) return;
+
+    console.log("video element found", el);
+
+    if (Hls.isSupported()) {
+      console.log("initialising hls.js");
+      const hls = new Hls({ debug: true, loader: ResponseUrlFixLoader }); // debug logs every step
+      hls.loadSource(selectedWatchLink);
+      hls.attachMedia(el);
+      hls.on(Hls.Events.MANIFEST_PARSED, () => console.log("manifest loaded"));
+      hls.on(Hls.Events.ERROR, (e, data) => {
+        toast.toast({
+          title: "Error",
+          description: `Yukleyemedim videoyu be.`,
+          variant: "destructive",
+        });
+        console.error("hls error", data);
+      });
+      videoRef.current?.play();
+
+      return () => {
+        hls.destroy();
+        clear();
+      };
+    } else {
+      console.log("native HLS");
+      el.src = src;
+      el.play().catch(() => {});
+    }
+
     return () => {
       clear();
     };
-  }, []);
+  }, [selectedWatchLink]);
 
   const tmdbData = useQuery<ITmdbSerieDetails>({
     queryKey: ["tmdb-details-with-season", params.slug, params.tmdbId],
@@ -192,7 +243,9 @@ export default function ChapterPage({ params }: IProps) {
         description: `İzlemeye devam ediyorsunuz. ${secondsToMinutes}.dakika da devam ediyorsunuz.`,
         duration: 1000,
       });
-      videoPlayerRef.current?.seekTo(lastWatched.data.atSecond);
+      if (!videoRef.current) return;
+
+      videoRef.current.fastSeek(lastWatched.data.atSecond);
     }
   }
 
@@ -233,32 +286,18 @@ export default function ChapterPage({ params }: IProps) {
               />
             ) : (
               <>
-                {isTurkishProvider ? (
-                  <ReactHlsPlayer
-                    url={selectedWatchLink}
-                    width={"100%"}
-                    height={"100%"}
-                    stopOnUnmount
-                    playing
-                    ref={videoPlayerRef}
-                    style={{
-                      backgroundColor: "black",
-                      width: "100%",
-                      height: "100%",
-                    }}
-                    light={`https://image.tmdb.org/t/p/original/${tmdbEpisodeData.data.still_path}`}
-                    controls
-                    onPlay={onPlay}
-                    onPause={onPause}
-                    onProgress={handleProgress}
-                    onStart={onStart}
-                    pip={true}
-                  />
-                ) : (
-                  <>
-                    <OpenInExternalPlayer url={selectedWatchLink} />
-                  </>
-                )}
+                <video
+                  ref={videoRef}
+                  style={{
+                    backgroundColor: "black",
+                    width: "100%",
+                    height: "100%",
+                  }}
+                  poster={`https://image.tmdb.org/t/p/original/${tmdbEpisodeData.data.still_path}`}
+                  controls
+                  onPlay={onPlay}
+                  onPause={onPause}
+                />
               </>
             )}
           </>

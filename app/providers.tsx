@@ -3,11 +3,24 @@
 import { Toaster } from "@/components/ui/toaster";
 import { useAppStore } from "@/lib/stores/app.store";
 import { useAuthStore } from "@/lib/stores/auth.store";
+import { SafeArea } from "@capacitor-community/safe-area";
+import { Capacitor } from "@capacitor/core";
+import { StatusBar, Style } from "@capacitor/status-bar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { PropsWithChildren, useEffect } from "react";
+import BackButtonHandler from "../lib/components/App/BackButtonHandler";
 import { getAccessToken } from "./actions/auth/getAccessToken";
+
+if (Capacitor.isNativePlatform()) {
+  SafeArea.enable({
+    config: {},
+  });
+  StatusBar.setOverlaysWebView({ overlay: false });
+  StatusBar.setBackgroundColor({ color: "#000000" });
+  StatusBar.setStyle({ style: Style.Dark });
+}
 
 function makeQueryClient() {
   return new QueryClient({
@@ -116,6 +129,7 @@ export function Providers({ children }: PropsWithChildren) {
       </div>
       <SpeedInsights />
       <Analytics />
+      <BackButtonHandler />
     </QueryClientProvider>
   );
 }

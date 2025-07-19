@@ -11,6 +11,7 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { NAV_LINKS } from "../constants";
 import { useAuthStore } from "../stores/auth.store";
+import { Capacitor } from "@capacitor/core";
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -47,9 +48,12 @@ export function Header() {
     });
   }
 
+
   return (
     <>
-      <header className="fixed top-0 w-full z-50 bg-gradient-to-b from-black/80 to-black/0">
+      <header className="fixed top-0 w-full z-50 bg-gradient-to-b from-black/80 to-black/0" style={{
+        paddingTop: "var(--safe-area-inset-top)"
+      }}>
         <div className="px-4 md:px-6 flex items-center justify-between gap-10 py-4">
           <div className="flex items-center gap-4 md:gap-8">
             <Link href="/" className="flex items-center gap-2">
