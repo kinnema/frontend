@@ -5,8 +5,7 @@ const config: CapacitorConfig = {
   appName: 'kinnema',
   webDir: 'dist',
   server: {
-    url: "http://192.168.1.227:3000",
-    cleartext: true
+    url: "https://frontend-git-native-kinnema.vercel.app"
   },
   plugins: {
     CapacitorHttp: {
