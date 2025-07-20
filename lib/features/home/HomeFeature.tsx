@@ -14,22 +14,17 @@ import { useQuery } from "@tanstack/react-query";
 export function HomeFeature() {
   const { toast } = useToast();
   const isAuthenticated = useAuthStore((state) => state.isLoggedIn);
-  const bluTvShows = useQuery({
-    queryKey: ["home", "blutv"],
-    queryFn: () => TmdbService.fetchNetworkSeries(TmdbNetworks.BLUTV),
-  });
-  const gainTvShows = useQuery({
-    queryKey: ["home", "gain"],
-    queryFn: () => TmdbService.fetchNetworkSeries(TmdbNetworks.GAIN),
-  });
-  const exxenShows = useQuery({
-    queryKey: ["home", "exxen"],
-    queryFn: () => TmdbService.fetchNetworkSeries(TmdbNetworks.EXXEN),
-  });
+
   const lastWatched = useQuery({
     enabled: isAuthenticated,
     queryKey: ["last-watched"],
     queryFn: () => UserService.fetchLastWatched(),
+  });
+
+  const networks = [TmdbNetworks.BLUTV, TmdbNetworks.GAIN, TmdbNetworks.EXXEN];
+  const { data: networkData, isPending: isNetworkPending } = useQuery({
+    queryKey: ["home", "networks"],
+    queryFn: () => TmdbService.fetchMultipleNetworksSeries(networks),
   });
 
   return (
@@ -43,7 +38,7 @@ export function HomeFeature() {
       <ShowCarousel
         title="BluTV"
         shows={
-          bluTvShows.data?.results.map((s) => (
+          networkData?.[TmdbNetworks.BLUTV]?.results.map((s) => (
             <ShowCard
               show={{ id: s.id, image: s.poster_path, title: s.name }}
               key={s.id}
@@ -52,12 +47,12 @@ export function HomeFeature() {
         }
         maxCards={5}
         largeCards={true}
-        isLoading={bluTvShows.isPending}
+        isLoading={isNetworkPending}
       />
       <ShowCarousel
         title="GainTV"
         shows={
-          gainTvShows.data?.results.map((s) => (
+          networkData?.[TmdbNetworks.GAIN]?.results.map((s) => (
             <ShowCard
               show={{ id: s.id, image: s.poster_path, title: s.name }}
               key={s.id}
@@ -66,12 +61,12 @@ export function HomeFeature() {
         }
         maxCards={5}
         largeCards={true}
-        isLoading={gainTvShows.isPending}
+        isLoading={isNetworkPending}
       />
       <ShowCarousel
         title="Exxen"
         shows={
-          exxenShows.data?.results.map((s) => (
+          networkData?.[TmdbNetworks.EXXEN]?.results.map((s) => (
             <ShowCard
               show={{ id: s.id, image: s.poster_path, title: s.name }}
               key={s.id}
@@ -80,7 +75,7 @@ export function HomeFeature() {
         }
         maxCards={5}
         largeCards={true}
-        isLoading={exxenShows.isPending}
+        isLoading={isNetworkPending}
       />
     </>
   );

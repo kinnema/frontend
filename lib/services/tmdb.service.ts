@@ -70,6 +70,23 @@ class TmdbService {
     return this.fetchSeriesByNetwork(network, page);
   };
 
+  static fetchMultipleNetworksSeries = async (
+    networks: TmdbNetworks[],
+    page: number = 1
+  ): Promise<Record<TmdbNetworks, ITmdbSearchResults>> => {
+    const results = await Promise.all(
+      networks.map((network) =>
+        this.fetchNetworkSeries(network, page).then(
+          (data) => [network, data] as const
+        )
+      )
+    );
+    return Object.fromEntries(results) as Record<
+      TmdbNetworks,
+      ITmdbSearchResults
+    >;
+  };
+
   private static fetchSeriesByNetwork = async (
     network: TmdbNetworks,
     page: number = 1
