@@ -11,7 +11,6 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { NAV_LINKS } from "../constants";
 import { useAuthStore } from "../stores/auth.store";
-import { Capacitor } from "@capacitor/core";
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -48,12 +47,14 @@ export function Header() {
     });
   }
 
-
   return (
     <>
-      <header className="fixed top-0 w-full z-50 bg-gradient-to-b from-black/80 to-black/0" style={{
-        paddingTop: "var(--safe-area-inset-top)"
-      }}>
+      <header
+        className="fixed top-0 w-full z-50 bg-gradient-to-b from-black/80 to-black/0"
+        style={{
+          paddingTop: "var(--safe-area-inset-top)",
+        }}
+      >
         <div className="px-4 md:px-6 flex items-center justify-between gap-10 py-4">
           <div className="flex items-center gap-4 md:gap-8">
             <Link href="/" className="flex items-center gap-2">
@@ -84,12 +85,6 @@ export function Header() {
                 <Button>Giriş Yap</Button>
               </Link>
             )}
-            <Link
-              href="/plugins"
-              className="text-sm font-medium transition-colors hover:text-white/70"
-            >
-              Eklentiler
-            </Link>
             <Link href="/search">
               <Button
                 variant="ghost"
@@ -112,6 +107,9 @@ export function Header() {
       </header>
 
       <div
+        style={{
+          marginTop: "var(--safe-area-inset-top)",
+        }}
         className={classNames(
           "fixed left-0 bg-black w-full h-full z-50 flex flex-col p-8 transition-all duration-300",
           {
@@ -120,7 +118,7 @@ export function Header() {
           }
         )}
       >
-        <div className="flex flex-col  h-full">
+        <div className="flex flex-col h-full">
           <Link href="/search">
             <div className="relative items-center content-center flex w-full cursor-pointer">
               <span className="text-gray-400 absolute left-4 cursor-pointer">
@@ -133,21 +131,31 @@ export function Header() {
           </Link>
 
           <ul className="flex flex-col justify-center items-center mt-10">
-            {NAV_LINKS.map((link) => (
-              <li className="p-3 text-center" key={link.href}>
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={classNames(
-                    "flex items-center space-x-2 py-1 dark:text-white font-semibold transition-all duration-200",
-                    "hover:text-red-600",
-                    "dark:hover:text-red-600"
-                  )}
-                >
-                  <span>{link.name}</span>
-                </Link>
-              </li>
-            ))}
+            {NAV_LINKS.map((link) => {
+              if (link.type === "divider") {
+                return (
+                  <li
+                    key={link.name}
+                    className="text-center border-b border-border block w-full"
+                  ></li>
+                );
+              }
+
+              return (
+                <li className="p-3 text-center" key={link.name}>
+                  <Link
+                    href={link.href ?? "#"}
+                    className={classNames(
+                      "flex items-center space-x-2 py-1 dark:text-white font-semibold transition-all duration-200",
+                      "hover:text-primary",
+                      "dark:hover:text-primary"
+                    )}
+                  >
+                    <span>{link.name}</span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
 
           <div className="m-auto">
