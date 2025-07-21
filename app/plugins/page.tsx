@@ -23,6 +23,9 @@ export default function PluginManager() {
     unregisterPlugin,
     disablePlugin,
     enablePlugin,
+    updatePlugins,
+    updatePlugin,
+    isUpdating,
   } = usePluginRegistry();
   const [pluginUrl, setPluginUrl] = useState("");
   const [loading, setLoading] = useState(false);
@@ -50,6 +53,14 @@ export default function PluginManager() {
     }
   };
 
+  const handleUpdateButton = async () => {
+    await updatePlugins();
+  };
+
+  const handlePluginUpdate = async (pluginId: string) => {
+    await updatePlugin(pluginId);
+  };
+
   return (
     <div className="p-10">
       <h1 className="font-semibold text-2xl">Eklenti Yöneticisi</h1>
@@ -71,6 +82,21 @@ export default function PluginManager() {
         </Button>
       </form>
       {error && <div className="text-red-500 my-5">{error}</div>}
+
+      <Button
+        type="button"
+        onClick={handleUpdateButton}
+        disabled={isUpdating?.isUpdating && isUpdating.pluginId === "*"}
+        className="my-5"
+      >
+        {isUpdating?.isUpdating && isUpdating.pluginId === "*" && (
+          <Loader2Icon className="animate-spin mr-2" />
+        )}
+        {isUpdating?.isUpdating && isUpdating.pluginId === "*"
+          ? "Guncelleniyor"
+          : "Tum Eklentileri Guncelle"}
+      </Button>
+
       <ul className="flex md:flex-row flex-col gap-5">
         {Object.values(plugins).length === 0 && (
           <li>Herhangi bir eklenti bulunamadi</li>
@@ -89,12 +115,6 @@ export default function PluginManager() {
               </CardContent>
               <CardFooter>
                 <div className="flex justify-between items-center gap-4">
-                  <Button
-                    style={{ marginLeft: 8 }}
-                    onClick={() => unregisterPlugin(plugin.id)}
-                  >
-                    Kaldir
-                  </Button>
                   <Switch
                     id={`enable-plugin-${plugin.id}`}
                     defaultChecked={plugin.enabled}
@@ -105,6 +125,27 @@ export default function PluginManager() {
                   <Label htmlFor={`enable-plugin-${plugin.id}`}>
                     Eklenti Durumu
                   </Label>
+                  <Button
+                    variant="outline"
+                    style={{ marginLeft: 8 }}
+                    onClick={() => handlePluginUpdate(plugin.id)}
+                    disabled={
+                      isUpdating?.isUpdating &&
+                      isUpdating.pluginId === plugin.id
+                    }
+                  >
+                    {isUpdating?.isUpdating === true &&
+                    isUpdating.pluginId === plugin.id
+                      ? "Guncelleniyor"
+                      : "Guncelle"}
+                  </Button>
+                  <Button
+                    style={{ marginLeft: 8 }}
+                    onClick={() => unregisterPlugin(plugin.id)}
+                    variant="destructive"
+                  >
+                    Kaldir
+                  </Button>
                 </div>
               </CardFooter>
             </Card>

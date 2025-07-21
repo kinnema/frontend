@@ -37,3 +37,8 @@ export interface IPluginEndpointPayload {
   season?: number;
   episode?: number;
 }
+
+export interface IPluginUpdating {
+  pluginId: string;
+  isUpdating: boolean;
+}
