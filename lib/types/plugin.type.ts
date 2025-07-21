@@ -15,6 +15,7 @@ export interface IPluginManifest {
   homepage: string;
   license?: string;
   supportedTypes: string[]; // e.g., ["movie", "series"]
+  cors: boolean;
   endpoints: {
     movie?: string;
     series?: string;

@@ -1,7 +1,6 @@
 import { useToast } from "@/hooks/use-toast";
-import { Capacitor } from "@capacitor/core";
 import Hls from "hls.js";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { createHlsConfig, hlsEventHandlers } from "../utils/hlsConfig";
 
 interface UseHlsPlayerProps {
@@ -21,17 +20,6 @@ export function useHlsPlayer({
 }: UseHlsPlayerProps) {
   const hlsRef = useRef<Hls | null>(null);
   const toast = useToast();
-
-  useEffect(() => {
-    if (!Capacitor.isNativePlatform()) {
-      toast.toast({
-        title: "Mobil uygulama gerekebilir",
-        description: "Mobilde calistirmiyorsunuz, video yuklenmeyebilir!",
-        duration: 3000,
-        variant: "default",
-      });
-    }
-  }, []);
 
   function loadSource(src: string) {
     const videoElement = videoRef.current;

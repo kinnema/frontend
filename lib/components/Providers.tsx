@@ -1,4 +1,5 @@
 "use client";
+import { useToast } from "@/hooks/use-toast";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { Card } from "../../components/ui/card";
@@ -15,6 +16,7 @@ export const Providers = ({
 }: {
   params: { id: string; season: number; chapter: number };
 }) => {
+  const toast = useToast();
   const setSelectedWatchLink = useWatchStore(
     (state) => state.setSelectedWatchLink
   );
@@ -24,6 +26,12 @@ export const Providers = ({
 
   // Fetch providers and events from the store
   useEffect(() => {
+    toast.toast({
+      title: "Mobil uygulama",
+      description:
+        "Mobil uygulama uzerinden calistirmiyorsunuz, bazi kaynaklar gözukmeyebilir!",
+      duration: 3000,
+    });
     console.log("Fetching providers for series...", getPluginsByType("series"));
     setProviders(getPluginsByType("series"));
 

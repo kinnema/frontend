@@ -1,3 +1,4 @@
+import { Capacitor } from "@capacitor/core";
 import { v4 as uuidv4 } from "uuid";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -73,7 +74,11 @@ export const usePluginRegistry = create<PluginRegistryState>()(
         return get().plugins.find((p) => p.id === id);
       },
       getPluginsByType: (type: "series" | "movie") => {
-        const plugins = get().plugins.filter((p) => p.enabled);
+        let plugins = get().plugins.filter((p) => p.enabled);
+
+        if (!Capacitor.isNativePlatform()) {
+          plugins = plugins.filter((p) => !p.manifest.cors);
+        }
 
         return plugins.filter((p) => p.manifest.supportedTypes?.includes(type));
       },
