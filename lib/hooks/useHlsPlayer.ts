@@ -1,11 +1,11 @@
 import { useToast } from "@/hooks/use-toast";
+import { Capacitor } from "@capacitor/core";
 import Hls from "hls.js";
 import { useEffect, useRef } from "react";
 import { createHlsConfig, hlsEventHandlers } from "../utils/hlsConfig";
 
 interface UseHlsPlayerProps {
-  videoRef: React.RefObject<HTMLVideoElement | null> ;
-  sourceUrl: string | null;
+  videoRef: React.RefObject<HTMLVideoElement | null>;
   onError?: (error: any) => void;
   onReady?: () => void;
 }
@@ -16,21 +16,29 @@ interface UseHlsPlayerProps {
  */
 export function useHlsPlayer({
   videoRef,
-  sourceUrl,
   onError,
   onReady,
 }: UseHlsPlayerProps) {
   const hlsRef = useRef<Hls | null>(null);
   const toast = useToast();
-  
-  useEffect(() => {
-    const videoElement = videoRef.current;
-    
-    if (!videoElement || !sourceUrl) {
-      return;
-    }
 
-    console.log("Initializing HLS player with source:", sourceUrl);
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) {
+      toast.toast({
+        title: "Mobil uygulama gerekebilir",
+        description: "Mobilde calistirmiyorsunuz, video yuklenmeyebilir!",
+        duration: 3000,
+        variant: "default",
+      });
+    }
+  }, []);
+
+  function loadSource(src: string) {
+    const videoElement = videoRef.current;
+
+    if (!videoElement) throw new Error("Source url or video ref is missing");
+
+    console.log("Initializing HLS player with source:", src);
 
     // Cleanup previous instance
     if (hlsRef.current) {
@@ -40,13 +48,13 @@ export function useHlsPlayer({
 
     if (Hls.isSupported()) {
       console.log("Initializing hls.js with CapacitorHTTP loader");
-      
+
       const hlsConfig = createHlsConfig();
       const hls = new Hls(hlsConfig);
       hlsRef.current = hls;
 
       // Load source and attach to video element
-      hls.loadSource(sourceUrl);
+      hls.loadSource(src);
       hls.attachMedia(videoElement);
 
       // Set up event listeners
@@ -58,17 +66,16 @@ export function useHlsPlayer({
       hls.on(Hls.Events.ERROR, hlsEventHandlers.createErrorHandler(hls, toast));
 
       hls.on(Hls.Events.FRAG_LOADED, hlsEventHandlers.onFragmentLoaded);
-
     } else if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
       console.log("Using native HLS support");
-      videoElement.src = sourceUrl;
+      videoElement.src = src;
       videoElement.play().catch(console.error);
       onReady?.();
     } else {
       console.error("HLS not supported on this platform");
       const error = new Error("HLS not supported on this platform");
       onError?.(error);
-      
+
       if (toast) {
         toast.toast({
           title: "Compatibility Error",
@@ -77,19 +84,20 @@ export function useHlsPlayer({
         });
       }
     }
+  }
 
-    // Cleanup function
-    return () => {
-      if (hlsRef.current) {
-        console.log("Cleaning up HLS instance");
-        hlsRef.current.destroy();
-        hlsRef.current = null;
-      }
-    };
-  }, [sourceUrl, videoRef, onError, onReady, toast]);
+  function destroy() {
+    if (hlsRef.current) {
+      console.log("Cleaning up HLS instance");
+      hlsRef.current.destroy();
+      hlsRef.current = null;
+    }
+  }
 
   return {
     hls: hlsRef.current,
     isHlsSupported: Hls.isSupported(),
+    destroy,
+    loadSource,
   };
 }

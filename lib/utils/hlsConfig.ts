@@ -7,7 +7,7 @@ import { CapacitorHttpLoader } from "../loaders/CapacitorHttpLoader";
  */
 export function createHlsConfig(): Partial<HlsConfig> {
   return {
-    debug: true,
+    debug: process.env.NODE_ENV === "development",
     // Use custom loader for both playlists and fragments
     pLoader: CapacitorHttpLoader as any,
     fLoader: CapacitorHttpLoader as any,

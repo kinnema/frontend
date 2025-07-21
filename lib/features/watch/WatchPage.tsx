@@ -28,8 +28,6 @@ interface IProps {
   };
 }
 
-const src = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8";
-
 export default function ChapterPage({ params }: IProps) {
   const queryClient = useQueryClient();
   const season = parseInt(params.season.replace("sezon-", ""));
@@ -44,9 +42,8 @@ export default function ChapterPage({ params }: IProps) {
   const toast = useToast();
 
   // Initialize HLS player with CapacitorHTTP integration
-  const { hls, isHlsSupported } = useHlsPlayer({
+  const { hls, isHlsSupported, destroy, loadSource } = useHlsPlayer({
     videoRef,
-    sourceUrl: selectedWatchLink || src,
     onReady: () => {
       console.log("HLS player ready");
     },
@@ -57,10 +54,15 @@ export default function ChapterPage({ params }: IProps) {
 
   // Cleanup when component unmounts or selectedWatchLink changes
   useEffect(() => {
+    if (!selectedWatchLink) return;
+
+    loadSource(selectedWatchLink);
+
     return () => {
+      destroy();
       clear();
     };
-  }, []);
+  }, [selectedWatchLink]);
 
   const tmdbData = useQuery<ITmdbSerieDetails>({
     queryKey: ["tmdb-details-with-season", params.slug, params.tmdbId],
