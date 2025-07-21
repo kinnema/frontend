@@ -3,6 +3,7 @@ import TypedEventEmitter from "typed-emitter";
 import { IPluginEndpointResponse } from "../types/plugin.type";
 import { IPluginEventEmitter } from "../types/pluginEvents.type";
 import { usePluginRegistry } from "./usePluginRegistry";
+import { Capacitor, CapacitorHttp } from "@capacitor/core";
 
 export class PluginManager {
   eventEmitter = new EventEmitter() as TypedEventEmitter<IPluginEventEmitter>;
@@ -64,7 +65,10 @@ export class PluginManager {
       },
     });
 
-    const response = await fetch(url.toString());
+    const response = await CapacitorHttp.get({
+      url: url.toString()
+    });
+
 
     if (response.status === 404) {
       this.eventEmitter.emit("event", {
@@ -86,7 +90,7 @@ export class PluginManager {
       throw new Error(`Serie not found ${pluginId}`);
     }
 
-    const { data, type } = (await response.json()) as IPluginEndpointResponse;
+    const { data, type } = (await response.data) as IPluginEndpointResponse;
 
     this.eventEmitter.emit("event", {
       type: "provider_success",

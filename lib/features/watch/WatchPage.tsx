@@ -16,10 +16,17 @@ import { useWatchStore } from "@/lib/stores/watch.store";
 
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { Episode, ITmdbSerieDetails } from "@/lib/types/tmdb";
+import { CapacitorHttp } from "@capacitor/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import Hls from "hls.js";
+import Hls, {
+  LoaderContext,
+  LoaderCallbacks,
+  LoaderResponse,
+  LoaderStats,
+} from "hls.js";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { arrayBuffer } from "stream/consumers";
 interface IProps {
   params: {
     slug: string;
@@ -30,21 +37,45 @@ interface IProps {
 }
 
 class ResponseUrlFixLoader extends Hls.DefaultConfig.loader {
-  load(context: any, config: any, callbacks: any) {
+  async load(context: LoaderContext, config: any, callbacks: LoaderCallbacks<any>) {
+    const { url, responseType, rangeStart, rangeEnd, headers } = context;
+
+    const response = await CapacitorHttp.get({
+      url,
+      headers:
+        rangeStart !== undefined
+          ? { Range: `bytes=${rangeStart}-${rangeEnd ?? ""}` }
+          : undefined,
+      responseType: responseType === "arraybuffer" ? "blob" : "text",
+    })
+
+       let payload: string | ArrayBuffer;
     const originalSuccess = callbacks.onSuccess;
 
-    callbacks.onSuccess = (
-      response: any,
-      stats: any,
-      context: any,
-      networkDetails: any
-    ) => {
-      console.log(response.url, context.url);
-      response.url = context.url;
-      originalSuccess(response, stats, context, networkDetails);
-    };
+        if (responseType === "arraybuffer") {
+          // Capacitor native returns base64 when responseType === 'arraybuffer'
+          const binaryString = window.atob(response.data as string);
+          const bytes = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+          payload = bytes.buffer;
+        } else {
+          payload = response.data as string;
+        }
 
-    super.load(context, config, callbacks);
+        callbacks.onSuccess = (
+          response: LoaderResponse,
+          stats: LoaderStats,
+          context: LoaderContext,
+          networkDetails: any
+        ) => {
+          response.text = payload as string;
+          response.url = context.url;
+
+          originalSuccess(response, stats, context, networkDetails);
+        };
+
   }
 }
 const src = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8";
@@ -74,8 +105,10 @@ export default function ChapterPage({ params }: IProps) {
     if (Hls.isSupported()) {
       console.log("initialising hls.js");
       const hls = new Hls({ debug: true, loader: ResponseUrlFixLoader }); // debug logs every step
+
       hls.loadSource(selectedWatchLink);
       hls.attachMedia(el);
+
       hls.on(Hls.Events.MANIFEST_PARSED, () => console.log("manifest loaded"));
       hls.on(Hls.Events.ERROR, (e, data) => {
         toast.toast({
