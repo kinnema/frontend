@@ -8,25 +8,17 @@ import {
 } from "@/lib/api";
 import { Loading } from "@/lib/components/Loading";
 import { Providers } from "@/lib/components/Providers";
+import { useHlsPlayer } from "@/lib/hooks/useHlsPlayer";
 import { ILastWatched, ILastWatchedMutation } from "@/lib/models";
 import TmdbService from "@/lib/services/tmdb.service";
 import UserService from "@/lib/services/user.service";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { useWatchStore } from "@/lib/stores/watch.store";
-
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { Episode, ITmdbSerieDetails } from "@/lib/types/tmdb";
-import { CapacitorHttp } from "@capacitor/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import Hls, {
-  LoaderContext,
-  LoaderCallbacks,
-  LoaderResponse,
-  LoaderStats,
-} from "hls.js";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { arrayBuffer } from "stream/consumers";
 interface IProps {
   params: {
     slug: string;
@@ -36,48 +28,6 @@ interface IProps {
   };
 }
 
-class ResponseUrlFixLoader extends Hls.DefaultConfig.loader {
-  async load(context: LoaderContext, config: any, callbacks: LoaderCallbacks<any>) {
-    const { url, responseType, rangeStart, rangeEnd, headers } = context;
-
-    const response = await CapacitorHttp.get({
-      url,
-      headers:
-        rangeStart !== undefined
-          ? { Range: `bytes=${rangeStart}-${rangeEnd ?? ""}` }
-          : undefined,
-      responseType: responseType === "arraybuffer" ? "blob" : "text",
-    })
-
-       let payload: string | ArrayBuffer;
-    const originalSuccess = callbacks.onSuccess;
-
-        if (responseType === "arraybuffer") {
-          // Capacitor native returns base64 when responseType === 'arraybuffer'
-          const binaryString = window.atob(response.data as string);
-          const bytes = new Uint8Array(binaryString.length);
-          for (let i = 0; i < binaryString.length; i++) {
-            bytes[i] = binaryString.charCodeAt(i);
-          }
-          payload = bytes.buffer;
-        } else {
-          payload = response.data as string;
-        }
-
-        callbacks.onSuccess = (
-          response: LoaderResponse,
-          stats: LoaderStats,
-          context: LoaderContext,
-          networkDetails: any
-        ) => {
-          response.text = payload as string;
-          response.url = context.url;
-
-          originalSuccess(response, stats, context, networkDetails);
-        };
-
-  }
-}
 const src = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8";
 
 export default function ChapterPage({ params }: IProps) {
@@ -91,49 +41,26 @@ export default function ChapterPage({ params }: IProps) {
   const clear = useWatchStore((state) => state.clear);
   const selectedWatchLink = useWatchStore((state) => state.selectedWatchLink);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-
   const toast = useToast();
 
+  // Initialize HLS player with CapacitorHTTP integration
+  const { hls, isHlsSupported } = useHlsPlayer({
+    videoRef,
+    sourceUrl: selectedWatchLink || src,
+    onReady: () => {
+      console.log("HLS player ready");
+    },
+    onError: (error) => {
+      console.error("HLS player error:", error);
+    },
+  });
+
+  // Cleanup when component unmounts or selectedWatchLink changes
   useEffect(() => {
-    const el = videoRef.current;
-    console.log("video not element found", el);
-
-    if (!el || !selectedWatchLink) return;
-
-    console.log("video element found", el);
-
-    if (Hls.isSupported()) {
-      console.log("initialising hls.js");
-      const hls = new Hls({ debug: true, loader: ResponseUrlFixLoader }); // debug logs every step
-
-      hls.loadSource(selectedWatchLink);
-      hls.attachMedia(el);
-
-      hls.on(Hls.Events.MANIFEST_PARSED, () => console.log("manifest loaded"));
-      hls.on(Hls.Events.ERROR, (e, data) => {
-        toast.toast({
-          title: "Error",
-          description: `Yukleyemedim videoyu be.`,
-          variant: "destructive",
-        });
-        console.error("hls error", data);
-      });
-      videoRef.current?.play();
-
-      return () => {
-        hls.destroy();
-        clear();
-      };
-    } else {
-      console.log("native HLS");
-      el.src = src;
-      el.play().catch(() => {});
-    }
-
     return () => {
       clear();
     };
-  }, [selectedWatchLink]);
+  }, []);
 
   const tmdbData = useQuery<ITmdbSerieDetails>({
     queryKey: ["tmdb-details-with-season", params.slug, params.tmdbId],
