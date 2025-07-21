@@ -4,7 +4,7 @@ import Hls from "hls.js";
 /**
  * Custom HLS loader that uses CapacitorHTTP for native platforms
  * and falls back to the default loader for web platforms.
- * 
+ *
  * This provides better performance and reliability on mobile devices
  * by leveraging native HTTP capabilities.
  */
@@ -23,7 +23,11 @@ export class CapacitorHttpLoader extends Hls.DefaultConfig.loader {
     }
   }
 
-  private async loadWithCapacitorHttp(context: any, config: any, callbacks: any) {
+  private async loadWithCapacitorHttp(
+    context: any,
+    config: any,
+    callbacks: any
+  ) {
     const { onSuccess, onError } = callbacks;
 
     try {
@@ -95,25 +99,27 @@ export class CapacitorHttpLoader extends Hls.DefaultConfig.loader {
         // Create stats object with the exact structure hls.js expects
         const stats = {
           aborted: false,
-          loaded: data instanceof ArrayBuffer ? data.byteLength : (data?.length || 0),
+          loaded:
+            data instanceof ArrayBuffer ? data.byteLength : data?.length || 0,
           retry: 0,
-          total: data instanceof ArrayBuffer ? data.byteLength : (data?.length || 0),
+          total:
+            data instanceof ArrayBuffer ? data.byteLength : data?.length || 0,
           chunkCount: 1,
           bwEstimate: 0,
           loading: {
             start: startTime,
             first: endTime,
-            end: endTime
+            end: endTime,
           },
           parsing: {
             start: 0,
-            end: 0
+            end: 0,
           },
           buffering: {
             start: 0,
             first: 0,
-            end: 0
-          }
+            end: 0,
+          },
         };
 
         console.log(
@@ -127,7 +133,7 @@ export class CapacitorHttpLoader extends Hls.DefaultConfig.loader {
         onError(
           {
             code: response.status,
-            text: `HTTP Error ${response.status}: ${response.statusText || "Unknown error"}`,
+            text: `HTTP Error ${response.status}: "Unknown error"`,
           },
           context
         );
