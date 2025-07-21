@@ -1,18 +1,18 @@
-import type { CapacitorConfig } from '@capacitor/cli';
+import type { CapacitorConfig } from "@capacitor/cli";
+import "dotenv/config";
 
 const config: CapacitorConfig = {
-  appId: 'com.kinnema.app',
-  appName: 'kinnema',
-  webDir: 'dist',
+  appId: "com.kinnema.app",
+  appName: "kinnema",
+  webDir: "dist",
   server: {
-    url: "http://192.168.1.227:3000",
-    cleartext: true
+    url: process.env.FRONTEND_URL,
+    cleartext: process.env.FRONTEND_URL?.startsWith("http://"),
   },
   plugins: {
     CapacitorHttp: {
-      enabled: true,
-
-    }
+      enabled: false,
+    },
   },
   overrideUserAgent: "VLC/3.0.17.4 LibVLC/3.0.9",
 };
