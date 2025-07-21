@@ -1,5 +1,6 @@
 "use client";
 import { useToast } from "@/hooks/use-toast";
+import { Capacitor } from "@capacitor/core";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { Card } from "../../components/ui/card";
@@ -26,12 +27,15 @@ export const Providers = ({
 
   // Fetch providers and events from the store
   useEffect(() => {
-    toast.toast({
-      title: "Mobil uygulama",
-      description:
-        "Mobil uygulama uzerinden calistirmiyorsunuz, bazi kaynaklar gözukmeyebilir!",
-      duration: 3000,
-    });
+    if (!Capacitor.isNativePlatform()) {
+      toast.toast({
+        title: "Mobil uygulama",
+        description:
+          "Mobil uygulama uzerinden calistirmiyorsunuz, bazi kaynaklar gözukmeyebilir!",
+        duration: 3000,
+      });
+    }
+
     console.log("Fetching providers for series...", getPluginsByType("series"));
     setProviders(getPluginsByType("series"));
 

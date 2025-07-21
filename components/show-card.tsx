@@ -31,7 +31,7 @@ export function ShowCard({
             <Button
               variant="link"
               onClick={(e) => {
-                e.stopPropagation();
+                e.preventDefault();
                 onRemove();
               }}
               className="absolute top-2 right-2 z-10 p-1.5 w-8 h-8 rounded-full bg-black/50 hover:bg-black/70 transition-colors opacity-0 group-hover:opacity-100"

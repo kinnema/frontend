@@ -1,9 +1,4 @@
-import {
-  ApiAuthLoginPost200Response,
-  ApiAuthLoginPostRequest,
-  LastWatchedCreateSchemaInputType,
-  LastWatchedCreateSchemaOutputType,
-} from "./api";
+import { ApiAuthLoginPost200Response, ApiAuthLoginPostRequest } from "./api";
 import { ITmdbSearchResults } from "./types/tmdb";
 
 export interface IHomeResults {
@@ -57,11 +52,6 @@ export interface IMutationAddFavorite extends IBaseFavorite {}
 export type IMutationLogin = ApiAuthLoginPostRequest;
 export type ILoginResponse = ApiAuthLoginPost200Response;
 export type IRegisterResponse = void;
-
-export type ILastWatched = LastWatchedCreateSchemaOutputType;
-
-export type ILastWatchedMutation = LastWatchedCreateSchemaInputType;
-
 export interface ISerie {
   name: string;
   image: string;

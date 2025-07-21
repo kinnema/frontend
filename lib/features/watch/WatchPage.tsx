@@ -1,22 +1,15 @@
 "use client";
 
 import { useToast } from "@/hooks/use-toast";
-import {
-  ApiLastWatchedIdPatchRequest,
-  LastWatchedPatchSchemaOutputType,
-  LastWatchedSchemaOutputType,
-} from "@/lib/api";
 import { Loading } from "@/lib/components/Loading";
 import { Providers } from "@/lib/components/Providers";
 import { useHlsPlayer } from "@/lib/hooks/useHlsPlayer";
-import { ILastWatched, ILastWatchedMutation } from "@/lib/models";
 import TmdbService from "@/lib/services/tmdb.service";
-import UserService from "@/lib/services/user.service";
-import { useAuthStore } from "@/lib/stores/auth.store";
+import { useLastWatchedStore } from "@/lib/stores/lastWatched.store";
 import { useWatchStore } from "@/lib/stores/watch.store";
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { Episode, ITmdbSerieDetails } from "@/lib/types/tmdb";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 interface IProps {
@@ -29,20 +22,21 @@ interface IProps {
 }
 
 export default function ChapterPage({ params }: IProps) {
-  const queryClient = useQueryClient();
   const season = parseInt(params.season.replace("sezon-", ""));
   const chapter = parseInt(params.chapter.replace("bolum-", ""));
   const [isPlaying, setIsPlaying] = useState(false);
-  const isAuthenticated = useAuthStore((state) => state.isLoggedIn);
   const searchParams = useSearchParams();
   const router = useRouter();
   const clear = useWatchStore((state) => state.clear);
   const selectedWatchLink = useWatchStore((state) => state.selectedWatchLink);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const toast = useToast();
+  const getLastWatched = useLastWatchedStore((state) => state.getSerie);
+  const updateLastWatched = useLastWatchedStore((state) => state.updateSerie);
+  const addLastWatched = useLastWatchedStore((state) => state.addSerie);
 
   // Initialize HLS player with CapacitorHTTP integration
-  const { hls, isHlsSupported, destroy, loadSource } = useHlsPlayer({
+  const { destroy, loadSource } = useHlsPlayer({
     videoRef,
     onReady: () => {
       console.log("HLS player ready");
@@ -58,7 +52,14 @@ export default function ChapterPage({ params }: IProps) {
 
     loadSource(selectedWatchLink);
 
+    const handleLoadedData = () => {
+      resumeFromWhereLeft();
+    };
+
+    videoRef.current?.addEventListener("loadeddata", handleLoadedData);
+
     return () => {
+      videoRef.current?.removeEventListener("loadeddata", handleLoadedData);
       destroy();
       clear();
     };
@@ -86,50 +87,6 @@ export default function ChapterPage({ params }: IProps) {
     },
   });
 
-  const lastWatched = useQuery<LastWatchedSchemaOutputType>({
-    queryKey: ["last-watched", tmdbData.data?.id],
-    retry: 1,
-    queryFn: async () => {
-      const lastWatched = await UserService.fetchSingleLastWatched(
-        tmdbData.data?.id!
-      );
-
-      return lastWatched;
-    },
-  });
-
-  const addToLastWatched = useMutation<
-    ILastWatched,
-    void,
-    ILastWatchedMutation
-  >({
-    mutationFn: async (data: ILastWatchedMutation) => {
-      const response = await UserService.addLastWatch(data);
-
-      return response;
-    },
-  });
-
-  const patchLastWatched = useMutation<
-    LastWatchedPatchSchemaOutputType,
-    void,
-    ApiLastWatchedIdPatchRequest
-  >({
-    mutationFn: async (data: ApiLastWatchedIdPatchRequest) => {
-      const response = await UserService.patchLastWatch(data);
-
-      return response;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["last-watched", tmdbData.data?.id],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["lastWatched"],
-      });
-    },
-  });
-
   const isTurkishProvider = useMemo(() => {
     const network = searchParams.get("network");
 
@@ -142,31 +99,34 @@ export default function ChapterPage({ params }: IProps) {
     }
   }, [isTurkishProvider]);
 
-  const handleProgress = async (state: { playedSeconds: number }) => {
-    if (!isAuthenticated || !tmdbData.data) return;
-
+  const handleProgress = async (
+    event: React.SyntheticEvent<HTMLVideoElement, Event>
+  ) => {
+    if (!tmdbData.data) return;
+    const playedSeconds = event.currentTarget.currentTime;
+    console.log(playedSeconds);
     // Only update every 10 seconds to avoid too many requests
-    if (Math.floor(state.playedSeconds) % 10 === 0) {
+    if (Math.floor(playedSeconds) % 10 === 0) {
       try {
-        if (lastWatched.data) {
-          await patchLastWatched.mutateAsync({
-            id: lastWatched.data.id,
-            lastWatchedPatchSchemaInputType: {
-              atSecond: state.playedSeconds,
-            },
+        const lastWatched = getLastWatched(params.tmdbId);
+
+        if (lastWatched) {
+          updateLastWatched(params.tmdbId, {
+            atSecond: playedSeconds,
           });
         } else {
           const minutesToSeconds = Math.floor(
             tmdbEpisodeData.data!.runtime * 60
           );
 
-          await addToLastWatched.mutateAsync({
+          addLastWatched({
+            id: params.tmdbId,
             name: tmdbData.data.name,
             posterPath: tmdbEpisodeData.data!.still_path,
             tmdbId: tmdbData.data.id,
             season,
             episode: chapter,
-            atSecond: state.playedSeconds,
+            atSecond: playedSeconds,
             totalSeconds: minutesToSeconds,
             episodeName: tmdbEpisodeData.data!.name,
             network: parseInt(searchParams.get("network")!),
@@ -197,39 +157,17 @@ export default function ChapterPage({ params }: IProps) {
   function onPause(): void {
     setIsPlaying(false);
   }
-  function onStart(): void {
-    if (lastWatched.data) {
-      const secondsToMinutes = Math.floor(lastWatched.data.atSecond / 60);
+  function resumeFromWhereLeft(): void {
+    const lastWatched = getLastWatched(params.tmdbId);
+    if (lastWatched) {
+      const secondsToMinutes = Math.floor(lastWatched.atSecond / 60);
       toast.toast({
         title: "İzlemeye devam ediyorsunuz",
         description: `İzlemeye devam ediyorsunuz. ${secondsToMinutes}.dakika da devam ediyorsunuz.`,
         duration: 1000,
       });
-      if (!videoRef.current) return;
 
-      videoRef.current.fastSeek(lastWatched.data.atSecond);
-    }
-  }
-
-  function openInExternalPlayer(url: string) {
-    // List of common video player protocols
-    var protocols = ["vlc://", "potplayer://", "mpc-hc://", "wmplayer://"];
-
-    // Try to open the URL with each protocol
-    var success = false;
-    for (var i = 0; i < protocols.length; i++) {
-      try {
-        window.open(protocols[i] + url, "_blank");
-        success = true;
-        break;
-      } catch (e) {
-        // Protocol not supported, try the next one
-      }
-    }
-
-    if (!success) {
-      // If no protocols worked, open the URL directly
-      window.open(url, "_blank");
+      if (videoRef.current) videoRef.current.currentTime = lastWatched.atSecond;
     }
   }
 
@@ -259,6 +197,7 @@ export default function ChapterPage({ params }: IProps) {
                   controls
                   onPlay={onPlay}
                   onPause={onPause}
+                  onTimeUpdate={handleProgress}
                 />
               </>
             )}

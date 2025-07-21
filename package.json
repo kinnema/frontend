@@ -38,6 +38,7 @@
     "embla-carousel-react": "^8.6.0",
     "hls.js": "^1.6.7",
     "i18next": "^23.11.5",
+    "idb-keyval": "^6.2.2",
     "immer": "^10.1.1",
     "lodash": "^4.17.21",
     "lucide-react": "^0.469.0",
