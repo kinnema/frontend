@@ -1,0 +1,14 @@
+apis/DefaultApi.ts
+apis/index.ts
+index.ts
+models/ApiAuthLoginPost200Response.ts
+models/ApiAuthLoginPostRequest.ts
+models/ApiFavoritesGet200ResponseInner.ts
+models/ApiFavoritesPostRequest.ts
+models/CreateUserInputType.ts
+models/Def1.ts
+models/Def2.ts
+models/Def3.ts
+models/Def4.ts
+models/index.ts
+runtime.ts
