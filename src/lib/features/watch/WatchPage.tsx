@@ -10,7 +10,7 @@ import { useWatchStore } from "@/lib/stores/watch.store";
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { Episode, ITmdbSerieDetails } from "@/lib/types/tmdb";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate, useSearch } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 interface IProps {
   params: {
@@ -18,6 +18,7 @@ interface IProps {
     season: string;
     chapter: string;
     tmdbId: string;
+    network?: string;
   };
 }
 
@@ -25,7 +26,6 @@ export default function ChapterPage({ params }: IProps) {
   const season = parseInt(params.season.replace("sezon-", ""));
   const chapter = parseInt(params.chapter.replace("bolum-", ""));
   const [isPlaying, setIsPlaying] = useState(false);
-  const searchParams = useSearch({ from: '/dizi/$slug/$tmdbId/$season/$chapter' });
   const navigate = useNavigate();
   const clear = useWatchStore((state) => state.clear);
   const selectedWatchLink = useWatchStore((state) => state.selectedWatchLink);
@@ -88,10 +88,10 @@ export default function ChapterPage({ params }: IProps) {
   });
 
   const isTurkishProvider = useMemo(() => {
-    const network = searchParams?.network;
+    const network = params?.network;
 
     return network ? TurkishProviderIds.includes(parseInt(network)) : false;
-  }, [searchParams]);
+  }, []);
 
   useEffect(() => {
     if (!isTurkishProvider) {
@@ -129,7 +129,7 @@ export default function ChapterPage({ params }: IProps) {
             atSecond: playedSeconds,
             totalSeconds: minutesToSeconds,
             episodeName: tmdbEpisodeData.data!.name,
-            network: searchParams?.network ? parseInt(searchParams.network) : 0,
+            network: params?.network ? parseInt(params.network) : 0,
           });
         }
       } catch (error) {

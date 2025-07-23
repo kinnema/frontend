@@ -1,8 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router'
-import LoginModule from '@/lib/features/auth/login'
-import { Suspense } from 'react'
+import LoginModule from "@/lib/features/auth/login";
+import { createFileRoute } from "@tanstack/react-router";
+import { Suspense } from "react";
 
-export const Route = createFileRoute('/login')({
+export const Route = createFileRoute("/login")({
+  codeSplitGroupings: [["component"]],
   component: () => (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-md mx-auto">
@@ -14,4 +15,4 @@ export const Route = createFileRoute('/login')({
       </div>
     </div>
   ),
-})
+});

@@ -4,8 +4,8 @@ import { ShowCard } from "@/components/show-card";
 import { Input } from "@/components/ui/input";
 import { useSearchStore } from "@/lib/stores/search.store";
 import { useQuery } from "@tanstack/react-query";
-import { Search } from "lucide-react";
 import { useNavigate, useSearch } from "@tanstack/react-router";
+import { Search } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Loading } from "../../components/Loading";
 import TmdbService from "../../services/tmdb.service";
@@ -14,7 +14,7 @@ import { ITmdbSearchResults, Result } from "../../types/tmdb";
 export function SearchFeature() {
   const [search, setSearch] = useState<string>("");
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const searchParams = useSearch({ from: '/search' });
+  const searchParams = useSearch({ from: "/search" });
   const patchSearches = useSearchStore((state) => state.patchSearches);
   const lastSearches = useSearchStore((state) => state.searches);
   const navigate = useNavigate();
@@ -45,12 +45,9 @@ export function SearchFeature() {
     navigate({ to: "/search", search: { q: search } });
   }, [search]);
 
-  const onClickShow = useCallback(
-    (show: Result) => {
-      patchSearches(show);
-    },
-    [router]
-  );
+  const onClickShow = useCallback((show: Result) => {
+    patchSearches(show);
+  }, []);
 
   return (
     <>

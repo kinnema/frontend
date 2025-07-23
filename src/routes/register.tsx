@@ -1,8 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router'
-import RegisterModule from '@/lib/features/auth/register'
-import { Suspense } from 'react'
+import RegisterModule from "@/lib/features/auth/register";
+import { createFileRoute } from "@tanstack/react-router";
+import { Suspense } from "react";
 
-export const Route = createFileRoute('/register')({
+export const Route = createFileRoute("/register")({
+  codeSplitGroupings: [["component"]],
   component: () => (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-md mx-auto">
@@ -14,4 +15,4 @@ export const Route = createFileRoute('/register')({
       </div>
     </div>
   ),
-})
+});

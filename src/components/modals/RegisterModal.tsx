@@ -1,15 +1,21 @@
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { useNavigate } from "@tanstack/react-router"
-import RegisterModule from "@/lib/features/auth/register"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import RegisterModule from "@/lib/features/auth/register";
+import { useNavigate } from "@tanstack/react-router";
 
 export function RegisterModal() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const onClose = (open: boolean) => {
     if (!open) {
-      navigate({ search: {} })
+      navigate({ to: "/", search: {} });
     }
-  }
+  };
 
   return (
     <Dialog open modal onOpenChange={onClose}>
@@ -21,5 +27,5 @@ export function RegisterModal() {
         <RegisterModule />
       </DialogContent>
     </Dialog>
-  )
+  );
 }

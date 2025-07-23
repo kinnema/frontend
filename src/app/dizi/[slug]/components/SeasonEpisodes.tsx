@@ -50,14 +50,6 @@ export default function SeasonEpisodes({
   return (
     <>
       {data.episodes?.map((episode) => {
-        let episodeHref = `/dizi/${slugify(
-          serie_name
-        )}/${id}/sezon-${season}/bolum-${episode.episode_number}`;
-
-        if (isTurkishProvider) {
-          episodeHref += `?network=${serieNetwork?.at(network)}`;
-        }
-
         return (
           <Link
             key={episode.id}
@@ -67,7 +59,9 @@ export default function SeasonEpisodes({
               watchTmdbId: id.toString(),
               watchSeason: season.toString(),
               watchChapter: episode.episode_number.toString(),
-              ...(isTurkishProvider && { watchNetwork: serieNetwork?.at(network)?.toString() || "" })
+              ...(isTurkishProvider && {
+                watchNetwork: serieNetwork?.at(network)?.toString() || "",
+              }),
             }}
             className="flex w-full gap-4 p-4 hover:bg-white/5 rounded-lg transition-colors text-left"
           >

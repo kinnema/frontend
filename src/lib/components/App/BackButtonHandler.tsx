@@ -2,11 +2,11 @@
 
 import { App as CapApp } from "@capacitor/app";
 import { Capacitor, PluginListenerHandle } from "@capacitor/core";
-import { useNavigate } from "@tanstack/react-router";
+import { useRouter } from "@tanstack/react-router";
 import { useEffect } from "react";
 
 const BackButtonHandler = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   if (!Capacitor.isNativePlatform()) return;
 
@@ -15,16 +15,16 @@ const BackButtonHandler = () => {
 
     CapApp.addListener("backButton", () => {
       const currentPath = window.location.pathname;
-      const canGoBack = window.history.length > 1;
+      const canGoBack = router.history.canGoBack();
 
       console.log("Back button pressed on:", currentPath);
 
-      if (currentPath === "/role_menu" || !canGoBack) {
+      if (!canGoBack) {
         console.log("Exiting app...");
         CapApp.exitApp();
       } else {
         console.log("Going back...");
-        router.back();
+        router.history.back();
       }
     }).then((handle) => {
       listenerHandle = handle;

@@ -17,8 +17,6 @@ import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as CollectionNetworkRouteImport } from './routes/collection.$network'
-import { Route as DiziSlugTmdbIdRouteImport } from './routes/dizi.$slug.$tmdbId'
-import { Route as DiziSlugTmdbIdSeasonChapterRouteImport } from './routes/dizi.$slug.$tmdbId.$season.$chapter'
 
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
@@ -59,17 +57,6 @@ const CollectionNetworkRoute = CollectionNetworkRouteImport.update({
   path: '/collection/$network',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DiziSlugTmdbIdRoute = DiziSlugTmdbIdRouteImport.update({
-  id: '/dizi/$slug/$tmdbId',
-  path: '/dizi/$slug/$tmdbId',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DiziSlugTmdbIdSeasonChapterRoute =
-  DiziSlugTmdbIdSeasonChapterRouteImport.update({
-    id: '/$season/$chapter',
-    path: '/$season/$chapter',
-    getParentRoute: () => DiziSlugTmdbIdRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/favorites': typeof FavoritesRoute
@@ -79,8 +66,6 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/collection/$network': typeof CollectionNetworkRoute
   '/': typeof LayoutIndexRoute
-  '/dizi/$slug/$tmdbId': typeof DiziSlugTmdbIdRouteWithChildren
-  '/dizi/$slug/$tmdbId/$season/$chapter': typeof DiziSlugTmdbIdSeasonChapterRoute
 }
 export interface FileRoutesByTo {
   '/favorites': typeof FavoritesRoute
@@ -90,8 +75,6 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/collection/$network': typeof CollectionNetworkRoute
   '/': typeof LayoutIndexRoute
-  '/dizi/$slug/$tmdbId': typeof DiziSlugTmdbIdRouteWithChildren
-  '/dizi/$slug/$tmdbId/$season/$chapter': typeof DiziSlugTmdbIdSeasonChapterRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -103,8 +86,6 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/collection/$network': typeof CollectionNetworkRoute
   '/_layout/': typeof LayoutIndexRoute
-  '/dizi/$slug/$tmdbId': typeof DiziSlugTmdbIdRouteWithChildren
-  '/dizi/$slug/$tmdbId/$season/$chapter': typeof DiziSlugTmdbIdSeasonChapterRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -116,8 +97,6 @@ export interface FileRouteTypes {
     | '/search'
     | '/collection/$network'
     | '/'
-    | '/dizi/$slug/$tmdbId'
-    | '/dizi/$slug/$tmdbId/$season/$chapter'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/favorites'
@@ -127,8 +106,6 @@ export interface FileRouteTypes {
     | '/search'
     | '/collection/$network'
     | '/'
-    | '/dizi/$slug/$tmdbId'
-    | '/dizi/$slug/$tmdbId/$season/$chapter'
   id:
     | '__root__'
     | '/_layout'
@@ -139,8 +116,6 @@ export interface FileRouteTypes {
     | '/search'
     | '/collection/$network'
     | '/_layout/'
-    | '/dizi/$slug/$tmdbId'
-    | '/dizi/$slug/$tmdbId/$season/$chapter'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -151,7 +126,6 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   SearchRoute: typeof SearchRoute
   CollectionNetworkRoute: typeof CollectionNetworkRoute
-  DiziSlugTmdbIdRoute: typeof DiziSlugTmdbIdRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -212,20 +186,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CollectionNetworkRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dizi/$slug/$tmdbId': {
-      id: '/dizi/$slug/$tmdbId'
-      path: '/dizi/$slug/$tmdbId'
-      fullPath: '/dizi/$slug/$tmdbId'
-      preLoaderRoute: typeof DiziSlugTmdbIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dizi/$slug/$tmdbId/$season/$chapter': {
-      id: '/dizi/$slug/$tmdbId/$season/$chapter'
-      path: '/$season/$chapter'
-      fullPath: '/dizi/$slug/$tmdbId/$season/$chapter'
-      preLoaderRoute: typeof DiziSlugTmdbIdSeasonChapterRouteImport
-      parentRoute: typeof DiziSlugTmdbIdRoute
-    }
   }
 }
 
@@ -240,18 +200,6 @@ const LayoutRouteChildren: LayoutRouteChildren = {
 const LayoutRouteWithChildren =
   LayoutRoute._addFileChildren(LayoutRouteChildren)
 
-interface DiziSlugTmdbIdRouteChildren {
-  DiziSlugTmdbIdSeasonChapterRoute: typeof DiziSlugTmdbIdSeasonChapterRoute
-}
-
-const DiziSlugTmdbIdRouteChildren: DiziSlugTmdbIdRouteChildren = {
-  DiziSlugTmdbIdSeasonChapterRoute: DiziSlugTmdbIdSeasonChapterRoute,
-}
-
-const DiziSlugTmdbIdRouteWithChildren = DiziSlugTmdbIdRoute._addFileChildren(
-  DiziSlugTmdbIdRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   LayoutRoute: LayoutRouteWithChildren,
   FavoritesRoute: FavoritesRoute,
@@ -260,7 +208,6 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   SearchRoute: SearchRoute,
   CollectionNetworkRoute: CollectionNetworkRoute,
-  DiziSlugTmdbIdRoute: DiziSlugTmdbIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,21 +1,21 @@
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
-import { SerieDialogFeature } from "@/lib/features/dizi/SerieDialog"
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
-import { useNavigate } from "@tanstack/react-router"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { SerieDialogFeature } from "@/lib/features/dizi/SerieDialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { useNavigate } from "@tanstack/react-router";
 
 interface SerieModalProps {
-  slug: string
-  tmdbId: number
+  slug: string;
+  tmdbId: number;
 }
 
 export function SerieModal({ slug, tmdbId }: SerieModalProps) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const onClose = (open: boolean) => {
     if (!open) {
-      navigate({ search: {} })
+      navigate({ to: "/", search: {} });
     }
-  }
+  };
 
   return (
     <Dialog open modal onOpenChange={onClose}>
@@ -31,5 +31,5 @@ export function SerieModal({ slug, tmdbId }: SerieModalProps) {
         />
       </DialogContent>
     </Dialog>
-  )
+  );
 }

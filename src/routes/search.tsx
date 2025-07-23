@@ -1,11 +1,14 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { SearchFeature } from '@/lib/features/search/Search'
-import { Suspense } from 'react'
+import { SearchFeature } from "@/lib/features/search/Search";
+import { createFileRoute } from "@tanstack/react-router";
+import { Suspense } from "react";
+import z from "zod";
 
-export const Route = createFileRoute('/search')({
-  validateSearch: {
-    q: undefined as string | undefined,
-  },
+const schema = z.object({
+  q: z.string().optional(),
+});
+
+export const Route = createFileRoute("/search")({
+  validateSearch: schema,
   component: () => (
     <div className="container mx-auto px-4 py-8">
       <Suspense>
@@ -13,4 +16,4 @@ export const Route = createFileRoute('/search')({
       </Suspense>
     </div>
   ),
-})
+});
