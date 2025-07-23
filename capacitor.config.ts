@@ -5,10 +5,6 @@ const config: CapacitorConfig = {
   appId: "com.kinnema.app",
   appName: "kinnema",
   webDir: "dist",
-  server: {
-    url: process.env.FRONTEND_URL,
-    cleartext: process.env.FRONTEND_URL?.startsWith("http://"),
-  },
   plugins: {
     CapacitorHttp: {
       enabled: false,
