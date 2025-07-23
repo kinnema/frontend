@@ -9,6 +9,9 @@ const config: CapacitorConfig = {
     CapacitorHttp: {
       enabled: false,
     },
+    CapacitorUpdater: {
+      autoUpdate: false,
+    },
   },
   overrideUserAgent: "VLC/3.0.17.4 LibVLC/3.0.9",
 };

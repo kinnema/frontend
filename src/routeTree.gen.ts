@@ -15,7 +15,9 @@ import { Route as PluginsRouteImport } from './routes/plugins'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as LayoutRouteImport } from './routes/_layout'
+import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
+import { Route as SettingsUpdatesRouteImport } from './routes/settings/updates'
 import { Route as CollectionNetworkRouteImport } from './routes/collection.$network'
 
 const SearchRoute = SearchRouteImport.update({
@@ -47,10 +49,20 @@ const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsIndexRoute = SettingsIndexRouteImport.update({
+  id: '/settings/',
+  path: '/settings/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LayoutIndexRoute = LayoutIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => LayoutRoute,
+} as any)
+const SettingsUpdatesRoute = SettingsUpdatesRouteImport.update({
+  id: '/settings/updates',
+  path: '/settings/updates',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const CollectionNetworkRoute = CollectionNetworkRouteImport.update({
   id: '/collection/$network',
@@ -65,7 +77,9 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
   '/collection/$network': typeof CollectionNetworkRoute
+  '/settings/updates': typeof SettingsUpdatesRoute
   '/': typeof LayoutIndexRoute
+  '/settings': typeof SettingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/favorites': typeof FavoritesRoute
@@ -74,7 +88,9 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
   '/collection/$network': typeof CollectionNetworkRoute
+  '/settings/updates': typeof SettingsUpdatesRoute
   '/': typeof LayoutIndexRoute
+  '/settings': typeof SettingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -85,7 +101,9 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
   '/collection/$network': typeof CollectionNetworkRoute
+  '/settings/updates': typeof SettingsUpdatesRoute
   '/_layout/': typeof LayoutIndexRoute
+  '/settings/': typeof SettingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -96,7 +114,9 @@ export interface FileRouteTypes {
     | '/register'
     | '/search'
     | '/collection/$network'
+    | '/settings/updates'
     | '/'
+    | '/settings'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/favorites'
@@ -105,7 +125,9 @@ export interface FileRouteTypes {
     | '/register'
     | '/search'
     | '/collection/$network'
+    | '/settings/updates'
     | '/'
+    | '/settings'
   id:
     | '__root__'
     | '/_layout'
@@ -115,7 +137,9 @@ export interface FileRouteTypes {
     | '/register'
     | '/search'
     | '/collection/$network'
+    | '/settings/updates'
     | '/_layout/'
+    | '/settings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -126,6 +150,8 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   SearchRoute: typeof SearchRoute
   CollectionNetworkRoute: typeof CollectionNetworkRoute
+  SettingsUpdatesRoute: typeof SettingsUpdatesRoute
+  SettingsIndexRoute: typeof SettingsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -172,12 +198,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/': {
+      id: '/settings/'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_layout/': {
       id: '/_layout/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof LayoutIndexRouteImport
       parentRoute: typeof LayoutRoute
+    }
+    '/settings/updates': {
+      id: '/settings/updates'
+      path: '/settings/updates'
+      fullPath: '/settings/updates'
+      preLoaderRoute: typeof SettingsUpdatesRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/collection/$network': {
       id: '/collection/$network'
@@ -208,6 +248,8 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   SearchRoute: SearchRoute,
   CollectionNetworkRoute: CollectionNetworkRoute,
+  SettingsUpdatesRoute: SettingsUpdatesRoute,
+  SettingsIndexRoute: SettingsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

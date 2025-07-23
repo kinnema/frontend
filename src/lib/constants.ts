@@ -15,6 +15,10 @@ export const NAV_LINKS: INavLinks[] = [
     href: "/",
   },
   {
+    name: "Ayarlar",
+    href: "/settings",
+  },
+  {
     name: "Eklentiler",
     href: "/plugins",
   },
