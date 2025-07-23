@@ -1,12 +1,11 @@
-import { Toaster } from "@/components/ui/toaster";
+import { getAccessToken } from "@/app/actions/auth/getAccessToken";
+import BackButtonHandler from "@/lib/components/App/BackButtonHandler";
 import { useAppStore } from "@/lib/stores/app.store";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { SafeArea } from "@capacitor-community/safe-area";
 import { Capacitor } from "@capacitor/core";
 import { StatusBar, Style } from "@capacitor/status-bar";
 import { PropsWithChildren, useEffect } from "react";
-import BackButtonHandler from "@/lib/components/App/BackButtonHandler";
-import { getAccessToken } from "@/app/actions/auth/getAccessToken";
 
 if (Capacitor.isNativePlatform()) {
   SafeArea.enable({
