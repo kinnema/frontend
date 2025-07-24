@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
@@ -17,10 +18,11 @@ import { useAppStore } from "@/lib/stores/app.store";
 import { IGithubRelease } from "@/lib/types/github.type";
 import { QUERY_KEYS } from "@/lib/utils/queryKeys";
 import { Capacitor } from "@capacitor/core";
-import { CapacitorUpdater } from "@capgo/capacitor-updater";
+import { BundleInfo, CapacitorUpdater } from "@capgo/capacitor-updater";
+import { ToastAction } from "@radix-ui/react-toast";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import DOMPurify from "dompurify";
-import { Download, Info } from "lucide-react";
+import { Download, Info, Loader2 } from "lucide-react";
 import { marked } from "marked";
 import { Suspense, useEffect, useState } from "react";
 import { compare } from "semver";
@@ -28,6 +30,8 @@ import { compare } from "semver";
 export default function AppUpdatesFeature() {
   const [jsUpdateAvailable, setJsUpdateAvailable] = useState(false);
   const [appUpateAvailable, setAppUpdateAvailable] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [downloadPercent, setDownloaderPercent] = useState(0);
   const localVersion = useAppStore((state) => state.version);
   const { toast } = useToast();
 
@@ -51,6 +55,38 @@ export default function AppUpdatesFeature() {
     }
   }, [lastUpdateQuery, localVersion]);
 
+  useEffect(() => {
+    CapacitorUpdater.addListener("download", (state) => {
+      setIsUpdating(true);
+      setDownloaderPercent(state.percent);
+    });
+
+    CapacitorUpdater.addListener("downloadComplete", (state) => {
+      async function setUpdate(version: BundleInfo) {
+        await CapacitorUpdater.set(version);
+      }
+      setIsUpdating(false);
+
+      toast({
+        title: "Update Downloaded",
+        description:
+          "Update downloaded, please confirm if you want to update it",
+        action: (
+          <ToastAction
+            altText="Try again"
+            onClick={() => setUpdate(state.bundle)}
+          >
+            Update now
+          </ToastAction>
+        ),
+      });
+    });
+
+    return () => {
+      CapacitorUpdater.removeAllListeners();
+    };
+  }, []);
+
   function renderBody(body: string) {
     return DOMPurify.sanitize(marked(body, { async: false }));
   }
@@ -67,10 +103,8 @@ export default function AppUpdatesFeature() {
 
     const version = await CapacitorUpdater.download({
       version: lastUpdateQuery.data.name,
-      url: `https://github.com/kinnema/frontend/releases/download/latest/${lastUpdateQuery.data.name}.zip`,
+      url: `https://github.com/kinnema/frontend/releases/latest/download/${lastUpdateQuery.data.name}.zip`,
     });
-
-    await CapacitorUpdater.set(version);
   }
 
   return (
@@ -114,17 +148,26 @@ export default function AppUpdatesFeature() {
           <Button
             className="w-full"
             variant={jsUpdateAvailable ? "default" : "outline"}
-            disabled={!jsUpdateAvailable || !Capacitor.isNativePlatform()}
+            disabled={
+              !jsUpdateAvailable || !Capacitor.isNativePlatform() || isUpdating
+            }
             onClick={downloadUpdate}
           >
-            <Download className="w-4 h-4 mr-2" />
+            {isUpdating ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <Download className="w-4 h-4 mr-2" />
+            )}
 
             {jsUpdateAvailable
               ? Capacitor.isNativePlatform()
-                ? "Download update"
+                ? isUpdating
+                  ? "Downloading update..."
+                  : "Download Update"
                 : "Not an native platform"
               : "You are already on latest version"}
           </Button>
+          {downloadPercent ? <Progress value={downloadPercent} /> : null}
         </CardFooter>
       </Card>
     </Suspense>
