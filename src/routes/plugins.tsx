@@ -1,4 +1,3 @@
-import { createFileRoute } from '@tanstack/react-router'
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -8,11 +7,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { usePluginRegistry } from "@/lib/plugins/usePluginRegistry";
-import { Loader2Icon } from "lucide-react";
+import { createFileRoute } from "@tanstack/react-router";
+import { ChevronDown, Loader2Icon } from "lucide-react";
 import { useState } from "react";
 
 function PluginManager() {
@@ -113,38 +119,43 @@ function PluginManager() {
                 <p>Versiyon: {plugin.manifest.version}</p>
               </CardContent>
               <CardFooter>
-                <div className="flex justify-between items-center gap-4">
-                  <Switch
-                    id={`enable-plugin-${plugin.id}`}
-                    defaultChecked={plugin.enabled}
-                    onCheckedChange={(checked) =>
-                      handleTogglePlugin(plugin.id, checked)
-                    }
-                  />
-                  <Label htmlFor={`enable-plugin-${plugin.id}`}>
-                    Eklenti Durumu
-                  </Label>
-                  <Button
-                    variant="outline"
-                    style={{ marginLeft: 8 }}
-                    onClick={() => handlePluginUpdate(plugin.id)}
-                    disabled={
-                      isUpdating?.isUpdating &&
-                      isUpdating.pluginId === plugin.id
-                    }
-                  >
-                    {isUpdating?.isUpdating === true &&
-                    isUpdating.pluginId === plugin.id
-                      ? "Guncelleniyor"
-                      : "Guncelle"}
-                  </Button>
-                  <Button
-                    style={{ marginLeft: 8 }}
-                    onClick={() => unregisterPlugin(plugin.id)}
-                    variant="destructive"
-                  >
-                    Kaldir
-                  </Button>
+                <div className="flex justify-between items-center gap-4 flex-wrap">
+                  <div className="flex items-center gap-5">
+                    <Switch
+                      id={`enable-plugin-${plugin.id}`}
+                      defaultChecked={plugin.enabled}
+                      onCheckedChange={(checked) =>
+                        handleTogglePlugin(plugin.id, checked)
+                      }
+                    />
+                    <Label htmlFor={`enable-plugin-${plugin.id}`}>
+                      Eklenti Durumu
+                    </Label>
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger>
+                      <Button
+                        variant="outline"
+                        style={{ marginLeft: 8 }}
+                        onClick={() => unregisterPlugin(plugin.id)}
+                      >
+                        <ChevronDown size={230} />
+                        Aksiyonlar
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem
+                        onClick={() => handlePluginUpdate(plugin.id)}
+                      >
+                        Guncelle
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => unregisterPlugin(plugin.id)}
+                      >
+                        Kaldir
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </CardFooter>
             </Card>
@@ -155,6 +166,6 @@ function PluginManager() {
   );
 }
 
-export const Route = createFileRoute('/plugins')({
+export const Route = createFileRoute("/plugins")({
   component: PluginManager,
-})
+});
