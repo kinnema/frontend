@@ -6,13 +6,15 @@ import tsconfigPaths from "vite-tsconfig-paths";
 export default defineConfig({
   plugins: [
     tsconfigPaths(),
-
     tanstackRouter({
       target: "react",
       autoCodeSplitting: true,
     }),
     react(),
   ],
+  define: {
+    '__APP_VERSION__': JSON.stringify(process.env.npm_package_version),
+  },
   build: {
     outDir: "dist",
   },

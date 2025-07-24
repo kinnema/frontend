@@ -18,13 +18,14 @@ interface IStoreActions {
 
 type IStore = IStoreValues & IStoreActions;
 
+const appVersion = __APP_VERSION__
 export const useAppStore = create(
   persist<IStore>(
     (set, get) => ({
       theme: "light",
       version: {
-        appVersion: "0.1.0",
-        jsVersion: "0.1.0",
+        appVersion: appVersion,
+        jsVersion: appVersion,
       },
 
       setVersion(version: IVersion) {
@@ -35,7 +36,7 @@ export const useAppStore = create(
       setTheme(theme) {
         const oldTheme =
           (get().theme ??
-          window.matchMedia("(prefers-color-scheme: dark)").matches)
+            window.matchMedia("(prefers-color-scheme: dark)").matches)
             ? "dark"
             : "light";
 

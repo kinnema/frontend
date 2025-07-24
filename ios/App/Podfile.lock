@@ -1,4 +1,6 @@
 PODS:
+  - Alamofire (5.10.2)
+  - BigInt (5.2.0)
   - Capacitor (7.4.2):
     - CapacitorCordova
   - CapacitorApp (7.0.1):
@@ -8,6 +10,14 @@ PODS:
   - CapacitorCordova (7.4.2)
   - CapacitorStatusBar (7.0.1):
     - Capacitor
+  - CapgoCapacitorUpdater (7.8.4):
+    - Alamofire (= 5.10.2)
+    - BigInt (= 5.2.0)
+    - Capacitor
+    - SSZipArchive (= 2.4.3)
+    - Version (= 0.8.0)
+  - SSZipArchive (2.4.3)
+  - Version (0.8.0)
 
 DEPENDENCIES:
   - "Capacitor (from `../../node_modules/@capacitor/ios`)"
@@ -15,6 +25,14 @@ DEPENDENCIES:
   - "CapacitorCommunitySafeArea (from `../../node_modules/@capacitor-community/safe-area`)"
   - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
+  - "CapgoCapacitorUpdater (from `../../node_modules/@capgo/capacitor-updater`)"
+
+SPEC REPOS:
+  trunk:
+    - Alamofire
+    - BigInt
+    - SSZipArchive
+    - Version
 
 EXTERNAL SOURCES:
   Capacitor:
@@ -27,14 +45,21 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/ios"
   CapacitorStatusBar:
     :path: "../../node_modules/@capacitor/status-bar"
+  CapgoCapacitorUpdater:
+    :path: "../../node_modules/@capgo/capacitor-updater"
 
 SPEC CHECKSUMS:
+  Alamofire: 7193b3b92c74a07f85569e1a6c4f4237291e7496
+  BigInt: f668a80089607f521586bbe29513d708491ef2f7
   Capacitor: 156d98aba46ec01dde72c4bbb92fa626837cad29
   CapacitorApp: d63334c052278caf5d81585d80b21905c6f93f39
   CapacitorCommunitySafeArea: cc370b4f8d4aa340e4616acef9b73eda41ba0914
   CapacitorCordova: 5e58d04631bc5094894ac106e2bf1da18a9e6151
   CapacitorStatusBar: 275cbf2f4dfc00388f519ef80c7ec22edda342c9
+  CapgoCapacitorUpdater: 774acc1ff399ab272055deb790fa8c9223affd07
+  SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
+  Version: de5907f2c5d0f3cf21708db7801d1d5401139486
 
-PODFILE CHECKSUM: 9eb92f38200e51e974556e33c95980cf2b34fef9
+PODFILE CHECKSUM: 39683801a3d759e2be38b6939ec051159da869c3
 
 COCOAPODS: 1.15.2
