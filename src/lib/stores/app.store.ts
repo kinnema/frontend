@@ -19,55 +19,51 @@ interface IStoreActions {
 type IStore = IStoreValues & IStoreActions;
 
 const appVersion = __APP_VERSION__
-export const useAppStore = create(
-  persist<IStore>(
-    (set, get) => ({
-      theme: "light",
-      version: {
-        appVersion: appVersion,
-        jsVersion: appVersion,
-      },
+export const useAppStore = create<IStore>(
+  (set, get) => ({
+    theme: "light",
+    version: {
+      appVersion: appVersion,
+      jsVersion: appVersion,
+    },
 
-      setVersion(version: IVersion) {
-        set({
-          version,
-        });
-      },
-      setTheme(theme) {
-        const oldTheme =
-          (get().theme ??
-            window.matchMedia("(prefers-color-scheme: dark)").matches)
-            ? "dark"
-            : "light";
+    setVersion(version: IVersion) {
+      set({
+        version,
+      });
+    },
+    setTheme(theme) {
+      const oldTheme =
+        (get().theme ??
+          window.matchMedia("(prefers-color-scheme: dark)").matches)
+          ? "dark"
+          : "light";
 
-        const classes = document.querySelector("html")?.classList;
+      const classes = document.querySelector("html")?.classList;
 
-        if (classes?.contains(oldTheme)) {
-          classes.replace(oldTheme, theme);
-        }
+      if (classes?.contains(oldTheme)) {
+        classes.replace(oldTheme, theme);
+      }
 
-        classes?.add(theme);
+      classes?.add(theme);
 
-        set({ theme });
-      },
-      initTheme() {
-        const mq = window.matchMedia("(prefers-color-scheme: dark)");
+      set({ theme });
+    },
+    initTheme() {
+      const mq = window.matchMedia("(prefers-color-scheme: dark)");
 
-        if (mq.matches) {
-          const theme = mq.matches ? "dark" : "light";
+      if (mq.matches) {
+        const theme = mq.matches ? "dark" : "light";
 
-          get().setTheme(theme);
-        }
+        get().setTheme(theme);
+      }
 
-        mq.addEventListener("change", (evt) => {
-          const theme = evt.matches ? "dark" : "light";
+      mq.addEventListener("change", (evt) => {
+        const theme = evt.matches ? "dark" : "light";
 
-          get().setTheme(theme);
-        });
-      },
-    }),
-    {
-      name: "kinnema",
-    }
-  )
+        get().setTheme(theme);
+      });
+    },
+  })
+  
 );
