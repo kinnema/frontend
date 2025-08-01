@@ -1,0 +1,7 @@
+onlyBuiltDependencies:
+  - '@firebase/util'
+  - '@swc/core'
+  - esbuild
+  - protobufjs
+  - rxdb
+  - sharp

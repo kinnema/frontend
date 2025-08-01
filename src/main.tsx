@@ -4,7 +4,7 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import React from "react";
 import ReactDOM from "react-dom/client";
-
+import { initDatabase } from "./lib/database/rxdb";
 import { routeTree } from "./routeTree.gen";
 
 const queryClient = new QueryClient({
@@ -29,6 +29,8 @@ declare module "@tanstack/react-router" {
     router: typeof router;
   }
 }
+
+await initDatabase();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

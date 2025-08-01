@@ -2,8 +2,8 @@ export interface ILastWatched {
   id: string;
   name: string;
   posterPath: string;
-  season: number;
-  episode: number;
+  season_number: number;
+  episode_number: number;
   isWatched?: boolean | null;
   tmdbId: number;
   atSecond: number;

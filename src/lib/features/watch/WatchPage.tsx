@@ -3,9 +3,10 @@
 import { useToast } from "@/hooks/use-toast";
 import { Loading } from "@/lib/components/Loading";
 import { Providers } from "@/lib/components/Providers";
+import { useLastWatched } from "@/lib/hooks/database/useLastWatched";
 import { useHlsPlayer } from "@/lib/hooks/useHlsPlayer";
 import TmdbService from "@/lib/services/tmdb.service";
-import { useLastWatchedStore } from "@/lib/stores/lastWatched.store";
+// import { useLastWatchedStore } from "@/lib/stores/lastWatched.store";
 import { useWatchStore } from "@/lib/stores/watch.store";
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { Episode, ITmdbSerieDetails } from "@/lib/types/tmdb";
@@ -31,9 +32,8 @@ export default function ChapterPage({ params }: IProps) {
   const selectedWatchLink = useWatchStore((state) => state.selectedWatchLink);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const toast = useToast();
-  const getLastWatched = useLastWatchedStore((state) => state.getSerie);
-  const updateLastWatched = useLastWatchedStore((state) => state.updateSerie);
-  const addLastWatched = useLastWatchedStore((state) => state.addSerie);
+  const { getSingleLastWatched, updateLastWatched, addLastWatched } =
+    useLastWatched();
 
   // Initialize HLS player with CapacitorHTTP integration
   const { destroy, loadSource } = useHlsPlayer({
@@ -108,26 +108,28 @@ export default function ChapterPage({ params }: IProps) {
     // Only update every 10 seconds to avoid too many requests
     if (Math.floor(playedSeconds) % 10 === 0) {
       try {
-        const lastWatched = getLastWatched(params.tmdbId);
+        const lastWatched = await getSingleLastWatched(parseInt(params.tmdbId));
 
         if (lastWatched) {
-          updateLastWatched(params.tmdbId, {
-            atSecond: playedSeconds,
-          });
-        } else {
-          const minutesToSeconds = Math.floor(
-            tmdbEpisodeData.data!.runtime * 60
+          await updateLastWatched(
+            parseInt(params.tmdbId),
+            {
+              atSecond: playedSeconds,
+            },
+            lastWatched
           );
+        } else {
+          const totalSeconds = videoRef.current?.duration || 0;
 
-          addLastWatched({
+          await addLastWatched({
             id: params.tmdbId,
             name: tmdbData.data.name,
             posterPath: tmdbEpisodeData.data!.still_path,
             tmdbId: tmdbData.data.id,
-            season,
-            episode: chapter,
+            season_number: season,
+            episode_number: chapter,
             atSecond: playedSeconds,
-            totalSeconds: minutesToSeconds,
+            totalSeconds: totalSeconds,
             episodeName: tmdbEpisodeData.data!.name,
             network: params?.network ? parseInt(params.network) : 0,
           });
@@ -157,8 +159,8 @@ export default function ChapterPage({ params }: IProps) {
   function onPause(): void {
     setIsPlaying(false);
   }
-  function resumeFromWhereLeft(): void {
-    const lastWatched = getLastWatched(params.tmdbId);
+  async function resumeFromWhereLeft(): Promise<void> {
+    const lastWatched = await getSingleLastWatched(parseInt(params.tmdbId));
     if (lastWatched) {
       const secondsToMinutes = Math.floor(lastWatched.atSecond / 60);
       toast.toast({
