@@ -1,4 +1,4 @@
-import { uniqueId } from "lodash";
+import uniqueId from "lodash/uniqueId";
 
 export const BASE_URL = import.meta.env.VITE_PUBLIC_API;
 export const TMDB_API_KEY = import.meta.env.VITE_PUBLIC_TMDB_API_KEY;

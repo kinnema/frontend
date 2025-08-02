@@ -26,6 +26,7 @@ const modalSearchSchema = z.object({
 
 export const Route = createFileRoute("/_layout/")({
   validateSearch: zodValidator(modalSearchSchema),
+  codeSplitGroupings: [["component", "loader"]],
   loader: async ({ context: { queryClient } }) => {
     // Prefetch data for home page
     await Promise.all([
@@ -63,24 +64,23 @@ export const Route = createFileRoute("/_layout/")({
       <>
         <Suspense>
           <HomeFeature />
+          {/* Modal rendering based on search params */}
+          {modal === "login" && <LoginModal />}
+          {modal === "register" && <RegisterModal />}
+          {modal === "favorites" && <FavoritesModal />}
+          {serieSlug && serieTmdbId && (
+            <SerieModal slug={serieSlug} tmdbId={parseInt(serieTmdbId)} />
+          )}
+          {watchSlug && watchTmdbId && watchSeason && watchChapter && (
+            <WatchModal
+              slug={watchSlug}
+              tmdbId={watchTmdbId}
+              season={watchSeason}
+              chapter={watchChapter}
+              network={watchNetwork}
+            />
+          )}
         </Suspense>
-
-        {/* Modal rendering based on search params */}
-        {modal === "login" && <LoginModal />}
-        {modal === "register" && <RegisterModal />}
-        {modal === "favorites" && <FavoritesModal />}
-        {serieSlug && serieTmdbId && (
-          <SerieModal slug={serieSlug} tmdbId={parseInt(serieTmdbId)} />
-        )}
-        {watchSlug && watchTmdbId && watchSeason && watchChapter && (
-          <WatchModal
-            slug={watchSlug}
-            tmdbId={watchTmdbId}
-            season={watchSeason}
-            chapter={watchChapter}
-            network={watchNetwork}
-          />
-        )}
       </>
     );
   },

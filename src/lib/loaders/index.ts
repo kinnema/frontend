@@ -1,1 +1,1 @@
-export { CapacitorHttpLoader } from './CapacitorHttpLoader';
+export { createCapacitorHttpLoader } from "./CapacitorHttpLoader";

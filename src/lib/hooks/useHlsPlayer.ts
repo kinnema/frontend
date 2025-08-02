@@ -1,6 +1,6 @@
 import { useToast } from "@/hooks/use-toast";
-import Hls from "hls.js";
-import { useRef } from "react";
+import type Hls from "hls.js";
+import { useRef, useState } from "react";
 import { createHlsConfig, hlsEventHandlers } from "../utils/hlsConfig";
 
 interface UseHlsPlayerProps {
@@ -20,8 +20,12 @@ export function useHlsPlayer({
 }: UseHlsPlayerProps) {
   const hlsRef = useRef<Hls | null>(null);
   const toast = useToast();
+  const [isHlsSupported, setIsHlsSupported] = useState(false);
 
-  function loadSource(src: string) {
+  async function loadSource(src: string) {
+    const { default: Hls } = await import("hls.js");
+    setIsHlsSupported(Hls.isSupported());
+
     const videoElement = videoRef.current;
 
     if (!videoElement) throw new Error("Source url or video ref is missing");
@@ -37,7 +41,7 @@ export function useHlsPlayer({
     if (Hls.isSupported()) {
       console.log("Initializing hls.js with CapacitorHTTP loader");
 
-      const hlsConfig = createHlsConfig();
+      const hlsConfig = await createHlsConfig();
       const hls = new Hls(hlsConfig);
       hlsRef.current = hls;
 
@@ -84,7 +88,7 @@ export function useHlsPlayer({
 
   return {
     hls: hlsRef.current,
-    isHlsSupported: Hls.isSupported(),
+    isHlsSupported,
     destroy,
     loadSource,
   };

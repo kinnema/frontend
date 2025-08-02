@@ -3,8 +3,6 @@ import { getRxStorageDexie } from "rxdb/plugins/storage-dexie";
 import { wrappedValidateAjvStorage } from "rxdb/plugins/validate-ajv";
 
 import { addRxPlugin } from "rxdb/plugins/core";
-import { RxDBDevModePlugin } from "rxdb/plugins/dev-mode";
-import { RxDBUpdatePlugin } from "rxdb/plugins/update";
 import { FavoritedCollection, favoriteSchema } from "./favorites.schema";
 import { LastWatchedCollection, lastWatchedSchema } from "./lastWatched.schema";
 
@@ -28,8 +26,10 @@ const collections = {
 
 async function _create(): Promise<RxDatabase<KinnemaCollections>> {
   if (import.meta.env.DEV) {
+    const { RxDBDevModePlugin } = await import("rxdb/plugins/dev-mode");
     addRxPlugin(RxDBDevModePlugin);
   }
+  const { RxDBUpdatePlugin } = await import("rxdb/plugins/update");
   addRxPlugin(RxDBUpdatePlugin);
 
   const db = await createRxDatabase<KinnemaCollections>({

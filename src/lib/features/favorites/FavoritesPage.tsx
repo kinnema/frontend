@@ -1,5 +1,3 @@
-"use client";
-
 import { ShowCard } from "@/components/show-card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ScrollArea } from "@/components/ui/scroll-area";

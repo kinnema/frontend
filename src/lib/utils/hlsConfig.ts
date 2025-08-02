@@ -1,11 +1,13 @@
 import { HlsConfig } from "hls.js";
-import { CapacitorHttpLoader } from "../loaders/CapacitorHttpLoader";
+import { createCapacitorHttpLoader } from "../loaders";
 
 /**
  * Creates an optimized HLS configuration for mobile and web platforms
  * Uses CapacitorHTTP loader for better performance on native platforms
  */
-export function createHlsConfig(): Partial<HlsConfig> {
+export async function createHlsConfig(): Promise<Partial<HlsConfig>> {
+  const CapacitorHttpLoader = await createCapacitorHttpLoader();
+
   return {
     debug: process.env.NODE_ENV === "development",
     // Use custom loader for both playlists and fragments
