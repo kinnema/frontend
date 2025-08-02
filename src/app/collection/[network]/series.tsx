@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Pagination,
   PaginationContent,
@@ -13,17 +11,16 @@ import { slugify, tmdbPoster } from "@/lib/helpers";
 import TmdbService from "@/lib/services/tmdb.service";
 import { TmdbNetworks } from "@/lib/types/networks";
 import { useQuery } from "@tanstack/react-query";
+import { Link, useSearch } from "@tanstack/react-router";
 import classNames from "classnames";
-import { Link } from "@tanstack/react-router";
-import { useSearch } from "@tanstack/react-router";
 
 interface IProps {
   network: TmdbNetworks;
 }
 
 export function CollectionSeries({ network }: IProps) {
-  const searchParams = useSearch({ from: '/collection/$network' });
-  const page = Number(searchParams?.page ?? 1);
+  const searchParams = useSearch({ from: "/collection/$network" });
+  const page = searchParams.page ?? 1;
 
   const { data, isPending, isError } = useQuery({
     queryKey: ["network-series", network, page],
@@ -47,7 +44,10 @@ export function CollectionSeries({ network }: IProps) {
         {data.results.map((serie) => (
           <Link
             to="/"
-            search={{ serieSlug: slugify(serie.original_name), serieTmdbId: serie.id.toString() }}
+            search={{
+              serieSlug: slugify(serie.original_name),
+              serieTmdbId: serie.id.toString(),
+            }}
             key={serie.id}
             className="overflow-hidden"
           >
@@ -84,28 +84,15 @@ export function CollectionSeries({ network }: IProps) {
             <PaginationContent className="flex-wrap">
               <PaginationItem>
                 <PaginationPrevious
-                  to={
-                    page > 1
-                      ? `/collection/${TmdbNetworks[
-                          network
-                        ].toLowerCase()}`
-                      : "#"
-                  }
                   search={page > 1 ? { page: (page - 1).toString() } : {}}
                   className={page === 1 ? "pointer-events-none opacity-50" : ""}
                 />
               </PaginationItem>
 
               <PaginationItem>
-                <PaginationLink
-                  to={`/collection/${TmdbNetworks[
-                    network
-                  ].toLowerCase()}`}
-                  search={{ page: "1" }}
-                  isActive={page === 1}
-                >
-                  1
-                </PaginationLink>
+                <Link to="." search={{ page: "1" }}>
+                  <PaginationLink isActive={page === 1}>1</PaginationLink>
+                </Link>
               </PaginationItem>
 
               {page > 4 && <PaginationItem>...</PaginationItem>}
@@ -116,10 +103,8 @@ export function CollectionSeries({ network }: IProps) {
                   return (
                     <PaginationItem key={pageNumber}>
                       <PaginationLink
-                        to={`/collection/${TmdbNetworks[
-                          network
-                        ].toLowerCase()}`}
-                        search={{ page: pageNumber.toString() }}
+                        from="/collection/$network"
+                        search={{ page: pageNumber }}
                         isActive={pageNumber === page}
                       >
                         {pageNumber}
@@ -135,10 +120,7 @@ export function CollectionSeries({ network }: IProps) {
               {totalPages > 1 && (
                 <PaginationItem>
                   <PaginationLink
-                    to={`/collection/${TmdbNetworks[
-                      network
-                    ].toLowerCase()}`}
-                    search={{ page: totalPages.toString() }}
+                    search={{ page: totalPages }}
                     isActive={page === totalPages}
                   >
                     {totalPages}
@@ -148,14 +130,7 @@ export function CollectionSeries({ network }: IProps) {
 
               <PaginationItem>
                 <PaginationNext
-                  to={
-                    page < totalPages
-                      ? `/collection/${TmdbNetworks[
-                          network
-                        ].toLowerCase()}`
-                      : "#"
-                  }
-                  search={page < totalPages ? { page: (page + 1).toString() } : {}}
+                  search={page < totalPages ? { page: page + 1 } : {}}
                   className={
                     page === totalPages ? "pointer-events-none opacity-50" : ""
                   }

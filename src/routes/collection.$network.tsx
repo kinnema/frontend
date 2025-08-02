@@ -1,7 +1,13 @@
 import { CollectionSeries } from "@/app/collection/[network]/series";
 import { TmdbNetworks } from "@/lib/types/networks";
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { zodValidator } from "@tanstack/zod-adapter";
 import { Suspense } from "react";
+import z from "zod";
+
+const collectionSearchSchema = z.object({
+  page: z.number().catch(1),
+});
 
 export const Route = createFileRoute("/collection/$network")({
   beforeLoad: ({ params }) => {
@@ -11,6 +17,7 @@ export const Route = createFileRoute("/collection/$network")({
       throw redirect({ to: "/" });
     }
   },
+  validateSearch: zodValidator(collectionSearchSchema),
   component: () => {
     const { network } = Route.useParams();
     const networkAsTmdbKey = network.toUpperCase() as keyof typeof TmdbNetworks;
