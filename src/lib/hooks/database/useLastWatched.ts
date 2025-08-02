@@ -1,19 +1,27 @@
-import { db } from "@/lib/database/rxdb";
+import { getDb } from "@/lib/database/rxdb";
 import { ILastWatched } from "@/lib/types/lastWatched.type";
 import { RxDocument } from "rxdb";
 
 export function useLastWatched() {
   async function getAllLastWatched() {
+    const db = await getDb();
+
     const lastWatchedQuery = db.lastWatched?.find();
 
     return lastWatchedQuery?.exec();
   }
-  function getAllLastWatched$() {
+
+  async function getAllLastWatched$() {
+    const db = await getDb();
+
     const lastWatchedQuery = db.lastWatched?.find().$;
 
     return lastWatchedQuery;
   }
+
   async function getSingleLastWatched(tmdbId: number) {
+    const db = await getDb();
+
     const lastWatchedQuery = db.lastWatched?.findOne({
       index: "tmdbId",
       selector: {
@@ -41,6 +49,8 @@ export function useLastWatched() {
   }
 
   async function addLastWatched(data: ILastWatched) {
+    const db = await getDb();
+
     await db.lastWatched?.insert(data);
   }
 

@@ -1,38 +1,30 @@
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import {
-  ApiFavoritesGet200ResponseInner,
-  ApiFavoritesIdDeleteRequest,
-  ApiFavoritesPostRequest,
-} from "@/lib/api";
-import UserService from "@/lib/services/user.service";
+import { useFavorites } from "@/lib/hooks/database/useFavorites";
+import { IAddFavorite, IRemoveFavorite } from "@/lib/types/favorite.type";
 import { ITmdbSerieDetails } from "@/lib/types/tmdb";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { QUERY_KEYS } from "@/lib/utils/queryKeys";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Heart, Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import { v4 } from "uuid";
 
 interface IProps {
   tmdbData: ITmdbSerieDetails;
 }
 
 export function FavoriteButton({ tmdbData }: IProps) {
-  const queryClient = useQueryClient();
+  const { addFavorite, getFavorite, removeFavorite, getFavoriteByTmdb } =
+    useFavorites(tmdbData.id);
 
   const favorites = useQuery({
-    queryKey: ["favorites"],
-    queryFn: () => UserService.fetchFavorites(),
+    queryKey: [...QUERY_KEYS.Favorites, tmdbData.id],
+    queryFn: () => getFavoriteByTmdb(tmdbData.id),
   });
 
-  const removeFavorite = useMutation<
-    ApiFavoritesGet200ResponseInner,
-    void,
-    ApiFavoritesIdDeleteRequest
-  >({
-    mutationFn: (data: ApiFavoritesIdDeleteRequest) =>
-      UserService.removeFromFavorites(data.id),
+  const removeFavoriteMutation = useMutation<void, void, IRemoveFavorite>({
+    mutationFn: (data: IRemoveFavorite) => removeFavorite(data.id),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["favorites"] });
-
       toast({
         title: "Favorilerden kaldirildi",
         variant: "default",
@@ -46,16 +38,9 @@ export function FavoriteButton({ tmdbData }: IProps) {
     },
   });
 
-  const addToFavorites = useMutation<
-    ApiFavoritesGet200ResponseInner,
-    void,
-    ApiFavoritesPostRequest
-  >({
-    mutationFn: (data: ApiFavoritesPostRequest) =>
-      UserService.addToFavorites(data),
+  const addToFavorites = useMutation<void, void, IAddFavorite>({
+    mutationFn: (data: IAddFavorite) => addFavorite(data),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["favorites"] });
-
       toast({
         title: "Favorilere eklendi",
         variant: "default",
@@ -74,22 +59,22 @@ export function FavoriteButton({ tmdbData }: IProps) {
       name: tmdbData.name,
       posterPath: tmdbData.poster_path,
       tmdbId: tmdbData.id,
+      createdAt: new Date().toISOString(),
+      id: v4(),
     });
   }
 
   async function onRemoveFavorite() {
-    const favoriteId = favorites.data
-      ?.filter((fav) => fav.tmdbId === tmdbData.id)
-      .at(0);
+    if (!favorites.data) return;
 
-    if (!favoriteId) return;
-
-    await removeFavorite.mutateAsync({
-      id: favoriteId.id!,
+    await removeFavoriteMutation.mutateAsync({
+      id: favorites.data?.id,
     });
   }
 
-  const isFavorite = favorites.data?.some((fav) => fav.tmdbId === tmdbData.id);
+  console.log(favorites.data);
+
+  const isFavorite = favorites.data ? true : false;
 
   return (
     <Button
@@ -97,8 +82,8 @@ export function FavoriteButton({ tmdbData }: IProps) {
       onClick={isFavorite ? onRemoveFavorite : onAddFavorite}
     >
       {addToFavorites.isPending ||
-        favorites.isPending ||
-        removeFavorite.isPending ? (
+      favorites.isPending ||
+      removeFavoriteMutation.isPending ? (
         <Loader2 className="h-6 w-6 animate-spin" />
       ) : (
         <AnimatePresence mode="wait">

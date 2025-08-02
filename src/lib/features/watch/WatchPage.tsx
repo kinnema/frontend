@@ -13,6 +13,7 @@ import { Episode, ITmdbSerieDetails } from "@/lib/types/tmdb";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { v4 } from "uuid";
 interface IProps {
   params: {
     slug: string;
@@ -122,7 +123,7 @@ export default function ChapterPage({ params }: IProps) {
           const totalSeconds = videoRef.current?.duration || 0;
 
           await addLastWatched({
-            id: params.tmdbId,
+            id: v4(),
             name: tmdbData.data.name,
             posterPath: tmdbEpisodeData.data!.still_path,
             tmdbId: tmdbData.data.id,

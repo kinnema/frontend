@@ -13,12 +13,21 @@ export function LastWatchedSeries() {
   const [lastWatched, setLastWatched] = useState<ILastWatched[]>([]);
 
   useEffect(() => {
-    const unsubscribe = getAllLastWatched$().subscribe((data) => {
-      setLastWatched(data);
-    });
+    async function getLastWatched() {
+      const query = await getAllLastWatched$();
+
+      const unsubscribe = query.subscribe((data) => {
+        setLastWatched(data);
+      });
+
+      return () => {
+        unsubscribe.unsubscribe();
+      };
+    }
+    const s = getLastWatched();
 
     return () => {
-      unsubscribe.unsubscribe();
+      s.then((r) => r());
     };
   }, []);
 

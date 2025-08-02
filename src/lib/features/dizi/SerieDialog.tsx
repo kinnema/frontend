@@ -106,9 +106,9 @@ export function SerieDialogFeature({ params }: IProps) {
           </div>
 
           <div className="mt-10">
-            {isAuthenticated && (
-              <FavoriteButton tmdbData={tmdbDetailsData.data} />
-            )}
+            {/* {isAuthenticated && ( */}
+            <FavoriteButton tmdbData={tmdbDetailsData.data} />
+            {/* )} */}
           </div>
         </div>
       </div>
