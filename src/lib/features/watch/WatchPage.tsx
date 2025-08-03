@@ -11,9 +11,11 @@ import TmdbService from "@/lib/services/tmdb.service";
 import { useWatchStore } from "@/lib/stores/watch.store";
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { Episode, ITmdbSerieDetails } from "@/lib/types/tmdb";
+import { p2pEventEmitter } from "@/lib/utils/p2pEvents";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import classNames from "classnames";
+import { useEffect, useMemo, useState } from "react";
 import { v4 } from "uuid";
 interface IProps {
   params: {
@@ -22,17 +24,20 @@ interface IProps {
     chapter: number;
     tmdbId: number;
     network?: string;
+    isInRoom: boolean;
+    videoRef: React.RefObject<HTMLVideoElement | null>;
   };
 }
 
-export default function ChapterPage({ params }: IProps) {
+export default function ChapterPage({
+  params: { videoRef, ...params },
+}: IProps) {
   const season = params.season;
   const chapter = params.chapter;
   const [isPlaying, setIsPlaying] = useState(false);
   const navigate = useNavigate();
   const clear = useWatchStore((state) => state.clear);
   const selectedWatchLink = useWatchStore((state) => state.selectedWatchLink);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
   const toast = useToast();
   const { getSingleLastWatched, updateLastWatched, addLastWatched } =
     useLastWatched();
@@ -53,12 +58,14 @@ export default function ChapterPage({ params }: IProps) {
     loadSource(selectedWatchLink);
 
     const handleLoadedData = () => {
+      p2pEventEmitter.emit("loadedVideo", selectedWatchLink);
       resumeFromWhereLeft();
     };
 
     videoRef.current?.addEventListener("loadeddata", handleLoadedData);
 
     return () => {
+      p2pEventEmitter.emit("loadedVideo");
       videoRef.current?.removeEventListener("loadeddata", handleLoadedData);
       destroy();
       clear();
@@ -174,7 +181,11 @@ export default function ChapterPage({ params }: IProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/95 z-50">
+    <div
+      className={classNames(
+        !params.isInRoom ? "fixed inset-0 bg-black/95 z-50" : "z-50"
+      )}
+    >
       <div className="relative h-full">
         <div className="w-full h-full flex">
           <>
@@ -190,11 +201,6 @@ export default function ChapterPage({ params }: IProps) {
               <>
                 <video
                   ref={videoRef}
-                  style={{
-                    backgroundColor: "black",
-                    width: "100%",
-                    height: "100%",
-                  }}
                   poster={`https://image.tmdb.org/t/p/original/${tmdbEpisodeData.data.still_path}`}
                   controls
                   onPlay={onPlay}
@@ -212,7 +218,15 @@ export default function ChapterPage({ params }: IProps) {
             visibility: isPlaying ? "hidden" : "visible",
           }}
         >
-          {selectedWatchLink && <WatchTogether videoRef={videoRef} />}
+          {selectedWatchLink && !params.isInRoom && (
+            <WatchTogether
+              videoRef={videoRef}
+              chapter={chapter}
+              season={season}
+              slug={params.slug}
+              tmdbId={params.tmdbId}
+            />
+          )}
 
           <span className="text-emerald-400 text-sm mb-2 gap-1 flex ">
             {tmdbData.data.networks.map((network) => (

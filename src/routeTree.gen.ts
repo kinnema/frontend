@@ -19,6 +19,7 @@ import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as SettingsUpdatesRouteImport } from './routes/settings/updates'
+import { Route as RoomRoomIdRouteImport } from './routes/room.$roomId'
 import { Route as CollectionNetworkRouteImport } from './routes/collection.$network'
 
 const TestRoomRoute = TestRoomRouteImport.update({
@@ -70,6 +71,11 @@ const SettingsUpdatesRoute = SettingsUpdatesRouteImport.update({
   path: '/settings/updates',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RoomRoomIdRoute = RoomRoomIdRouteImport.update({
+  id: '/room/$roomId',
+  path: '/room/$roomId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CollectionNetworkRoute = CollectionNetworkRouteImport.update({
   id: '/collection/$network',
   path: '/collection/$network',
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/test-room': typeof TestRoomRoute
   '/collection/$network': typeof CollectionNetworkRoute
+  '/room/$roomId': typeof RoomRoomIdRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/': typeof LayoutIndexRoute
   '/settings': typeof SettingsIndexRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/test-room': typeof TestRoomRoute
   '/collection/$network': typeof CollectionNetworkRoute
+  '/room/$roomId': typeof RoomRoomIdRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/': typeof LayoutIndexRoute
   '/settings': typeof SettingsIndexRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/test-room': typeof TestRoomRoute
   '/collection/$network': typeof CollectionNetworkRoute
+  '/room/$roomId': typeof RoomRoomIdRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/_layout/': typeof LayoutIndexRoute
   '/settings/': typeof SettingsIndexRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/test-room'
     | '/collection/$network'
+    | '/room/$roomId'
     | '/settings/updates'
     | '/'
     | '/settings'
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/test-room'
     | '/collection/$network'
+    | '/room/$roomId'
     | '/settings/updates'
     | '/'
     | '/settings'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/test-room'
     | '/collection/$network'
+    | '/room/$roomId'
     | '/settings/updates'
     | '/_layout/'
     | '/settings/'
@@ -163,6 +175,7 @@ export interface RootRouteChildren {
   SearchRoute: typeof SearchRoute
   TestRoomRoute: typeof TestRoomRoute
   CollectionNetworkRoute: typeof CollectionNetworkRoute
+  RoomRoomIdRoute: typeof RoomRoomIdRoute
   SettingsUpdatesRoute: typeof SettingsUpdatesRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
 }
@@ -239,6 +252,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsUpdatesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/room/$roomId': {
+      id: '/room/$roomId'
+      path: '/room/$roomId'
+      fullPath: '/room/$roomId'
+      preLoaderRoute: typeof RoomRoomIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/collection/$network': {
       id: '/collection/$network'
       path: '/collection/$network'
@@ -269,6 +289,7 @@ const rootRouteChildren: RootRouteChildren = {
   SearchRoute: SearchRoute,
   TestRoomRoute: TestRoomRoute,
   CollectionNetworkRoute: CollectionNetworkRoute,
+  RoomRoomIdRoute: RoomRoomIdRoute,
   SettingsUpdatesRoute: SettingsUpdatesRoute,
   SettingsIndexRoute: SettingsIndexRoute,
 }

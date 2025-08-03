@@ -77,7 +77,6 @@ export const Route = createFileRoute("/_layout/")({
               tmdbId={watchTmdbId}
               season={watchSeason}
               chapter={watchChapter}
-              room={watchRoomId}
             />
           )}
         </Suspense>

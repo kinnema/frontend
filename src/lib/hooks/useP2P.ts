@@ -1,11 +1,8 @@
-import { useToast } from "@/hooks/use-toast";
 import { useRef } from "react";
-import { joinRoom as joinChannel, Room, selfId } from "trystero";
+import { joinRoom as joinChannel, Room } from "trystero/torrent";
 import { v4 as uuid } from "uuid";
-
-interface IProps {
-  videoRef: React.RefObject<HTMLVideoElement | null>;
-}
+import { IP2PCommand } from "../types/p2p.types";
+import { p2pEventEmitter } from "../utils/p2pEvents";
 
 const password = import.meta.env.VITE_P2P_KEY;
 const p2pConfig = {
@@ -13,65 +10,36 @@ const p2pConfig = {
   password,
 };
 
-export interface IP2PCommand {
-  command: "CHECK_ADMIN" | "SYNC" | "PLAY" | "PAUSE";
-  payload: unknown;
-}
-interface IProps {
-  videoRef: React.RefObject<HTMLVideoElement | null>;
-}
-
-export function useP2P({ videoRef }: IProps) {
+export function useP2P() {
   const room = useRef<Room | undefined>(undefined);
-  const roomAdmin = useRef<string>(selfId);
-  const { toast } = useToast();
 
-  function createRoom(): string {
-    const roomId = uuid();
+  function createRoomId(): string {
+    return uuid();
+  }
+
+  function createRoom(roomId: string) {
     const _room = joinChannel(p2pConfig, roomId);
     room.current = _room;
     const [sendAction, getAction] = room.current?.makeAction("WATCH");
 
-    _room.onPeerJoin(() => {
+    _room.onPeerJoin((peerId: string) => {
       console.log("Peer joined");
-      sendAction({
-        command: "CHECK_ADMIN",
-        payload: roomAdmin.current,
-      });
-
-      videoRef.current?.addEventListener("play", () => {
-        sendAction({
-          command: "PLAY",
-          payload: videoRef.current?.currentTime ?? 0,
-        });
-      });
-
-      videoRef.current?.addEventListener("pause", () => {
-        sendAction({
-          command: "PAUSE",
-          payload: null,
-        });
-      });
-
-      videoRef.current?.addEventListener("playing", (c) => {
-        setInterval(() => {
-          sendAction({
-            command: "SYNC",
-            payload: Math.floor(videoRef.current?.currentTime ?? 0),
-          });
-        }, 10_000);
-      });
+      p2pEventEmitter.emit("status", "JOINED", peerId);
     });
 
-    _room.onPeerLeave(() => {
-      toast({
-        title: "2. kisi ayrildi!",
-        description: "2. kisi ayrildi!",
-      });
-      videoRef.current?.pause();
+    _room.onPeerLeave((peerId: string) => {
+      console.log("Peer left");
+      p2pEventEmitter.emit("status", "LEAVED", peerId);
     });
 
-    return roomId;
+    getAction((data) => {
+      const _data = data as unknown as IP2PCommand;
+      console.log(_data);
+
+      p2pEventEmitter.emit("command", _data.command, _data.payload);
+    });
+
+    return { sendAction };
   }
 
   function joinRoom(roomId: string) {
@@ -83,33 +51,31 @@ export function useP2P({ videoRef }: IProps) {
       const _data = data as unknown as IP2PCommand;
       console.log(_data);
 
-      switch (_data.command) {
-        case "CHECK_ADMIN":
-          roomAdmin.current = _data.payload as string;
-          break;
-        case "PAUSE":
-          videoRef.current?.pause();
-          break;
-        case "PLAY":
-          videoRef.current!.currentTime = _data.payload as number;
-          videoRef.current?.play();
-          break;
-        case "SYNC":
-          if (
-            Math.floor(videoRef.current?.currentTime ?? 0) !== _data.payload
-          ) {
-            videoRef.current!.currentTime = _data.payload as number;
-          }
-          break;
-
-        default:
-          break;
-      }
+      p2pEventEmitter.emit("command", _data.command, _data.payload);
     });
+
+    _room.onPeerJoin((peerId: string) => {
+      console.log("Peer joined");
+      p2pEventEmitter.emit("status", "JOINED", peerId);
+    });
+
+    _room.onPeerLeave((peerId: string) => {
+      console.log("Peer left");
+
+      p2pEventEmitter.emit("status", "LEAVED", peerId);
+    });
+
+    return { sendAction };
+  }
+
+  function leaveRoom() {
+    room.current?.leave();
   }
 
   return {
     createRoom,
     joinRoom,
+    createRoomId,
+    leaveRoom,
   };
 }
