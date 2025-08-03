@@ -1,6 +1,6 @@
 import { useToast } from "@/hooks/use-toast";
 import { useRef } from "react";
-import { joinRoom as joinChannel, Room, selfId } from "trystero/torrent";
+import { joinRoom as joinChannel, Room, selfId } from "trystero";
 import { v4 as uuid } from "uuid";
 
 interface IProps {
