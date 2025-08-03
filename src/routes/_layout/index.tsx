@@ -16,12 +16,12 @@ const modalSearchSchema = z.object({
     z.enum(["login", "register", "favorites", "serie", "watch"]).nullable()
   ),
   serieSlug: z.string().optional(),
-  serieTmdbId: z.string().optional(),
+  serieTmdbId: z.number().optional(),
   watchSlug: z.string().optional(),
-  watchTmdbId: z.string().optional(),
-  watchSeason: z.string().optional(),
-  watchChapter: z.string().optional(),
-  watchNetwork: z.string().optional(),
+  watchTmdbId: z.number().optional(),
+  watchSeason: z.number().optional(),
+  watchChapter: z.number().optional(),
+  watchRoomId: z.string().optional(),
 });
 
 export const Route = createFileRoute("/_layout/")({
@@ -57,7 +57,7 @@ export const Route = createFileRoute("/_layout/")({
       watchTmdbId,
       watchSeason,
       watchChapter,
-      watchNetwork,
+      watchRoomId,
     } = Route.useSearch();
 
     return (
@@ -69,7 +69,7 @@ export const Route = createFileRoute("/_layout/")({
           {modal === "register" && <RegisterModal />}
           {modal === "favorites" && <FavoritesModal />}
           {serieSlug && serieTmdbId && (
-            <SerieModal slug={serieSlug} tmdbId={parseInt(serieTmdbId)} />
+            <SerieModal slug={serieSlug} tmdbId={serieTmdbId} />
           )}
           {watchSlug && watchTmdbId && watchSeason && watchChapter && (
             <WatchModal
@@ -77,7 +77,7 @@ export const Route = createFileRoute("/_layout/")({
               tmdbId={watchTmdbId}
               season={watchSeason}
               chapter={watchChapter}
-              network={watchNetwork}
+              room={watchRoomId}
             />
           )}
         </Suspense>

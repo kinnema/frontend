@@ -3,6 +3,7 @@
 import { useToast } from "@/hooks/use-toast";
 import { Loading } from "@/lib/components/Loading";
 import { Providers } from "@/lib/components/Providers";
+import { WatchTogether } from "@/lib/components/Watch/WatchTogether";
 import { useLastWatched } from "@/lib/hooks/database/useLastWatched";
 import { useHlsPlayer } from "@/lib/hooks/useHlsPlayer";
 import TmdbService from "@/lib/services/tmdb.service";
@@ -17,16 +18,16 @@ import { v4 } from "uuid";
 interface IProps {
   params: {
     slug: string;
-    season: string;
-    chapter: string;
-    tmdbId: string;
+    season: number;
+    chapter: number;
+    tmdbId: number;
     network?: string;
   };
 }
 
 export default function ChapterPage({ params }: IProps) {
-  const season = parseInt(params.season.replace("sezon-", ""));
-  const chapter = parseInt(params.chapter.replace("bolum-", ""));
+  const season = params.season;
+  const chapter = params.chapter;
   const [isPlaying, setIsPlaying] = useState(false);
   const navigate = useNavigate();
   const clear = useWatchStore((state) => state.clear);
@@ -36,7 +37,6 @@ export default function ChapterPage({ params }: IProps) {
   const { getSingleLastWatched, updateLastWatched, addLastWatched } =
     useLastWatched();
 
-  // Initialize HLS player with CapacitorHTTP integration
   const { destroy, loadSource } = useHlsPlayer({
     videoRef,
     onReady: () => {
@@ -47,7 +47,6 @@ export default function ChapterPage({ params }: IProps) {
     },
   });
 
-  // Cleanup when component unmounts or selectedWatchLink changes
   useEffect(() => {
     if (!selectedWatchLink) return;
 
@@ -69,7 +68,7 @@ export default function ChapterPage({ params }: IProps) {
   const tmdbData = useQuery<ITmdbSerieDetails>({
     queryKey: ["tmdb-details-with-season", params.slug, params.tmdbId],
     queryFn: async () => {
-      const tmdbData = await TmdbService.fetchSerie(parseInt(params.tmdbId));
+      const tmdbData = await TmdbService.fetchSerie(params.tmdbId);
 
       return tmdbData;
     },
@@ -79,7 +78,7 @@ export default function ChapterPage({ params }: IProps) {
     queryKey: ["tmdb-detail-episode", params.tmdbId, season, chapter],
     queryFn: async () => {
       const tmdbData = await TmdbService.fetchEpisode(
-        parseInt(params.tmdbId),
+        params.tmdbId,
         season,
         chapter
       );
@@ -109,11 +108,11 @@ export default function ChapterPage({ params }: IProps) {
     // Only update every 10 seconds to avoid too many requests
     if (Math.floor(playedSeconds) % 10 === 0) {
       try {
-        const lastWatched = await getSingleLastWatched(parseInt(params.tmdbId));
+        const lastWatched = await getSingleLastWatched(params.tmdbId);
 
         if (lastWatched) {
           await updateLastWatched(
-            parseInt(params.tmdbId),
+            params.tmdbId,
             {
               atSecond: playedSeconds,
             },
@@ -161,7 +160,7 @@ export default function ChapterPage({ params }: IProps) {
     setIsPlaying(false);
   }
   async function resumeFromWhereLeft(): Promise<void> {
-    const lastWatched = await getSingleLastWatched(parseInt(params.tmdbId));
+    const lastWatched = await getSingleLastWatched(params.tmdbId);
     if (lastWatched) {
       const secondsToMinutes = Math.floor(lastWatched.atSecond / 60);
       toast.toast({
@@ -213,6 +212,8 @@ export default function ChapterPage({ params }: IProps) {
             visibility: isPlaying ? "hidden" : "visible",
           }}
         >
+          {selectedWatchLink && <WatchTogether videoRef={videoRef} />}
+
           <span className="text-emerald-400 text-sm mb-2 gap-1 flex ">
             {tmdbData.data.networks.map((network) => (
               <p key={network.name}>{network.name}</p>

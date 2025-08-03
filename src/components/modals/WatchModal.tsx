@@ -5,10 +5,10 @@ import { useNavigate } from "@tanstack/react-router";
 
 interface WatchModalProps {
   slug: string;
-  tmdbId: string;
-  season: string;
-  chapter: string;
-  network?: string;
+  tmdbId: number;
+  season: number;
+  chapter: number;
+  room?: string;
 }
 
 export function WatchModal({
@@ -16,7 +16,7 @@ export function WatchModal({
   tmdbId,
   season,
   chapter,
-  network,
+  room,
 }: WatchModalProps) {
   const navigate = useNavigate();
 

@@ -56,12 +56,9 @@ export default function SeasonEpisodes({
             to="/"
             search={{
               watchSlug: slugify(serie_name),
-              watchTmdbId: id.toString(),
-              watchSeason: season.toString(),
-              watchChapter: episode.episode_number.toString(),
-              ...(isTurkishProvider && {
-                watchNetwork: serieNetwork?.at(network)?.toString() || "",
-              }),
+              watchTmdbId: id,
+              watchSeason: season,
+              watchChapter: episode.episode_number,
             }}
             className="flex w-full gap-4 p-4 hover:bg-white/5 rounded-lg transition-colors text-left"
           >

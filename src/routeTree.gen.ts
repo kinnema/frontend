@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TestRoomRouteImport } from './routes/test-room'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PluginsRouteImport } from './routes/plugins'
@@ -20,6 +21,11 @@ import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as SettingsUpdatesRouteImport } from './routes/settings/updates'
 import { Route as CollectionNetworkRouteImport } from './routes/collection.$network'
 
+const TestRoomRoute = TestRoomRouteImport.update({
+  id: '/test-room',
+  path: '/test-room',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
@@ -76,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/plugins': typeof PluginsRoute
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
+  '/test-room': typeof TestRoomRoute
   '/collection/$network': typeof CollectionNetworkRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/': typeof LayoutIndexRoute
@@ -87,6 +94,7 @@ export interface FileRoutesByTo {
   '/plugins': typeof PluginsRoute
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
+  '/test-room': typeof TestRoomRoute
   '/collection/$network': typeof CollectionNetworkRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/': typeof LayoutIndexRoute
@@ -100,6 +108,7 @@ export interface FileRoutesById {
   '/plugins': typeof PluginsRoute
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
+  '/test-room': typeof TestRoomRoute
   '/collection/$network': typeof CollectionNetworkRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/_layout/': typeof LayoutIndexRoute
@@ -113,6 +122,7 @@ export interface FileRouteTypes {
     | '/plugins'
     | '/register'
     | '/search'
+    | '/test-room'
     | '/collection/$network'
     | '/settings/updates'
     | '/'
@@ -124,6 +134,7 @@ export interface FileRouteTypes {
     | '/plugins'
     | '/register'
     | '/search'
+    | '/test-room'
     | '/collection/$network'
     | '/settings/updates'
     | '/'
@@ -136,6 +147,7 @@ export interface FileRouteTypes {
     | '/plugins'
     | '/register'
     | '/search'
+    | '/test-room'
     | '/collection/$network'
     | '/settings/updates'
     | '/_layout/'
@@ -149,6 +161,7 @@ export interface RootRouteChildren {
   PluginsRoute: typeof PluginsRoute
   RegisterRoute: typeof RegisterRoute
   SearchRoute: typeof SearchRoute
+  TestRoomRoute: typeof TestRoomRoute
   CollectionNetworkRoute: typeof CollectionNetworkRoute
   SettingsUpdatesRoute: typeof SettingsUpdatesRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
@@ -156,6 +169,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/test-room': {
+      id: '/test-room'
+      path: '/test-room'
+      fullPath: '/test-room'
+      preLoaderRoute: typeof TestRoomRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/search': {
       id: '/search'
       path: '/search'
@@ -247,6 +267,7 @@ const rootRouteChildren: RootRouteChildren = {
   PluginsRoute: PluginsRoute,
   RegisterRoute: RegisterRoute,
   SearchRoute: SearchRoute,
+  TestRoomRoute: TestRoomRoute,
   CollectionNetworkRoute: CollectionNetworkRoute,
   SettingsUpdatesRoute: SettingsUpdatesRoute,
   SettingsIndexRoute: SettingsIndexRoute,
