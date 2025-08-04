@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
 import { useP2P } from "@/lib/hooks/useP2P";
-import { useNavigate, useRouterState } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 
 interface IProps {
   videoRef: React.RefObject<HTMLVideoElement | null>;
@@ -15,7 +15,6 @@ interface IProps {
 export function WatchTogether({ videoRef, ...params }: IProps) {
   const p2p = useP2P();
   const { toast } = useToast();
-  const router = useRouterState();
   const navigate = useNavigate();
 
   function createRoom() {

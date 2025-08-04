@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { joinRoom as joinChannel, Room } from "trystero/torrent";
+import { joinRoom as joinChannel, Room } from "trystero";
 import { v4 as uuid } from "uuid";
 import { IP2PCommand } from "../types/p2p.types";
 import { p2pEventEmitter } from "../utils/p2pEvents";

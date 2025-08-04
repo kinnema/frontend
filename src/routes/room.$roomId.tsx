@@ -6,7 +6,7 @@ import WatchPage from "@/lib/features/watch/WatchPage";
 import { useP2P } from "@/lib/hooks/useP2P";
 import { useWatchStore } from "@/lib/stores/watch.store";
 import { p2pEventEmitter } from "@/lib/utils/p2pEvents";
-import { Share } from "@capacitor/share";
+import { share } from "@/lib/utils/share";
 import { createFileRoute, useRouterState } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { Share2 } from "lucide-react";
@@ -72,29 +72,11 @@ function RouteComponent() {
   async function onClickShare() {
     const url = _createUrl(roomId);
 
-    const canShare = await Share.canShare();
-
-    if (canShare.value) {
-      try {
-        await Share.share({
-          url,
-          title: "Hadi gel beraber izleyelim!",
-          dialogTitle: "Hadi gel beraber izleyelim!",
-        });
-      } catch (error) {
-        toast({
-          title: "Kopyaladim!",
-          description: "URL Kopyalandi!",
-        });
-        window.navigator.clipboard.writeText(url);
-      }
-    } else {
-      toast({
-        title: "Kopyaladim!",
-        description: "URL Kopyalandi!",
-      });
-      window.navigator.clipboard.writeText(url);
-    }
+    await share({
+      url,
+      title: "Hadi gel beraber izleyelim!",
+      dialogTitle: "Hadi gel beraber izleyelim!",
+    });
   }
 
   function slaveEvents() {
