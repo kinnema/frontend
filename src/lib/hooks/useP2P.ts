@@ -1,13 +1,38 @@
 import { useRef } from "react";
-import { joinRoom as joinChannel, Room } from "trystero";
+import {
+  BaseRoomConfig,
+  joinRoom as joinChannel,
+  RelayConfig,
+  Room,
+  TurnConfig,
+} from "trystero";
 import { v4 as uuid } from "uuid";
 import { IP2PCommand } from "../types/p2p.types";
 import { p2pEventEmitter } from "../utils/p2pEvents";
 
 const password = import.meta.env.VITE_P2P_KEY;
-const p2pConfig = {
+type P2PConfig = BaseRoomConfig & RelayConfig & TurnConfig;
+const p2pConfig: P2PConfig = {
   appId: "com.kinnema",
   password,
+  turnConfig: [
+    {
+      urls: [
+        "turn:eu-0.turn.peerjs.com:3478",
+        "turn:us-0.turn.peerjs.com:3478",
+      ],
+      username: "peerjs",
+      credential: "peerjsp",
+      credentialType: "password",
+    },
+  ],
+  rtcConfig: {
+    iceServers: [
+      {
+        urls: "stun:stun.l.google.com:19302",
+      },
+    ],
+  },
 };
 
 export function useP2P() {
