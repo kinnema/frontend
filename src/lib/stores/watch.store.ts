@@ -1,16 +1,36 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { Episode, ITmdbSerieDetails } from "../types/tmdb";
+
+export interface IWatchTogetherRoom {
+  tmdbData: ITmdbSerieDetails;
+  tmdbEpisodeData: Episode;
+  roomId: string;
+  watchLink: string;
+}
 
 interface WatchStore {
   selectedWatchLink: string | null;
+  room?: IWatchTogetherRoom;
 }
 
 interface WatchStoreActions {
   setSelectedWatchLink: (link: string | null) => void;
+  setRoom: (room: IWatchTogetherRoom) => void;
   clear: () => void;
+  clearWatchLink: () => void;
 }
 
-export const useWatchStore = create<WatchStore & WatchStoreActions>((set) => ({
-  selectedWatchLink: null,
-  setSelectedWatchLink: (link) => set({ selectedWatchLink: link }),
-  clear: () => set({ selectedWatchLink: null }),
-}));
+export const useWatchStore = create(
+  persist<WatchStore & WatchStoreActions>(
+    (set) => ({
+      selectedWatchLink: null,
+      setSelectedWatchLink: (link) => set({ selectedWatchLink: link }),
+      room: undefined,
+      setRoom: (room) => set({ room }),
+      clear: () => set({ selectedWatchLink: null, room: undefined }),
+      clearWatchLink: () => set({ selectedWatchLink: null }),
+    }),
+    { name: "watchStore" }
+  )
+);

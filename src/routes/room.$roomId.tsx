@@ -1,28 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Loading } from "@/lib/components/Loading";
 import PeersList from "@/lib/components/Watch/PeersList";
-import WatchPage from "@/lib/features/watch/WatchPage";
+import { WatchVideoPlayer } from "@/lib/components/Watch/WatchVideoPlayer";
 import { useP2P } from "@/lib/hooks/useP2P";
-import { useWatchStore } from "@/lib/stores/watch.store";
+import { IWatchTogetherRoom, useWatchStore } from "@/lib/stores/watch.store";
 import { p2pEventEmitter } from "@/lib/utils/p2pEvents";
 import { share } from "@/lib/utils/share";
-import { createFileRoute, useRouterState } from "@tanstack/react-router";
-import { zodValidator } from "@tanstack/zod-adapter";
+import { videoEventEmitter } from "@/lib/utils/videoEvents";
+import { createFileRoute } from "@tanstack/react-router";
 import { Share2 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import z from "zod";
-
-const searchSchema = z.object({
-  slug: z.string(),
-  tmdbId: z.number(),
-  season: z.number(),
-  chapter: z.number(),
-  created: z.boolean().optional(),
-});
+import { useEffect, useMemo, useRef, useState } from "react";
+import { JsonValue, selfId } from "trystero";
 
 export const Route = createFileRoute("/room/$roomId")({
-  validateSearch: zodValidator(searchSchema),
   component: RouteComponent,
 });
 
@@ -30,14 +20,22 @@ function RouteComponent() {
   const { createRoom, leaveRoom, joinRoom } = useP2P();
   const [peers, setPeers] = useState<string[]>([]);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const { slug, tmdbId, season, chapter, created } = Route.useSearch();
   const { roomId } = Route.useParams();
   const { toast } = useToast();
-  const router = useRouterState();
   const selectedWatchLink = useWatchStore((state) => state.selectedWatchLink);
-  const setSelectedWatchLink = useWatchStore(
-    (state) => state.setSelectedWatchLink
-  );
+  const roomStore = useWatchStore((state) => state.room);
+  const isVideoLoaded = useRef<boolean>(false);
+  const roomAdmin = useRef<string | null>(null);
+  const clear = useWatchStore((state) => state.clear);
+  const isAdmin = useMemo(() => {
+    return roomAdmin.current === selfId;
+  }, [roomAdmin]);
+
+  useEffect(() => {
+    return () => {
+      clear();
+    };
+  }, []);
 
   const onPeerLeave = (peerId: string) => {
     console.log("Peer left");
@@ -51,20 +49,7 @@ function RouteComponent() {
   };
 
   function _createUrl(roomId: string) {
-    const currentParams = router.location.search as Record<
-      string,
-      string | undefined | null
-    >;
-    const paramsWithRoom = { ...currentParams };
-
-    const searchParams = new URLSearchParams(
-      Object.fromEntries(
-        Object.entries(paramsWithRoom).filter(([, value]) => value != null)
-      ) as Record<string, string>
-    );
-    const url = `${
-      window.location.origin
-    }/room/${roomId}?${searchParams.toString()}`;
+    const url = `${window.location.origin}/room/${roomId}`;
 
     return url;
   }
@@ -92,6 +77,7 @@ function RouteComponent() {
     p2pEventEmitter.addListener("command", (command, payload) => {
       switch (command) {
         case "CHECK_ADMIN":
+          roomAdmin.current = payload as string;
           break;
         case "PAUSE":
           videoRef.current?.pause();
@@ -105,9 +91,9 @@ function RouteComponent() {
             videoRef.current!.currentTime = payload as number;
           }
           break;
-        case "RETRIEVE_URL":
-          setSelectedWatchLink(payload as string);
-          videoRef.current?.play();
+        case "DATA":
+          const data = payload as IWatchTogetherRoom;
+          videoEventEmitter.emit("loadVideo", data.watchLink ?? "");
           break;
 
         default:
@@ -118,6 +104,8 @@ function RouteComponent() {
     p2pEventEmitter.addListener("loadedVideo", (loaded) => {
       if (loaded) {
         videoRef.current?.addEventListener("play", () => {
+          if (!isAdmin) return;
+
           sendAction({
             command: "PLAY",
             payload: videoRef.current?.currentTime ?? 0,
@@ -125,6 +113,8 @@ function RouteComponent() {
         });
 
         videoRef.current?.addEventListener("pause", () => {
+          if (!isAdmin) return;
+
           sendAction({
             command: "PAUSE",
             payload: null,
@@ -132,6 +122,8 @@ function RouteComponent() {
         });
 
         videoRef.current?.addEventListener("playing", (c) => {
+          if (!isAdmin) return;
+
           setInterval(() => {
             sendAction({
               command: "SYNC",
@@ -146,12 +138,19 @@ function RouteComponent() {
   function commanderEvents() {
     const { sendAction } = createRoom(roomId);
 
-    sendAction({
-      command: "CHECK_ADMIN",
-      payload: null,
-    });
+    if (!roomStore) return;
 
     p2pEventEmitter.addListener("loadedVideo", (videoUrl) => {
+      sendAction({
+        command: "CHECK_ADMIN",
+        payload: selfId,
+      });
+
+      sendAction({
+        command: "DATA",
+        payload: roomStore,
+      } as unknown as JsonValue);
+
       if (videoUrl) {
         console.warn("videoUrl", videoUrl);
         sendAction({
@@ -186,7 +185,15 @@ function RouteComponent() {
 
     p2pEventEmitter.addListener("status", (status, peerId) => {
       if (status === "JOINED") {
+        console.log("Peer joined ve emitliyorum", peerId);
+
         setPeers((prev) => [...prev, peerId]);
+
+        setTimeout(() => {
+          if (!isVideoLoaded.current) {
+            videoEventEmitter.emit("loadVideo", roomStore?.watchLink);
+          }
+        }, 300);
       } else {
         onPeerLeave(peerId);
       }
@@ -197,16 +204,16 @@ function RouteComponent() {
         case "CHECK_ADMIN":
           break;
         case "PAUSE":
-          videoRef.current?.pause();
+          // videoRef.current?.pause();
           break;
         case "PLAY":
-          videoRef.current!.currentTime = payload as number;
-          videoRef.current?.play();
+          // videoRef.current!.currentTime = payload as number;
+          // videoRef.current?.play();
           break;
         case "SYNC":
-          if (Math.floor(videoRef.current?.currentTime ?? 0) !== payload) {
-            videoRef.current!.currentTime = payload as number;
-          }
+          // if (Math.floor(videoRef.current?.currentTime ?? 0) !== payload) {
+          //   videoRef.current!.currentTime = payload as number;
+          // }
           break;
 
         default:
@@ -216,9 +223,11 @@ function RouteComponent() {
   }
 
   useEffect(() => {
-    if (created) {
+    if (roomStore) {
+      console.log("ROOM STORE", roomStore);
       commanderEvents();
     } else {
+      console.log("ROOM STORE", roomStore);
       slaveEvents();
     }
 
@@ -227,14 +236,19 @@ function RouteComponent() {
       leaveRoom();
       p2pEventEmitter.removeAllListeners();
     };
-  }, []);
+  }, [roomStore, selectedWatchLink]);
 
   function waitForPeers() {
     return (
-      <Loading
-        fullscreen
-        description="Kullanicilarin baglanmasi bekleniyor.."
-      />
+      <div className="flex flex-col justify-center items-center h-full m-auto">
+        <Button onClick={onClickShare}>
+          <Share2 />
+          Paylas
+        </Button>
+        <h1 className="text-center items-center justify-center text-2xl ">
+          Kullanicilar bekleniyor...
+        </h1>
+      </div>
     );
   }
 
@@ -245,19 +259,16 @@ function RouteComponent() {
           waitForPeers()
         ) : (
           <div>
-            <Button onClick={onClickShare}>
-              <Share2 />
-              Paylas
-            </Button>
-            <WatchPage
-              params={{
-                chapter,
-                season,
-                slug,
-                tmdbId,
-                isInRoom: true,
-                videoRef,
+            <h1>ID: {selfId}</h1>
+            <WatchVideoPlayer
+              videoRef={videoRef}
+              handleLoadedData={() => {
+                p2pEventEmitter.emit("loadedVideo", "qwe");
               }}
+              posterPath=""
+              onPlay={() => {}}
+              onPause={() => {}}
+              handleProgress={() => {}}
             />
           </div>
         )}

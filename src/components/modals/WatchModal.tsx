@@ -35,7 +35,6 @@ export function WatchModal({ slug, tmdbId, season, chapter }: WatchModalProps) {
             tmdbId,
             season,
             chapter,
-            isInRoom: false,
             videoRef,
           }}
         />

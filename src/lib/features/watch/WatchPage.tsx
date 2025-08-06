@@ -4,18 +4,16 @@ import { useToast } from "@/hooks/use-toast";
 import { Loading } from "@/lib/components/Loading";
 import { Providers } from "@/lib/components/Providers";
 import { WatchTogether } from "@/lib/components/Watch/WatchTogether";
+import { WatchVideoPlayer } from "@/lib/components/Watch/WatchVideoPlayer";
+import { tmdbPoster } from "@/lib/helpers";
 import { useLastWatched } from "@/lib/hooks/database/useLastWatched";
-import { useHlsPlayer } from "@/lib/hooks/useHlsPlayer";
 import TmdbService from "@/lib/services/tmdb.service";
 // import { useLastWatchedStore } from "@/lib/stores/lastWatched.store";
 import { useWatchStore } from "@/lib/stores/watch.store";
-import { TurkishProviderIds } from "@/lib/types/networks";
 import { Episode, ITmdbSerieDetails } from "@/lib/types/tmdb";
-import { p2pEventEmitter } from "@/lib/utils/p2pEvents";
+import { videoEventEmitter } from "@/lib/utils/videoEvents";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
-import classNames from "classnames";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 } from "uuid";
 interface IProps {
   params: {
@@ -24,7 +22,6 @@ interface IProps {
     chapter: number;
     tmdbId: number;
     network?: string;
-    isInRoom: boolean;
     videoRef: React.RefObject<HTMLVideoElement | null>;
   };
 }
@@ -35,42 +32,27 @@ export default function ChapterPage({
   const season = params.season;
   const chapter = params.chapter;
   const [isPlaying, setIsPlaying] = useState(false);
-  const navigate = useNavigate();
-  const clear = useWatchStore((state) => state.clear);
   const selectedWatchLink = useWatchStore((state) => state.selectedWatchLink);
+  const clearWatchLink = useWatchStore((state) => state.clearWatchLink);
   const toast = useToast();
   const { getSingleLastWatched, updateLastWatched, addLastWatched } =
     useLastWatched();
 
-  const { destroy, loadSource } = useHlsPlayer({
-    videoRef,
-    onReady: () => {
-      console.log("HLS player ready");
-    },
-    onError: (error) => {
-      console.error("HLS player error:", error);
-    },
-  });
+  useEffect(() => {
+    if (selectedWatchLink) {
+      videoEventEmitter.emit("loadVideo", selectedWatchLink);
+    }
+  }, [selectedWatchLink]);
 
   useEffect(() => {
-    if (!selectedWatchLink) return;
-
-    loadSource(selectedWatchLink);
-
-    const handleLoadedData = () => {
-      p2pEventEmitter.emit("loadedVideo", selectedWatchLink);
-      resumeFromWhereLeft();
-    };
-
-    videoRef.current?.addEventListener("loadeddata", handleLoadedData);
-
     return () => {
-      p2pEventEmitter.emit("loadedVideo");
-      videoRef.current?.removeEventListener("loadeddata", handleLoadedData);
-      destroy();
-      clear();
+      clearWatchLink();
     };
-  }, [selectedWatchLink]);
+  }, []);
+
+  const handleLoadedData = () => {
+    resumeFromWhereLeft();
+  };
 
   const tmdbData = useQuery<ITmdbSerieDetails>({
     queryKey: ["tmdb-details-with-season", params.slug, params.tmdbId],
@@ -93,18 +75,6 @@ export default function ChapterPage({
       return tmdbData;
     },
   });
-
-  const isTurkishProvider = useMemo(() => {
-    const network = params?.network;
-
-    return network ? TurkishProviderIds.includes(parseInt(network)) : false;
-  }, []);
-
-  useEffect(() => {
-    if (!isTurkishProvider) {
-      setIsPlaying(true);
-    }
-  }, [isTurkishProvider]);
 
   const handleProgress = async (
     event: React.SyntheticEvent<HTMLVideoElement, Event>
@@ -155,10 +125,6 @@ export default function ChapterPage({
     return <Loading fullscreen />;
   }
 
-  function onClickClose(): void {
-    navigate({ to: "/" });
-  }
-
   function onPlay(): void {
     setIsPlaying(true);
   }
@@ -181,11 +147,7 @@ export default function ChapterPage({
   }
 
   return (
-    <div
-      className={classNames(
-        !params.isInRoom ? "fixed inset-0 bg-black/95 z-50" : "z-50"
-      )}
-    >
+    <div className="fixed inset-0 bg-black/95 z-50">
       <div className="relative h-full">
         <div className="w-full h-full flex">
           <>
@@ -199,13 +161,13 @@ export default function ChapterPage({
               />
             ) : (
               <>
-                <video
-                  ref={videoRef}
-                  poster={`https://image.tmdb.org/t/p/original/${tmdbEpisodeData.data.still_path}`}
-                  controls
+                <WatchVideoPlayer
+                  videoRef={videoRef}
+                  handleLoadedData={handleLoadedData}
+                  posterPath={tmdbPoster(tmdbEpisodeData.data.still_path)}
                   onPlay={onPlay}
                   onPause={onPause}
-                  onTimeUpdate={handleProgress}
+                  handleProgress={handleProgress}
                 />
               </>
             )}
@@ -218,13 +180,11 @@ export default function ChapterPage({
             visibility: isPlaying ? "hidden" : "visible",
           }}
         >
-          {selectedWatchLink && !params.isInRoom && (
+          {selectedWatchLink && (
             <WatchTogether
               videoRef={videoRef}
-              chapter={chapter}
-              season={season}
-              slug={params.slug}
-              tmdbId={params.tmdbId}
+              episodeData={tmdbEpisodeData.data}
+              tmdbData={tmdbData.data}
             />
           )}
 

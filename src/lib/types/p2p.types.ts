@@ -3,6 +3,7 @@ export type Commands =
   | "SYNC"
   | "PLAY"
   | "PAUSE"
+  | "DATA"
   | "RETRIEVE_URL";
 export type Status = "JOINED" | "LEAVED";
 

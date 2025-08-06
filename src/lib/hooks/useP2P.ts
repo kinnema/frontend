@@ -5,7 +5,7 @@ import {
   RelayConfig,
   Room,
   TurnConfig,
-} from "trystero";
+} from "trystero/torrent";
 import { v4 as uuid } from "uuid";
 import { IP2PCommand } from "../types/p2p.types";
 import { p2pEventEmitter } from "../utils/p2pEvents";
@@ -18,21 +18,17 @@ const p2pConfig: P2PConfig = {
   turnConfig: [
     {
       urls: [
-        "turn:eu-0.turn.peerjs.com:3478",
-        "turn:us-0.turn.peerjs.com:3478",
+        "stun:stun.l.google.com:19302",
+        "stun:stun1.l.google.com:19302",
+        "stun:stun2.l.google.com:19302",
       ],
-      username: "peerjs",
-      credential: "peerjsp",
-      credentialType: "password",
+    },
+    {
+      urls: "turn:161.35.65.1:3478",
+      username: "username",
+      credential: "password",
     },
   ],
-  rtcConfig: {
-    iceServers: [
-      {
-        urls: "stun:stun.l.google.com:19302",
-      },
-    ],
-  },
 };
 
 export function useP2P() {
