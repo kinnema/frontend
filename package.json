@@ -52,7 +52,7 @@
     "eslint": "^9.31.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
-    "eventemitter3": "^5.0.1",
+    "events": "^3.3.0",
     "hls.js": "^1.6.7",
     "i18next": "^23.11.5",
     "idb-keyval": "^6.2.2",

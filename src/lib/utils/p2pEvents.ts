@@ -1,4 +1,4 @@
-import EventEmitter from "eventemitter3";
+import EventEmitter from "events";
 import TypedEmitter from "typed-emitter";
 import { Commands, Status } from "../types/p2p.types";
 

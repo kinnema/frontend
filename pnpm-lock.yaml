@@ -131,9 +131,10 @@ importers:
       eslint-plugin-react-refresh:
         specifier: ^0.4.20
         version: 0.4.20(eslint@9.32.0(jiti@1.21.7))
-      eventemitter3:
-        specifier: ^5.0.1
-        version: 5.0.1
+      events:
+      events:
+        specifier: ^3.3.0
+        version: 3.3.0
       hls.js:
         specifier: ^1.6.7
         version: 1.6.7

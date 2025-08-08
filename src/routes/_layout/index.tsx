@@ -57,7 +57,6 @@ export const Route = createFileRoute("/_layout/")({
       watchTmdbId,
       watchSeason,
       watchChapter,
-      watchRoomId,
     } = Route.useSearch();
 
     return (
