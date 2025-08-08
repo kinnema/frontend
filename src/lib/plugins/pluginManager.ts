@@ -1,5 +1,5 @@
 import { CapacitorHttp } from "@capacitor/core";
-import EventEmitter from "events";
+import EventEmitter from "eventemitter3";
 import TypedEventEmitter from "typed-emitter";
 import { IPluginEndpointResponse } from "../types/plugin.type";
 import { IPluginEventEmitter } from "../types/pluginEvents.type";
