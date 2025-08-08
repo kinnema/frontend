@@ -47,6 +47,7 @@ export function WatchVideoPlayer({
   return (
     <>
       <video
+        className="w-full h-full object-contain"
         ref={videoRef}
         poster={posterPath}
         controls
