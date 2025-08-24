@@ -1,3 +1,5 @@
+import { IPluginEndpointSubtitle } from "./plugin.type";
+
 interface IPluginEventEmitterTryingPayload {
   pluginId: string;
 }
@@ -7,6 +9,7 @@ type IPluginEventEmitterFailedPayload = IPluginEventEmitterTryingPayload;
 interface IPluginEventEmitterSuccessPayload {
   pluginId: string;
   url: string;
+  subtitles?: IPluginEndpointSubtitle[];
 }
 
 export interface IPluginEventEmitterTryingProvider {

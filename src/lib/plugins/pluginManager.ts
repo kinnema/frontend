@@ -89,13 +89,15 @@ export class PluginManager {
       throw new Error(`Serie not found ${pluginId}`);
     }
 
-    const { data, type } = (await response.data) as IPluginEndpointResponse;
+    const { data, type, subtitles } =
+      (await response.data) as IPluginEndpointResponse;
 
     this.eventEmitter.emit("event", {
       type: "provider_success",
       data: {
         pluginId: plugin.id,
         url: data.url,
+        subtitles,
       },
     });
   }

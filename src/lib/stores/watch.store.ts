@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { IPluginEndpointSubtitle } from "../types/plugin.type";
 import { Episode, ITmdbSerieDetails } from "../types/tmdb";
 
 export interface IWatchTogetherRoom {
@@ -11,12 +12,14 @@ export interface IWatchTogetherRoom {
 
 interface WatchStore {
   selectedWatchLink: string | null;
+  subtitles?: IPluginEndpointSubtitle[];
   room?: IWatchTogetherRoom;
 }
 
 interface WatchStoreActions {
   setSelectedWatchLink: (link: string | null) => void;
   setRoom: (room: IWatchTogetherRoom) => void;
+  setSubtitles: (subtitles: IPluginEndpointSubtitle[]) => void;
   clear: () => void;
   clearWatchLink: () => void;
 }
@@ -30,6 +33,11 @@ export const useWatchStore = create(
       setRoom: (room) => set({ room }),
       clear: () => set({ selectedWatchLink: null, room: undefined }),
       clearWatchLink: () => set({ selectedWatchLink: null }),
+      setSubtitles(subtitles) {
+        set({
+          subtitles,
+        });
+      },
     }),
     { name: "watchStore" }
   )
