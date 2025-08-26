@@ -1,7 +1,6 @@
 import { useHlsPlayer } from "@/lib/hooks";
 import { useWatchStore } from "@/lib/stores/watch.store";
 import { videoEventEmitter } from "@/lib/utils/videoEvents";
-import { Capacitor } from "@capacitor/core";
 import { useEffect } from "react";
 
 interface IProps {
@@ -47,6 +46,8 @@ export function WatchVideoPlayer({
     };
   }, []);
 
+  console.log("subtitlessss", subtitles);
+
   return (
     <>
       <video
@@ -59,17 +60,17 @@ export function WatchVideoPlayer({
         onTimeUpdate={handleProgress}
       >
         {subtitles?.map((subtitle) => {
-          if (Capacitor.isNativePlatform()) {
-            return (
-              <track
-                default
-                kind="subttiles"
-                label={subtitle.lang}
-                srcLang={subtitle.lang}
-                src={subtitle.url}
-              />
-            );
-          }
+          // if (Capacitor.isNativePlatform()) {
+          return (
+            <track
+              default
+              kind="subtitles"
+              label={subtitle.lang}
+              srcLang={subtitle.lang}
+              src={subtitle.url}
+            />
+          );
+          // }
         })}
       </video>
     </>

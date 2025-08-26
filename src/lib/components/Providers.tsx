@@ -21,6 +21,7 @@ export const Providers = ({
   const setSelectedWatchLink = useWatchStore(
     (state) => state.setSelectedWatchLink
   );
+  const setSubtitles = useWatchStore((state) => state.setSubtitles);
   const [providers, setProviders] = useState<IPlugin[]>([]);
   const { getPluginsByType } = usePluginRegistry();
   const [data, setData] = useState<IPluginEvent[]>([]);
@@ -102,6 +103,7 @@ export const Providers = ({
                     provider: event.data.pluginId,
                     url: event.data.url,
                   };
+                  setSubtitles(event.data.subtitles);
                   setSelectedWatchLink(watchData.url);
                 }
               }}

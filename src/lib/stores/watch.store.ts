@@ -19,7 +19,7 @@ interface WatchStore {
 interface WatchStoreActions {
   setSelectedWatchLink: (link: string | null) => void;
   setRoom: (room: IWatchTogetherRoom) => void;
-  setSubtitles: (subtitles: IPluginEndpointSubtitle[]) => void;
+  setSubtitles: (subtitles?: IPluginEndpointSubtitle[]) => void;
   clear: () => void;
   clearWatchLink: () => void;
 }
