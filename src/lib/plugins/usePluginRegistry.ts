@@ -1,4 +1,4 @@
-import { Capacitor, CapacitorHttp } from "@capacitor/core";
+import { CapacitorHttp } from "@capacitor/core";
 import { compare } from "semver";
 import { v4 as uuidv4 } from "uuid";
 import { create } from "zustand";
@@ -8,6 +8,7 @@ import {
   IPluginManifest,
   IPluginUpdating,
 } from "../types/plugin.type";
+import { isNativePlatform } from "../utils/native";
 
 interface PluginRegistryState {
   plugins: IPlugin[];
@@ -134,7 +135,7 @@ export const usePluginRegistry = create<PluginRegistryState>()(
       getPluginsByType: (type: "series" | "movie") => {
         let plugins = get().plugins.filter((p) => p.enabled);
 
-        if (!Capacitor.isNativePlatform()) {
+        if (!isNativePlatform()) {
           plugins = plugins.filter((p) => !p.manifest.cors);
         }
 

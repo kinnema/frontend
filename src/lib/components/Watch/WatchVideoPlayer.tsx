@@ -1,5 +1,6 @@
 import { useHlsPlayer } from "@/lib/hooks";
 import { useWatchStore } from "@/lib/stores/watch.store";
+import { isNativePlatform } from "@/lib/utils/native";
 import { videoEventEmitter } from "@/lib/utils/videoEvents";
 import { useEffect } from "react";
 
@@ -21,6 +22,7 @@ export function WatchVideoPlayer({
   handleProgress,
 }: IProps) {
   const subtitles = useWatchStore((state) => state.subtitles);
+  const setSubtitles = useWatchStore((state) => state.setSubtitles);
   const { destroy, loadSource } = useHlsPlayer({
     videoRef,
     onReady: () => {
@@ -60,17 +62,17 @@ export function WatchVideoPlayer({
         onTimeUpdate={handleProgress}
       >
         {subtitles?.map((subtitle) => {
-          // if (Capacitor.isNativePlatform()) {
-          return (
-            <track
-              default
-              kind="subtitles"
-              label={subtitle.lang}
-              srcLang={subtitle.lang}
-              src={subtitle.url}
-            />
-          );
-          // }
+          if (isNativePlatform()) {
+            return (
+              <track
+                default
+                kind="subtitles"
+                label={subtitle.lang}
+                srcLang={subtitle.lang}
+                src={subtitle.url}
+              />
+            );
+          }
         })}
       </video>
     </>

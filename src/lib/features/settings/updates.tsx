@@ -16,11 +16,12 @@ import { useToast } from "@/hooks/use-toast";
 import { Loading } from "@/lib/components/Loading";
 import { useAppStore } from "@/lib/stores/app.store";
 import { IGithubRelease } from "@/lib/types/github.type";
+import { isNativePlatform } from "@/lib/utils/native";
 import { QUERY_KEYS } from "@/lib/utils/queryKeys";
-import { Capacitor } from "@capacitor/core";
 import { BundleInfo, CapacitorUpdater } from "@capgo/capacitor-updater";
 import { ToastAction } from "@radix-ui/react-toast";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { isTauri } from "@tauri-apps/api/core";
 import DOMPurify from "dompurify";
 import { Download, Info, Loader2 } from "lucide-react";
 import { marked } from "marked";
@@ -92,12 +93,16 @@ export default function AppUpdatesFeature() {
   }
 
   async function downloadUpdate() {
-    if (!Capacitor.isNativePlatform()) {
+    if (!isNativePlatform()) {
       toast({
         title: "Native platform",
         description: "Are you even on a native platform?",
       });
 
+      return;
+    }
+
+    if (isTauri()) {
       return;
     }
 
@@ -148,9 +153,7 @@ export default function AppUpdatesFeature() {
           <Button
             className="w-full"
             variant={jsUpdateAvailable ? "default" : "outline"}
-            disabled={
-              !jsUpdateAvailable || !Capacitor.isNativePlatform() || isUpdating
-            }
+            disabled={!jsUpdateAvailable || !isNativePlatform() || isUpdating}
             onClick={downloadUpdate}
           >
             {isUpdating ? (
@@ -160,7 +163,7 @@ export default function AppUpdatesFeature() {
             )}
 
             {jsUpdateAvailable
-              ? Capacitor.isNativePlatform()
+              ? isNativePlatform()
                 ? isUpdating
                   ? "Downloading update..."
                   : "Download Update"

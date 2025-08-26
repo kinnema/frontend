@@ -39,6 +39,7 @@
     "@tanstack/router-devtools": "^1.129.5",
     "@tanstack/router-vite-plugin": "^1.129.5",
     "@tanstack/zod-adapter": "^1.129.8",
+    "@tauri-apps/api": "^2.8.0",
     "@tauri-apps/plugin-http": "~2.5.2",
     "@typescript-eslint/eslint-plugin": "^8.38.0",
     "@typescript-eslint/parser": "^8.38.0",
