@@ -3,7 +3,7 @@
 import { Progress } from "@/components/ui/progress";
 import { slugify, tmdbPoster } from "@/lib/helpers";
 import { IShowCard } from "@/lib/types/show_card";
-import { Link } from "@tanstack/react-router";
+import { Link, ToOptions } from "@tanstack/react-router";
 import { X } from "lucide-react";
 import { Button } from "./ui/button";
 
@@ -11,15 +11,15 @@ interface ShowCardProps {
   show: IShowCard;
   withTimeline?: boolean;
   progress?: number;
-  href?: string;
   onRemove?: () => void;
+  linkProps?: ToOptions;
 }
 
 export function ShowCard({
   show,
   withTimeline = false,
   progress = 70,
-  href,
+  linkProps,
   onRemove,
 }: ShowCardProps) {
   return (
@@ -27,6 +27,7 @@ export function ShowCard({
       <Link
         to="/"
         search={{ serieSlug: slugify(show.title), serieTmdbId: show.id }}
+        {...linkProps}
       >
         <div className="relative block aspect-[2/3] w-40 rounded-lg overflow-hidden group cursor-pointer">
           {onRemove && (

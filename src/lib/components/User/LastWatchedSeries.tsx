@@ -58,9 +58,17 @@ export function LastWatchedSeries() {
             withTimeline={true}
             progress={Math.floor((s.atSecond / s.totalSeconds) * 100)}
             onRemove={() => handleRemove(s.tmdbId)}
-            href={`/dizi/${slugify(s.name)}/${s.tmdbId}/sezon-${
-              s.season_number
-            }/bolum-${s.episode_number}?network=${s.network}`}
+            linkProps={{
+              search: {
+                watchSlug: slugify(s.name),
+                watchTmdbId: s.tmdbId,
+                watchSeason: s.season_number,
+                watchChapter: s.episode_number,
+              },
+            }}
+            // href={`/dizi/${slugify(s.name)}/${s.tmdbId}/sezon-${
+            //   s.season_number
+            // }/bolum-${s.episode_number}?network=${s.network}`}
           />
         );
       })}
