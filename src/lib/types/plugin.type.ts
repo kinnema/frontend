@@ -28,6 +28,12 @@ export interface IPluginManifest {
 export interface IPluginEndpointResponse {
   type: "movie" | "series";
   data: IPluginEndpointPayload;
+  subtitles?: IPluginEndpointSubtitle[];
+}
+
+export interface IPluginEndpointSubtitle {
+  url: string;
+  lang: string;
 }
 
 export interface IPluginEndpointPayload {

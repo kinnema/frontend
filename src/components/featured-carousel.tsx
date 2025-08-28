@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { slugify, tmdbPoster } from "@/lib/helpers";
 import TmdbService from "@/lib/services/tmdb.service";
 import { useQuery } from "@tanstack/react-query";
-import Autoplay from "embla-carousel-autoplay";
 import { Link } from "@tanstack/react-router";
+import Autoplay from "embla-carousel-autoplay";
 import { useMemo } from "react";
 import { Carousel, CarouselContent, CarouselItem } from "./ui/carousel";
 
@@ -37,7 +37,7 @@ export function FeaturedCarousel() {
           <CarouselItem key={item.id}>
             <Link
               to="/"
-              search={{ serieSlug: slugify(item.name), serieTmdbId: item.id.toString() }}
+              search={{ serieSlug: slugify(item.name), serieTmdbId: item.id }}
               className="w-full h-full"
             >
               <section className="relative h-[calc(100vh-35vh)] overflow-hidden">
@@ -49,7 +49,9 @@ export function FeaturedCarousel() {
                     width={1024}
                     height={768}
                     className="object-cover w-full h-full"
-                    loading={item.id === featuredItems[0]?.id ? "eager" : "lazy"}
+                    loading={
+                      item.id === featuredItems[0]?.id ? "eager" : "lazy"
+                    }
                   />
                 </div>
 

@@ -3,73 +3,65 @@
 import { useToast } from "@/hooks/use-toast";
 import { Loading } from "@/lib/components/Loading";
 import { Providers } from "@/lib/components/Providers";
+import { SubtitleSelectDialog } from "@/lib/components/Watch/SubtitleSelectDialog";
+import { WatchTogether } from "@/lib/components/Watch/WatchTogether";
+import { WatchVideoPlayer } from "@/lib/components/Watch/WatchVideoPlayer";
+import { tmdbPoster } from "@/lib/helpers";
 import { useLastWatched } from "@/lib/hooks/database/useLastWatched";
-import { useHlsPlayer } from "@/lib/hooks/useHlsPlayer";
 import TmdbService from "@/lib/services/tmdb.service";
 // import { useLastWatchedStore } from "@/lib/stores/lastWatched.store";
 import { useWatchStore } from "@/lib/stores/watch.store";
-import { TurkishProviderIds } from "@/lib/types/networks";
 import { Episode, ITmdbSerieDetails } from "@/lib/types/tmdb";
+import { isNativePlatform } from "@/lib/utils/native";
+import { videoEventEmitter } from "@/lib/utils/videoEvents";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 } from "uuid";
 interface IProps {
   params: {
     slug: string;
-    season: string;
-    chapter: string;
-    tmdbId: string;
+    season: number;
+    chapter: number;
+    tmdbId: number;
     network?: string;
+    videoRef: React.RefObject<HTMLVideoElement | null>;
   };
 }
 
-export default function ChapterPage({ params }: IProps) {
-  const season = parseInt(params.season.replace("sezon-", ""));
-  const chapter = parseInt(params.chapter.replace("bolum-", ""));
+export default function ChapterPage({
+  params: { videoRef, ...params },
+}: IProps) {
+  const season = params.season;
+  const chapter = params.chapter;
   const [isPlaying, setIsPlaying] = useState(false);
-  const navigate = useNavigate();
-  const clear = useWatchStore((state) => state.clear);
   const selectedWatchLink = useWatchStore((state) => state.selectedWatchLink);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const clearWatchLink = useWatchStore((state) => state.clearWatchLink);
+  const clearSubtitles = useWatchStore((state) => state.clearSubtitles);
   const toast = useToast();
   const { getSingleLastWatched, updateLastWatched, addLastWatched } =
     useLastWatched();
 
-  // Initialize HLS player with CapacitorHTTP integration
-  const { destroy, loadSource } = useHlsPlayer({
-    videoRef,
-    onReady: () => {
-      console.log("HLS player ready");
-    },
-    onError: (error) => {
-      console.error("HLS player error:", error);
-    },
-  });
-
-  // Cleanup when component unmounts or selectedWatchLink changes
   useEffect(() => {
-    if (!selectedWatchLink) return;
-
-    loadSource(selectedWatchLink);
-
-    const handleLoadedData = () => {
-      resumeFromWhereLeft();
-    };
-
-    videoRef.current?.addEventListener("loadeddata", handleLoadedData);
-
-    return () => {
-      videoRef.current?.removeEventListener("loadeddata", handleLoadedData);
-      destroy();
-      clear();
-    };
+    if (selectedWatchLink) {
+      videoEventEmitter.emit("loadVideo", selectedWatchLink);
+    }
   }, [selectedWatchLink]);
+
+  useEffect(() => {
+    return () => {
+      clearWatchLink();
+      clearSubtitles();
+    };
+  }, []);
+
+  const handleLoadedData = () => {
+    resumeFromWhereLeft();
+  };
 
   const tmdbData = useQuery<ITmdbSerieDetails>({
     queryKey: ["tmdb-details-with-season", params.slug, params.tmdbId],
     queryFn: async () => {
-      const tmdbData = await TmdbService.fetchSerie(parseInt(params.tmdbId));
+      const tmdbData = await TmdbService.fetchSerie(params.tmdbId);
 
       return tmdbData;
     },
@@ -79,7 +71,7 @@ export default function ChapterPage({ params }: IProps) {
     queryKey: ["tmdb-detail-episode", params.tmdbId, season, chapter],
     queryFn: async () => {
       const tmdbData = await TmdbService.fetchEpisode(
-        parseInt(params.tmdbId),
+        params.tmdbId,
         season,
         chapter
       );
@@ -87,18 +79,6 @@ export default function ChapterPage({ params }: IProps) {
       return tmdbData;
     },
   });
-
-  const isTurkishProvider = useMemo(() => {
-    const network = params?.network;
-
-    return network ? TurkishProviderIds.includes(parseInt(network)) : false;
-  }, []);
-
-  useEffect(() => {
-    if (!isTurkishProvider) {
-      setIsPlaying(true);
-    }
-  }, [isTurkishProvider]);
 
   const handleProgress = async (
     event: React.SyntheticEvent<HTMLVideoElement, Event>
@@ -109,11 +89,11 @@ export default function ChapterPage({ params }: IProps) {
     // Only update every 10 seconds to avoid too many requests
     if (Math.floor(playedSeconds) % 10 === 0) {
       try {
-        const lastWatched = await getSingleLastWatched(parseInt(params.tmdbId));
+        const lastWatched = await getSingleLastWatched(params.tmdbId);
 
         if (lastWatched) {
           await updateLastWatched(
-            parseInt(params.tmdbId),
+            params.tmdbId,
             {
               atSecond: playedSeconds,
             },
@@ -149,10 +129,6 @@ export default function ChapterPage({ params }: IProps) {
     return <Loading fullscreen />;
   }
 
-  function onClickClose(): void {
-    navigate({ to: "/" });
-  }
-
   function onPlay(): void {
     setIsPlaying(true);
   }
@@ -161,7 +137,7 @@ export default function ChapterPage({ params }: IProps) {
     setIsPlaying(false);
   }
   async function resumeFromWhereLeft(): Promise<void> {
-    const lastWatched = await getSingleLastWatched(parseInt(params.tmdbId));
+    const lastWatched = await getSingleLastWatched(params.tmdbId);
     if (lastWatched) {
       const secondsToMinutes = Math.floor(lastWatched.atSecond / 60);
       toast.toast({
@@ -189,18 +165,13 @@ export default function ChapterPage({ params }: IProps) {
               />
             ) : (
               <>
-                <video
-                  ref={videoRef}
-                  style={{
-                    backgroundColor: "black",
-                    width: "100%",
-                    height: "100%",
-                  }}
-                  poster={`https://image.tmdb.org/t/p/original/${tmdbEpisodeData.data.still_path}`}
-                  controls
+                <WatchVideoPlayer
+                  videoRef={videoRef}
+                  handleLoadedData={handleLoadedData}
+                  posterPath={tmdbPoster(tmdbEpisodeData.data.still_path)}
                   onPlay={onPlay}
                   onPause={onPause}
-                  onTimeUpdate={handleProgress}
+                  handleProgress={handleProgress}
                 />
               </>
             )}
@@ -213,12 +184,23 @@ export default function ChapterPage({ params }: IProps) {
             visibility: isPlaying ? "hidden" : "visible",
           }}
         >
-          <span className="text-emerald-400 text-sm mb-2 gap-1 flex ">
-            {tmdbData.data.networks.map((network) => (
-              <p key={network.name}>{network.name}</p>
-            ))}
-            orijinal dizisi
-          </span>
+          <div className="flex gap-5 mb-5">
+            {isNativePlatform() && (
+              <SubtitleSelectDialog
+                tmdbId={tmdbData.data.id}
+                season={season}
+                episode={chapter}
+              />
+            )}
+
+            {selectedWatchLink && (
+              <WatchTogether
+                videoRef={videoRef}
+                episodeData={tmdbEpisodeData.data}
+                tmdbData={tmdbData.data}
+              />
+            )}
+          </div>
           <h1 className="text-2xl md:text-4xl font-bold mb-2">
             {tmdbData.data.name}
           </h1>

@@ -11,7 +11,7 @@ export function MainNav() {
           return (
             <li key={item.name}>
               <Link
-                href={item.href ?? "#"}
+                to={item.href ?? "#"}
                 className="text-sm font-medium transition-colors hover:text-white/70"
               >
                 {item.name}

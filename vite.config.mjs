@@ -18,11 +18,7 @@ export default defineConfig({
       registerType: "autoUpdate",
       manifest: "public/manifest.json",
       minify: true,
-      mode:
-        process.env.NODE_ENV === "production" ? "production" : "development",
-      devOptions: {
-        enabled: process.env.NODE_ENV === "development",
-      },
+      disable: process.env.TAURI_ENV_ARCH ? true : false,
     }),
   ],
   define: {

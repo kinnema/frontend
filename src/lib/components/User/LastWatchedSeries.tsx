@@ -49,7 +49,7 @@ export function LastWatchedSeries() {
         return (
           <ShowCard
             show={{
-              id: s.id,
+              id: s.tmdbId,
               image: s.posterPath,
               title: s.name,
               subTitle: `${s.season_number} Sezon ${s.episode_number} Bölüm`,

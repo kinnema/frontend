@@ -1,6 +1,5 @@
 "use client";
 import { useToast } from "@/hooks/use-toast";
-import { Capacitor } from "@capacitor/core";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { Card } from "../../components/ui/card";
@@ -9,6 +8,7 @@ import { usePluginRegistry } from "../plugins/usePluginRegistry";
 import { useWatchStore } from "../stores/watch.store";
 import { IPlugin } from "../types/plugin.type";
 import { IPluginEvent } from "../types/pluginEvents.type";
+import { isNativePlatform } from "../utils/native";
 
 const MotionCard = motion.create(Card);
 
@@ -21,17 +21,18 @@ export const Providers = ({
   const setSelectedWatchLink = useWatchStore(
     (state) => state.setSelectedWatchLink
   );
+  const setSubtitles = useWatchStore((state) => state.setSubtitles);
   const [providers, setProviders] = useState<IPlugin[]>([]);
   const { getPluginsByType } = usePluginRegistry();
   const [data, setData] = useState<IPluginEvent[]>([]);
 
   // Fetch providers and events from the store
   useEffect(() => {
-    if (!Capacitor.isNativePlatform()) {
+    if (!isNativePlatform()) {
       toast.toast({
-        title: "Mobil uygulama",
+        title: "Uyarı",
         description:
-          "Mobil uygulama uzerinden calistirmiyorsunuz, bazi kaynaklar gözukmeyebilir!",
+          "Lutfen daha iyi bir kullanim icin uygulamamizi kullaniniz",
         duration: 3000,
       });
     }
@@ -102,6 +103,7 @@ export const Providers = ({
                     provider: event.data.pluginId,
                     url: event.data.url,
                   };
+                  setSubtitles(event.data.subtitles);
                   setSelectedWatchLink(watchData.url);
                 }
               }}

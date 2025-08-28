@@ -22,8 +22,113 @@ export async function createCapacitorHttpLoader() {
       if (Capacitor.isNativePlatform()) {
         this.loadWithCapacitorHttp(context, config, callbacks);
       } else {
-        // Fallback to default loader for web
-        super.load(context, config, callbacks);
+        this.loadWithFetch(context, config, callbacks);
+      }
+    }
+
+    private async loadWithFetch(context: any, config: any, callbacks: any) {
+      const { onSuccess, onError } = callbacks;
+
+      try {
+        const startTime = performance.now();
+
+        // Determine if this is a binary request (TS segments) or text (m3u8 playlists)
+        const isBinaryRequest =
+          context.responseType === "arraybuffer" ||
+          context.url.includes(".ts") ||
+          context.url.includes(".m4s");
+
+        // Prepare headers with proper content type expectations
+        const headers = new Headers({
+          ...context.headers,
+          "User-Agent": "VLC/3.0.17.4 LibVLC/3.0.9",
+        });
+
+        console.log(
+          `Fetch API loading: ${context.url} (binary: ${isBinaryRequest})`
+        );
+
+        // Use Fetch API for the request
+        const controller = new AbortController();
+        const timeoutId = setTimeout(
+          () => controller.abort(),
+          context.timeout || 30000
+        );
+
+        const response = await fetch(context.url, {
+          headers,
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+        const endTime = performance.now();
+
+        if (response.ok) {
+          let data: ArrayBuffer | string;
+          if (isBinaryRequest) {
+            // For binary data (TS segments), handle ArrayBuffer
+            data = await response.arrayBuffer();
+          } else {
+            // For text data (m3u8 playlists)
+            data = await response.text();
+          }
+
+          const responseObj = {
+            url: context.url,
+            data: data,
+          };
+
+          // Create stats object with the exact structure hls.js expects
+          const stats = {
+            aborted: false,
+            loaded:
+              data instanceof ArrayBuffer ? data.byteLength : data.length || 0,
+            retry: 0,
+            total:
+              data instanceof ArrayBuffer ? data.byteLength : data.length || 0,
+            chunkCount: 1,
+            bwEstimate: 0,
+            loading: {
+              start: startTime,
+              first: endTime,
+              end: endTime,
+            },
+            parsing: {
+              start: 0,
+              end: 0,
+            },
+            buffering: {
+              start: 0,
+              first: 0,
+              end: 0,
+            },
+          };
+
+          console.log(
+            `Fetch API success: ${context.url} (${stats.loaded} bytes)`
+          );
+          onSuccess(responseObj, stats, context);
+        } else {
+          console.error(
+            `Fetch API error: ${response.status} for ${context.url}`
+          );
+          onError(
+            {
+              code: response.status,
+              text: `HTTP Error ${response.status}: ${response.statusText}`,
+            },
+            context
+          );
+        }
+      } catch (error) {
+        console.error("Fetch API loader error:", error);
+        onError(
+          {
+            code: 0,
+            text: error instanceof Error ? error.message : "Network error",
+          },
+          context
+        );
       }
     }
 
@@ -66,7 +171,6 @@ export async function createCapacitorHttpLoader() {
 
         if (response.status >= 200 && response.status < 300) {
           let data;
-
           if (isBinaryRequest) {
             // For binary data (TS segments), handle ArrayBuffer or base64
             if (response.data instanceof ArrayBuffer) {

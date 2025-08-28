@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TestRoomRouteImport } from './routes/test-room'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PluginsRouteImport } from './routes/plugins'
@@ -18,8 +19,15 @@ import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as SettingsUpdatesRouteImport } from './routes/settings/updates'
+import { Route as SettingsSubtitlesRouteImport } from './routes/settings/subtitles'
+import { Route as RoomRoomIdRouteImport } from './routes/room.$roomId'
 import { Route as CollectionNetworkRouteImport } from './routes/collection.$network'
 
+const TestRoomRoute = TestRoomRouteImport.update({
+  id: '/test-room',
+  path: '/test-room',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
@@ -64,6 +72,16 @@ const SettingsUpdatesRoute = SettingsUpdatesRouteImport.update({
   path: '/settings/updates',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsSubtitlesRoute = SettingsSubtitlesRouteImport.update({
+  id: '/settings/subtitles',
+  path: '/settings/subtitles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RoomRoomIdRoute = RoomRoomIdRouteImport.update({
+  id: '/room/$roomId',
+  path: '/room/$roomId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CollectionNetworkRoute = CollectionNetworkRouteImport.update({
   id: '/collection/$network',
   path: '/collection/$network',
@@ -76,7 +94,10 @@ export interface FileRoutesByFullPath {
   '/plugins': typeof PluginsRoute
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
+  '/test-room': typeof TestRoomRoute
   '/collection/$network': typeof CollectionNetworkRoute
+  '/room/$roomId': typeof RoomRoomIdRoute
+  '/settings/subtitles': typeof SettingsSubtitlesRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/': typeof LayoutIndexRoute
   '/settings': typeof SettingsIndexRoute
@@ -87,7 +108,10 @@ export interface FileRoutesByTo {
   '/plugins': typeof PluginsRoute
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
+  '/test-room': typeof TestRoomRoute
   '/collection/$network': typeof CollectionNetworkRoute
+  '/room/$roomId': typeof RoomRoomIdRoute
+  '/settings/subtitles': typeof SettingsSubtitlesRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/': typeof LayoutIndexRoute
   '/settings': typeof SettingsIndexRoute
@@ -100,7 +124,10 @@ export interface FileRoutesById {
   '/plugins': typeof PluginsRoute
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
+  '/test-room': typeof TestRoomRoute
   '/collection/$network': typeof CollectionNetworkRoute
+  '/room/$roomId': typeof RoomRoomIdRoute
+  '/settings/subtitles': typeof SettingsSubtitlesRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/_layout/': typeof LayoutIndexRoute
   '/settings/': typeof SettingsIndexRoute
@@ -113,7 +140,10 @@ export interface FileRouteTypes {
     | '/plugins'
     | '/register'
     | '/search'
+    | '/test-room'
     | '/collection/$network'
+    | '/room/$roomId'
+    | '/settings/subtitles'
     | '/settings/updates'
     | '/'
     | '/settings'
@@ -124,7 +154,10 @@ export interface FileRouteTypes {
     | '/plugins'
     | '/register'
     | '/search'
+    | '/test-room'
     | '/collection/$network'
+    | '/room/$roomId'
+    | '/settings/subtitles'
     | '/settings/updates'
     | '/'
     | '/settings'
@@ -136,7 +169,10 @@ export interface FileRouteTypes {
     | '/plugins'
     | '/register'
     | '/search'
+    | '/test-room'
     | '/collection/$network'
+    | '/room/$roomId'
+    | '/settings/subtitles'
     | '/settings/updates'
     | '/_layout/'
     | '/settings/'
@@ -149,13 +185,23 @@ export interface RootRouteChildren {
   PluginsRoute: typeof PluginsRoute
   RegisterRoute: typeof RegisterRoute
   SearchRoute: typeof SearchRoute
+  TestRoomRoute: typeof TestRoomRoute
   CollectionNetworkRoute: typeof CollectionNetworkRoute
+  RoomRoomIdRoute: typeof RoomRoomIdRoute
+  SettingsSubtitlesRoute: typeof SettingsSubtitlesRoute
   SettingsUpdatesRoute: typeof SettingsUpdatesRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/test-room': {
+      id: '/test-room'
+      path: '/test-room'
+      fullPath: '/test-room'
+      preLoaderRoute: typeof TestRoomRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/search': {
       id: '/search'
       path: '/search'
@@ -219,6 +265,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsUpdatesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/subtitles': {
+      id: '/settings/subtitles'
+      path: '/settings/subtitles'
+      fullPath: '/settings/subtitles'
+      preLoaderRoute: typeof SettingsSubtitlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/room/$roomId': {
+      id: '/room/$roomId'
+      path: '/room/$roomId'
+      fullPath: '/room/$roomId'
+      preLoaderRoute: typeof RoomRoomIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/collection/$network': {
       id: '/collection/$network'
       path: '/collection/$network'
@@ -247,7 +307,10 @@ const rootRouteChildren: RootRouteChildren = {
   PluginsRoute: PluginsRoute,
   RegisterRoute: RegisterRoute,
   SearchRoute: SearchRoute,
+  TestRoomRoute: TestRoomRoute,
   CollectionNetworkRoute: CollectionNetworkRoute,
+  RoomRoomIdRoute: RoomRoomIdRoute,
+  SettingsSubtitlesRoute: SettingsSubtitlesRoute,
   SettingsUpdatesRoute: SettingsUpdatesRoute,
   SettingsIndexRoute: SettingsIndexRoute,
 }

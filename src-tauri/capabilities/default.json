@@ -1,0 +1,51 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "enables the default permissions",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:default",
+    "cors-fetch:default",
+    "fs:allow-mkdir",
+    "fs:allow-remove",
+    "fs:allow-read",
+    "fs:allow-write",
+    "fs:write-files",
+    "fs:read-dirs",
+    "fs:read-files",
+    {
+      "identifier": "fs:scope",
+      "allow": [
+        {
+          "path": "$APPCACHE/subtitles/**"
+        },
+        {
+          "path": "$APPCACHE/**"
+        },
+        {
+          "path": "$APPCACHE"
+        }
+      ]
+    },
+    {
+      "identifier": "shell:allow-execute",
+      "allow": [
+        {
+          "name": "unzip-command",
+          "cmd": "unzip",
+          "args": [
+            {
+              "validator": "\\S+\\.zip"
+            },
+            "-d",
+            {
+              "validator": "\\S+"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
