@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,12 +13,20 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useSubtitles } from "@/lib/hooks/useSubtitles";
+import { useSubtitleStore } from "@/lib/stores/subtitle.store";
 import { useWatchStore } from "@/lib/stores/watch.store";
 import { ILanguage } from "@/lib/types/language.type";
 import { ISubtitleResult } from "@/lib/types/subtitle.type";
 import { cn } from "@/lib/utils";
-import { Check, Download, Globe, Languages, Loader2 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import {
+  Check,
+  Download,
+  Globe,
+  InfoIcon,
+  Languages,
+  Loader2,
+} from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 interface IProps {
   tmdbId: number;
@@ -27,6 +36,15 @@ interface IProps {
 
 export function SubtitleSelectDialog({ tmdbId, season, episode }: IProps) {
   const setSubtitles = useWatchStore((state) => state.setSubtitles);
+  const providerConfig = useSubtitleStore((state) => state.providerConfig);
+  const isProvidersExists = useMemo(() => {
+    return (
+      Object.values(providerConfig).filter((provider) => provider.enabled)
+        .length > 0 &&
+      Object.values(providerConfig).filter((provider) => provider.apiKey)
+        .length > 0
+    );
+  }, [providerConfig]);
   const { toast } = useToast();
   const [selectedLanguage, setSelectedLanguage] = useState("en");
   const [open, setOpen] = useState(false);
@@ -136,6 +154,16 @@ export function SubtitleSelectDialog({ tmdbId, season, episode }: IProps) {
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-2 py-4 max-h-80 overflow-y-auto">
+          {!isProvidersExists && (
+            <Alert variant="destructive">
+              <InfoIcon className="h-4 w-4" />
+              <AlertTitle>Configure Subtitle Providers!</AlertTitle>
+              <AlertDescription>
+                You have not configured any subtitle providers.
+              </AlertDescription>
+            </Alert>
+          )}
+
           <Input
             placeholder="Search"
             onChange={(text) => handleSearch(text.currentTarget.value)}
@@ -144,7 +172,7 @@ export function SubtitleSelectDialog({ tmdbId, season, episode }: IProps) {
             <div key={language.code} className="space-y-2">
               <button
                 onClick={() => handleLanguageSelect(language.code)}
-                disabled={loadingLanguage !== null}
+                disabled={loadingLanguage !== null || !isProvidersExists}
                 className={cn(
                   "flex items-center justify-between p-3 rounded-lg border text-left transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed w-full",
                   selectedLanguage === language.code &&

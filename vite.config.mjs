@@ -5,8 +5,6 @@ import { VitePWA } from "vite-plugin-pwa";
 import topLevelAwait from "vite-plugin-top-level-await";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-console.log(process.env);
-
 export default defineConfig({
   plugins: [
     tsconfigPaths(),
