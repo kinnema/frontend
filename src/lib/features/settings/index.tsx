@@ -28,6 +28,10 @@ const SETTINGS = [
         name: "Subtitles",
         href: "/settings/subtitles",
       },
+      {
+        name: "Sync",
+        href: "/settings/sync",
+      },
     ],
   },
 ];

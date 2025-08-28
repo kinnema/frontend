@@ -19,6 +19,7 @@ import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as SettingsUpdatesRouteImport } from './routes/settings/updates'
+import { Route as SettingsSyncRouteImport } from './routes/settings/sync'
 import { Route as SettingsSubtitlesRouteImport } from './routes/settings/subtitles'
 import { Route as RoomRoomIdRouteImport } from './routes/room.$roomId'
 import { Route as CollectionNetworkRouteImport } from './routes/collection.$network'
@@ -72,6 +73,11 @@ const SettingsUpdatesRoute = SettingsUpdatesRouteImport.update({
   path: '/settings/updates',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsSyncRoute = SettingsSyncRouteImport.update({
+  id: '/settings/sync',
+  path: '/settings/sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsSubtitlesRoute = SettingsSubtitlesRouteImport.update({
   id: '/settings/subtitles',
   path: '/settings/subtitles',
@@ -98,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/collection/$network': typeof CollectionNetworkRoute
   '/room/$roomId': typeof RoomRoomIdRoute
   '/settings/subtitles': typeof SettingsSubtitlesRoute
+  '/settings/sync': typeof SettingsSyncRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/': typeof LayoutIndexRoute
   '/settings': typeof SettingsIndexRoute
@@ -112,6 +119,7 @@ export interface FileRoutesByTo {
   '/collection/$network': typeof CollectionNetworkRoute
   '/room/$roomId': typeof RoomRoomIdRoute
   '/settings/subtitles': typeof SettingsSubtitlesRoute
+  '/settings/sync': typeof SettingsSyncRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/': typeof LayoutIndexRoute
   '/settings': typeof SettingsIndexRoute
@@ -128,6 +136,7 @@ export interface FileRoutesById {
   '/collection/$network': typeof CollectionNetworkRoute
   '/room/$roomId': typeof RoomRoomIdRoute
   '/settings/subtitles': typeof SettingsSubtitlesRoute
+  '/settings/sync': typeof SettingsSyncRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/_layout/': typeof LayoutIndexRoute
   '/settings/': typeof SettingsIndexRoute
@@ -144,6 +153,7 @@ export interface FileRouteTypes {
     | '/collection/$network'
     | '/room/$roomId'
     | '/settings/subtitles'
+    | '/settings/sync'
     | '/settings/updates'
     | '/'
     | '/settings'
@@ -158,6 +168,7 @@ export interface FileRouteTypes {
     | '/collection/$network'
     | '/room/$roomId'
     | '/settings/subtitles'
+    | '/settings/sync'
     | '/settings/updates'
     | '/'
     | '/settings'
@@ -173,6 +184,7 @@ export interface FileRouteTypes {
     | '/collection/$network'
     | '/room/$roomId'
     | '/settings/subtitles'
+    | '/settings/sync'
     | '/settings/updates'
     | '/_layout/'
     | '/settings/'
@@ -189,6 +201,7 @@ export interface RootRouteChildren {
   CollectionNetworkRoute: typeof CollectionNetworkRoute
   RoomRoomIdRoute: typeof RoomRoomIdRoute
   SettingsSubtitlesRoute: typeof SettingsSubtitlesRoute
+  SettingsSyncRoute: typeof SettingsSyncRoute
   SettingsUpdatesRoute: typeof SettingsUpdatesRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
 }
@@ -265,6 +278,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsUpdatesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/sync': {
+      id: '/settings/sync'
+      path: '/settings/sync'
+      fullPath: '/settings/sync'
+      preLoaderRoute: typeof SettingsSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings/subtitles': {
       id: '/settings/subtitles'
       path: '/settings/subtitles'
@@ -311,6 +331,7 @@ const rootRouteChildren: RootRouteChildren = {
   CollectionNetworkRoute: CollectionNetworkRoute,
   RoomRoomIdRoute: RoomRoomIdRoute,
   SettingsSubtitlesRoute: SettingsSubtitlesRoute,
+  SettingsSyncRoute: SettingsSyncRoute,
   SettingsUpdatesRoute: SettingsUpdatesRoute,
   SettingsIndexRoute: SettingsIndexRoute,
 }
