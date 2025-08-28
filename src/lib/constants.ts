@@ -26,24 +26,4 @@ export const NAV_LINKS: INavLinks[] = [
     name: uniqueId(),
     type: "divider",
   },
-  {
-    name: "Gain",
-    href: "/collection/gain",
-  },
-  {
-    name: "BluTV",
-    href: "/collection/blutv",
-  },
-  {
-    name: "Exxen",
-    href: "/collection/exxen",
-  },
-  {
-    name: "Netflix",
-    href: "/collection/netflix",
-  },
-  {
-    name: "tabii",
-    href: "/collection/tabii",
-  },
 ];
