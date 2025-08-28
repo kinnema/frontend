@@ -24,6 +24,10 @@ const SETTINGS = [
         name: "Updates",
         href: "updates",
       },
+      {
+        name: "Subtitles",
+        href: "/settings/subtitles",
+      },
     ],
   },
 ];
@@ -42,7 +46,7 @@ export default function AppSettingsFeature() {
 
             {setting.sub.map((subMenu) => (
               <Link to={subMenu.href}>
-                <Button variant="ghost" className="justify-between px-0">
+                <Button variant="ghost" className="justify-between w-full px-0">
                   <span>{subMenu.name}</span>
                   <ChevronRight className="w-4 h-4" />
                 </Button>

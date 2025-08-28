@@ -5,6 +5,8 @@ import { VitePWA } from "vite-plugin-pwa";
 import topLevelAwait from "vite-plugin-top-level-await";
 import tsconfigPaths from "vite-tsconfig-paths";
 
+console.log(process.env);
+
 export default defineConfig({
   plugins: [
     tsconfigPaths(),
@@ -18,6 +20,7 @@ export default defineConfig({
       registerType: "autoUpdate",
       manifest: "public/manifest.json",
       minify: true,
+      disable: process.env.TAURI_ENV_ARCH ? true : false,
     }),
   ],
   define: {

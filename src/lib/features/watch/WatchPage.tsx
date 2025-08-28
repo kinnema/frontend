@@ -3,6 +3,7 @@
 import { useToast } from "@/hooks/use-toast";
 import { Loading } from "@/lib/components/Loading";
 import { Providers } from "@/lib/components/Providers";
+import { SubtitleSelectDialog } from "@/lib/components/Watch/SubtitleSelectDialog";
 import { WatchTogether } from "@/lib/components/Watch/WatchTogether";
 import { WatchVideoPlayer } from "@/lib/components/Watch/WatchVideoPlayer";
 import { tmdbPoster } from "@/lib/helpers";
@@ -11,6 +12,7 @@ import TmdbService from "@/lib/services/tmdb.service";
 // import { useLastWatchedStore } from "@/lib/stores/lastWatched.store";
 import { useWatchStore } from "@/lib/stores/watch.store";
 import { Episode, ITmdbSerieDetails } from "@/lib/types/tmdb";
+import { isNativePlatform } from "@/lib/utils/native";
 import { videoEventEmitter } from "@/lib/utils/videoEvents";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -34,6 +36,7 @@ export default function ChapterPage({
   const [isPlaying, setIsPlaying] = useState(false);
   const selectedWatchLink = useWatchStore((state) => state.selectedWatchLink);
   const clearWatchLink = useWatchStore((state) => state.clearWatchLink);
+  const clearSubtitles = useWatchStore((state) => state.clearSubtitles);
   const toast = useToast();
   const { getSingleLastWatched, updateLastWatched, addLastWatched } =
     useLastWatched();
@@ -47,6 +50,7 @@ export default function ChapterPage({
   useEffect(() => {
     return () => {
       clearWatchLink();
+      clearSubtitles();
     };
   }, []);
 
@@ -180,20 +184,23 @@ export default function ChapterPage({
             visibility: isPlaying ? "hidden" : "visible",
           }}
         >
-          {selectedWatchLink && (
-            <WatchTogether
-              videoRef={videoRef}
-              episodeData={tmdbEpisodeData.data}
-              tmdbData={tmdbData.data}
-            />
-          )}
+          <div className="flex gap-5 mb-5">
+            {isNativePlatform() && (
+              <SubtitleSelectDialog
+                tmdbId={tmdbData.data.id}
+                season={season}
+                episode={chapter}
+              />
+            )}
 
-          <span className="text-emerald-400 text-sm mb-2 gap-1 flex ">
-            {tmdbData.data.networks.map((network) => (
-              <p key={network.name}>{network.name}</p>
-            ))}
-            orijinal dizisi
-          </span>
+            {selectedWatchLink && (
+              <WatchTogether
+                videoRef={videoRef}
+                episodeData={tmdbEpisodeData.data}
+                tmdbData={tmdbData.data}
+              />
+            )}
+          </div>
           <h1 className="text-2xl md:text-4xl font-bold mb-2">
             {tmdbData.data.name}
           </h1>

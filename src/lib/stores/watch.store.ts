@@ -22,20 +22,23 @@ interface WatchStoreActions {
   setSubtitles: (subtitles?: IPluginEndpointSubtitle[]) => void;
   clear: () => void;
   clearWatchLink: () => void;
+  clearSubtitles: () => void;
 }
 
 export const useWatchStore = create(
   persist<WatchStore & WatchStoreActions>(
-    (set) => ({
+    (set, get) => ({
       selectedWatchLink: null,
       setSelectedWatchLink: (link) => set({ selectedWatchLink: link }),
       room: undefined,
       setRoom: (room) => set({ room }),
-      clear: () => set({ selectedWatchLink: null, room: undefined }),
+      clear: () =>
+        set({ selectedWatchLink: null, room: undefined, subtitles: undefined }),
+      clearSubtitles: () => set({ subtitles: undefined }),
       clearWatchLink: () => set({ selectedWatchLink: null }),
       setSubtitles(subtitles) {
         set({
-          subtitles,
+          subtitles: [...(get().subtitles || []), ...(subtitles || [])],
         });
       },
     }),

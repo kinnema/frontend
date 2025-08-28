@@ -33,6 +33,43 @@ export function WatchVideoPlayer({
     },
   });
 
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     if (!subtitles) {
+  //       if (isTauri()) {
+  //         toast({
+  //           title: "Do you want subtitles?",
+
+  //           action: (
+  //             <ToastAction
+  //               altText="share"
+  //               onClick={() => {
+  //                 subdlService.getSubtitles(1396, 1, 1).then((subtitles) => {
+  //                   console.log("hoppa", subtitles);
+
+  //                   if (!subtitles) return;
+  //                   toast({
+  //                     title: "Subtitles loaded",
+  //                     description: "Subtitles loaded successfully",
+  //                   });
+  //                   setSubtitles([
+  //                     {
+  //                       lang: "tr",
+  //                       url: subtitles,
+  //                     },
+  //                   ]);
+  //                 });
+  //               }}
+  //             >
+  //               Git
+  //             </ToastAction>
+  //           ),
+  //         });
+  //       }
+  //     }
+  //   }, 3000);
+  // }, []);
+
   useEffect(() => {
     videoEventEmitter.addListener("loadVideo", async (url) => {
       console.log("loadVideo", url);

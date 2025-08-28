@@ -19,6 +19,7 @@ import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as SettingsUpdatesRouteImport } from './routes/settings/updates'
+import { Route as SettingsSubtitlesRouteImport } from './routes/settings/subtitles'
 import { Route as RoomRoomIdRouteImport } from './routes/room.$roomId'
 import { Route as CollectionNetworkRouteImport } from './routes/collection.$network'
 
@@ -71,6 +72,11 @@ const SettingsUpdatesRoute = SettingsUpdatesRouteImport.update({
   path: '/settings/updates',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsSubtitlesRoute = SettingsSubtitlesRouteImport.update({
+  id: '/settings/subtitles',
+  path: '/settings/subtitles',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RoomRoomIdRoute = RoomRoomIdRouteImport.update({
   id: '/room/$roomId',
   path: '/room/$roomId',
@@ -91,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/test-room': typeof TestRoomRoute
   '/collection/$network': typeof CollectionNetworkRoute
   '/room/$roomId': typeof RoomRoomIdRoute
+  '/settings/subtitles': typeof SettingsSubtitlesRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/': typeof LayoutIndexRoute
   '/settings': typeof SettingsIndexRoute
@@ -104,6 +111,7 @@ export interface FileRoutesByTo {
   '/test-room': typeof TestRoomRoute
   '/collection/$network': typeof CollectionNetworkRoute
   '/room/$roomId': typeof RoomRoomIdRoute
+  '/settings/subtitles': typeof SettingsSubtitlesRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/': typeof LayoutIndexRoute
   '/settings': typeof SettingsIndexRoute
@@ -119,6 +127,7 @@ export interface FileRoutesById {
   '/test-room': typeof TestRoomRoute
   '/collection/$network': typeof CollectionNetworkRoute
   '/room/$roomId': typeof RoomRoomIdRoute
+  '/settings/subtitles': typeof SettingsSubtitlesRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/_layout/': typeof LayoutIndexRoute
   '/settings/': typeof SettingsIndexRoute
@@ -134,6 +143,7 @@ export interface FileRouteTypes {
     | '/test-room'
     | '/collection/$network'
     | '/room/$roomId'
+    | '/settings/subtitles'
     | '/settings/updates'
     | '/'
     | '/settings'
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/test-room'
     | '/collection/$network'
     | '/room/$roomId'
+    | '/settings/subtitles'
     | '/settings/updates'
     | '/'
     | '/settings'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/test-room'
     | '/collection/$network'
     | '/room/$roomId'
+    | '/settings/subtitles'
     | '/settings/updates'
     | '/_layout/'
     | '/settings/'
@@ -176,6 +188,7 @@ export interface RootRouteChildren {
   TestRoomRoute: typeof TestRoomRoute
   CollectionNetworkRoute: typeof CollectionNetworkRoute
   RoomRoomIdRoute: typeof RoomRoomIdRoute
+  SettingsSubtitlesRoute: typeof SettingsSubtitlesRoute
   SettingsUpdatesRoute: typeof SettingsUpdatesRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
 }
@@ -252,6 +265,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsUpdatesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/subtitles': {
+      id: '/settings/subtitles'
+      path: '/settings/subtitles'
+      fullPath: '/settings/subtitles'
+      preLoaderRoute: typeof SettingsSubtitlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/room/$roomId': {
       id: '/room/$roomId'
       path: '/room/$roomId'
@@ -290,6 +310,7 @@ const rootRouteChildren: RootRouteChildren = {
   TestRoomRoute: TestRoomRoute,
   CollectionNetworkRoute: CollectionNetworkRoute,
   RoomRoomIdRoute: RoomRoomIdRoute,
+  SettingsSubtitlesRoute: SettingsSubtitlesRoute,
   SettingsUpdatesRoute: SettingsUpdatesRoute,
   SettingsIndexRoute: SettingsIndexRoute,
 }
