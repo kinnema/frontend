@@ -210,7 +210,7 @@ export class SubDlService extends AbstractSubtitleService {
 
       const subtitleContentBytes = await readFile(srtFilePath);
 
-      const subtitleContentString = new TextDecoder("iso-8859-1").decode(
+      const subtitleContentString = new TextDecoder().decode(
         subtitleContentBytes
       );
 
