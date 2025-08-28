@@ -1,10 +1,13 @@
+import { Badge } from "@/components/ui/badge";
 import { Loading } from "@/lib/components/Loading";
 import { slugify, tmdbPoster } from "@/lib/helpers";
+import { useLastWatched } from "@/lib/hooks/database/useLastWatched";
 import TmdbService from "@/lib/services/tmdb.service";
-import { TurkishProviderIds } from "@/lib/types/networks";
+import { ILastWatched } from "@/lib/types/lastWatched.type";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
+import { RxDocument } from "rxdb";
 
 interface IProps {
   id: number;
@@ -14,31 +17,26 @@ interface IProps {
   serieNetwork: number[];
 }
 
-export default function SeasonEpisodes({
-  id,
-  season,
-  serie_name,
-  isTurkishProvider,
-  serieNetwork,
-}: IProps) {
+export default function SeasonEpisodes({ id, season, serie_name }: IProps) {
+  const { getAllLastWatched } = useLastWatched();
+  const [lastWatched, setLastWatched] = useState<
+    RxDocument<ILastWatched, {}>[]
+  >([]);
   const { data, isPending, isError } = useQuery({
     queryKey: ["season-episodes", id, season],
     queryFn: () => TmdbService.fetchSeasonEpisodes(id, season),
   });
 
+  useEffect(() => {
+    getAllLastWatched().then((r) => {
+      setLastWatched(r);
+      console.log(r);
+    });
+  }, []);
+
   if (isError) {
     return <div>Error</div>;
   }
-
-  const network = useMemo(() => {
-    return serieNetwork.findIndex((n) => {
-      const s = TurkishProviderIds.findIndex((i) => n === i);
-
-      if (s !== -1) {
-        return s;
-      }
-    });
-  }, [serieNetwork]);
 
   if (isPending) {
     return <Loading />;
@@ -80,6 +78,14 @@ export default function SeasonEpisodes({
               <p className="text-sm text-gray-400 line-clamp-2">
                 {episode.overview}
               </p>
+
+              {lastWatched.filter(
+                (r) =>
+                  r.tmdbId === episode.show_id &&
+                  r.season_number === episode.season_number &&
+                  r.episode_number === episode.episode_number &&
+                  r.isWatched == true
+              ).length > 0 && <Badge variant="default">Izlendi</Badge>}
             </div>
           </Link>
         );

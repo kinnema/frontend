@@ -15,7 +15,7 @@ import { Episode, ITmdbSerieDetails } from "@/lib/types/tmdb";
 import { isNativePlatform } from "@/lib/utils/native";
 import { videoEventEmitter } from "@/lib/utils/videoEvents";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { v4 } from "uuid";
 interface IProps {
   params: {
@@ -37,6 +37,7 @@ export default function ChapterPage({
   const selectedWatchLink = useWatchStore((state) => state.selectedWatchLink);
   const clearWatchLink = useWatchStore((state) => state.clearWatchLink);
   const clearSubtitles = useWatchStore((state) => state.clearSubtitles);
+  const isWatched = useRef<boolean>(false);
   const toast = useToast();
   const { getSingleLastWatched, updateLastWatched, addLastWatched } =
     useLastWatched();
@@ -85,7 +86,16 @@ export default function ChapterPage({
   ) => {
     if (!tmdbData.data) return;
     const playedSeconds = event.currentTarget.currentTime;
-    console.log(playedSeconds);
+    const totalSeconds = videoRef.current?.duration || 0;
+
+    if (playedSeconds >= totalSeconds - 120 && !isWatched.current) {
+      await updateLastWatched(params.tmdbId, {
+        isWatched: true,
+      });
+
+      isWatched.current = true;
+    }
+
     // Only update every 10 seconds to avoid too many requests
     if (Math.floor(playedSeconds) % 10 === 0) {
       try {
@@ -100,8 +110,6 @@ export default function ChapterPage({
             lastWatched
           );
         } else {
-          const totalSeconds = videoRef.current?.duration || 0;
-
           await addLastWatched({
             id: v4(),
             name: tmdbData.data.name,
