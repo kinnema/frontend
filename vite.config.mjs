@@ -23,6 +23,10 @@ export default defineConfig({
       manifest: "public/manifest.json",
       minify: true,
       disable: process.env.TAURI_ENV_ARCH ? true : false,
+      workbox: {
+        //FIXME: delete this
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
+      },
     }),
   ],
 
