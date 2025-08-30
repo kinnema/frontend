@@ -3,8 +3,10 @@ import { getRxStorageDexie } from "rxdb/plugins/storage-dexie";
 import { wrappedValidateAjvStorage } from "rxdb/plugins/validate-ajv";
 
 import { addRxPlugin } from "rxdb/plugins/core";
+import { SyncObservables } from "../observables/sync.observable";
 import { FavoritedCollection, favoriteSchema } from "./favorites.schema";
 import { LastWatchedCollection, lastWatchedSchema } from "./lastWatched.schema";
+import { rxdbReplicationFactory } from "./replication/replicationFactory";
 
 export type KinnemaCollections = {
   lastWatched: LastWatchedCollection;
@@ -40,6 +42,15 @@ async function _create(): Promise<RxDatabase<KinnemaCollections>> {
   });
 
   await db.addCollections(collections);
+  SyncObservables.isEnabled$.subscribe(async (isEnabled) => {
+    if (isEnabled) {
+      await rxdbReplicationFactory.initialize();
+      console.log("Sync is enabled");
+    } else {
+      rxdbReplicationFactory.disable();
+      console.log("Sync is disabled");
+    }
+  });
 
   return db;
 }

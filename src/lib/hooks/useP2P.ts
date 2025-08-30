@@ -1,11 +1,5 @@
 import { useRef } from "react";
-import {
-  BaseRoomConfig,
-  joinRoom as joinChannel,
-  RelayConfig,
-  Room,
-  TurnConfig,
-} from "trystero/torrent";
+import { joinRoom as joinChannel, Room } from "trystero/torrent";
 import { v4 as uuid } from "uuid";
 import {
   Commands,
@@ -13,28 +7,8 @@ import {
   P2PAction,
   P2PCreateAction,
 } from "../types/p2p.types";
+import { getP2pConfig } from "../utils/p2p/config";
 import { p2pEventEmitter } from "../utils/p2pEvents";
-
-const password = import.meta.env.VITE_P2P_KEY;
-type P2PConfig = BaseRoomConfig & RelayConfig & TurnConfig;
-const p2pConfig: P2PConfig = {
-  appId: "com.kinnema",
-  password,
-  turnConfig: [
-    {
-      urls: [
-        "stun:stun.l.google.com:19302",
-        "stun:stun1.l.google.com:19302",
-        "stun:stun2.l.google.com:19302",
-      ],
-    },
-    {
-      urls: "turn:161.35.65.1:3478",
-      username: "username",
-      credential: "password",
-    },
-  ],
-};
 
 export function useP2P() {
   const room = useRef<Room | undefined>(undefined);
@@ -57,6 +31,7 @@ export function useP2P() {
   }
 
   function createRoom(roomId: string) {
+    const p2pConfig = getP2pConfig();
     const _room = joinChannel(p2pConfig, roomId);
     room.current = _room;
     const [sendAction, getAction] = room.current?.makeAction("WATCH");
@@ -82,6 +57,7 @@ export function useP2P() {
   }
 
   function joinRoom(roomId: string) {
+    const p2pConfig = getP2pConfig();
     const _room = joinChannel(p2pConfig, roomId);
     room.current = _room;
     const [sendAction, getAction] = room.current?.makeAction("WATCH");

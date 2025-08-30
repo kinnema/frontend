@@ -10,9 +10,12 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { createFileRoute } from "@tanstack/react-router";
+import { AvailableCollectionForSync } from "@/lib/database/replication/availableReplications";
+import { rxdbReplicationFactory } from "@/lib/database/replication/replicationFactory";
+import { getDb } from "@/lib/database/rxdb";
+import { useSyncStore } from "@/lib/stores/sync.store";
+import clsx from "clsx";
 import {
-  AlertCircle,
   CheckCircle,
   Clock,
   Download,
@@ -23,19 +26,36 @@ import {
   Wifi,
   WifiOff,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export const Route = createFileRoute("/settings/sync")({
-  component: RouteComponent,
-});
-
-function RouteComponent() {
+export default function SyncSettingsFeature() {
   const [isExporting, setIsExporting] = useState(false);
-  const [isP2PConnected, setIsP2PConnected] = useState(false);
+  const isP2PEnabled = useSyncStore((state) => state.isP2PEnabled);
+  const setIsP2PEnabled = useSyncStore((state) => state.setIsP2PEnabled);
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncProgress, setSyncProgress] = useState(0);
   const [lastSyncTime, setLastSyncTime] = useState("2 minutes ago");
   const { toast } = useToast();
+  const peers = useSyncStore((state) => state.peers);
+  const availableCollections = useSyncStore(
+    (state) => state.availableCollections
+  );
+
+  useEffect(() => {
+    getDb();
+  }, []);
+
+  const updateCollection = async (
+    key: AvailableCollectionForSync,
+    enabled: boolean
+  ) => {
+    if (enabled) {
+      console.log(`Enabling replication for ${key}`);
+      await rxdbReplicationFactory.enableReplication(key);
+    } else {
+      await rxdbReplicationFactory.disableReplication(key);
+    }
+  };
 
   const handleExport = async () => {
     setIsExporting(true);
@@ -50,10 +70,10 @@ function RouteComponent() {
   };
 
   const handleP2PConnect = () => {
-    setIsP2PConnected(!isP2PConnected);
+    setIsP2PEnabled(!isP2PEnabled);
     toast({
-      title: isP2PConnected ? "Disconnected from P2P" : "Connected to P2P",
-      description: isP2PConnected
+      title: isP2PEnabled ? "Disconnected from P2P" : "Connected to P2P",
+      description: isP2PEnabled
         ? "P2P sync disabled"
         : "Ready for peer-to-peer syncing",
     });
@@ -198,7 +218,7 @@ function RouteComponent() {
                 <div className="space-y-1">
                   <p className="text-sm font-medium">P2P Connection</p>
                   <p className="text-xs text-muted-foreground flex items-center gap-1">
-                    {isP2PConnected ? (
+                    {isP2PEnabled ? (
                       <>
                         <Wifi className="h-3 w-3 text-green-500" />
                         Connected
@@ -212,14 +232,14 @@ function RouteComponent() {
                   </p>
                 </div>
                 <Switch
-                  checked={isP2PConnected}
+                  checked={isP2PEnabled}
                   onCheckedChange={handleP2PConnect}
                 />
               </div>
 
               <Button
                 onClick={handleSync}
-                disabled={!isP2PConnected || isSyncing}
+                disabled={!isP2PEnabled || isSyncing}
                 variant="secondary"
                 className="w-full"
               >
@@ -240,7 +260,9 @@ function RouteComponent() {
         </div>
 
         {/* Settings Management */}
-        <Card>
+        <Card
+          className={clsx({ "opacity-20 cursor-not-allowed": !isP2PEnabled })}
+        >
           <CardHeader>
             <CardTitle>Sync Preferences</CardTitle>
             <CardDescription>
@@ -249,45 +271,22 @@ function RouteComponent() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">Theme & Appearance</p>
-                  <p className="text-xs text-muted-foreground">
-                    Dark mode, colors, layout
-                  </p>
+              {availableCollections.map((collection) => (
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium">{collection.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {collection.enabled ? "Enabled" : "Disabled"}
+                    </p>
+                  </div>
+                  <Switch
+                    checked={collection.enabled}
+                    onCheckedChange={(enabled) =>
+                      updateCollection(collection.key, enabled)
+                    }
+                  />
                 </div>
-                <Switch defaultChecked />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">Notifications</p>
-                  <p className="text-xs text-muted-foreground">
-                    Alert preferences, sounds
-                  </p>
-                </div>
-                <Switch defaultChecked />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">Privacy Settings</p>
-                  <p className="text-xs text-muted-foreground">
-                    Data sharing, analytics
-                  </p>
-                </div>
-                <Switch />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">Keyboard Shortcuts</p>
-                  <p className="text-xs text-muted-foreground">
-                    Custom key bindings
-                  </p>
-                </div>
-                <Switch defaultChecked />
-              </div>
+              ))}
             </div>
           </CardContent>
         </Card>
@@ -302,44 +301,20 @@ function RouteComponent() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                  <div>
-                    <p className="text-sm font-medium">MacBook Pro</p>
-                    <p className="text-xs text-muted-foreground">
-                      Last sync: Just now
-                    </p>
+              {peers.map((peer) => (
+                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                    <div>
+                      <p className="text-sm font-medium">{peer}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Last sync: Just now
+                      </p>
+                    </div>
                   </div>
+                  <Badge variant="default">Active</Badge>
                 </div>
-                <Badge variant="default">Active</Badge>
-              </div>
-
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                <div className="flex items-center gap-3">
-                  <Clock className="h-4 w-4 text-yellow-500" />
-                  <div>
-                    <p className="text-sm font-medium">iPhone 15</p>
-                    <p className="text-xs text-muted-foreground">
-                      Last sync: 5 minutes ago
-                    </p>
-                  </div>
-                </div>
-                <Badge variant="secondary">Pending</Badge>
-              </div>
-
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                <div className="flex items-center gap-3">
-                  <AlertCircle className="h-4 w-4 text-red-500" />
-                  <div>
-                    <p className="text-sm font-medium">iPad Air</p>
-                    <p className="text-xs text-muted-foreground">
-                      Last sync: 2 hours ago
-                    </p>
-                  </div>
-                </div>
-                <Badge variant="destructive">Error</Badge>
-              </div>
+              ))}
             </div>
           </CardContent>
         </Card>

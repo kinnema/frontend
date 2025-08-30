@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "0.2.0",
   "private": true,
-  "packageManager": "pnpm@10.14.0",
+  "packageManager": "pnpm@10.15.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -65,6 +65,7 @@
     "lucide-react": "^0.469.0",
     "marked": "^16.1.1",
     "motion": "^11.18.1",
+    "qrcode": "^1.5.4",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-hook-form": "^7.52.0",
@@ -90,6 +91,7 @@
     "@types/events": "^3.0.3",
     "@types/lodash": "^4.17.4",
     "@types/node": "^20",
+    "@types/qrcode": "^1.5.5",
     "@types/react": "19.0.8",
     "@types/react-dom": "19.0.3",
     "@types/react-modal": "^3.16.3",
@@ -100,6 +102,7 @@
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^3.4.17",
     "typescript": "^5",
+    "vite-plugin-node-polyfills": "^0.24.0",
     "vite-plugin-pwa": "^1.0.2",
     "vite-plugin-top-level-await": "^1.6.0"
   },

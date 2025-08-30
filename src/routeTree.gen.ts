@@ -19,10 +19,12 @@ import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as SettingsUpdatesRouteImport } from './routes/settings/updates'
-import { Route as SettingsSyncRouteImport } from './routes/settings/sync'
 import { Route as SettingsSubtitlesRouteImport } from './routes/settings/subtitles'
 import { Route as RoomRoomIdRouteImport } from './routes/room.$roomId'
 import { Route as CollectionNetworkRouteImport } from './routes/collection.$network'
+import { Route as SettingsSyncIndexRouteImport } from './routes/settings/sync/index'
+import { Route as SettingsSyncSetupRouteImport } from './routes/settings/sync/setup'
+import { Route as SettingsSyncSyncIdRouteImport } from './routes/settings/sync/$syncId'
 
 const TestRoomRoute = TestRoomRouteImport.update({
   id: '/test-room',
@@ -73,11 +75,6 @@ const SettingsUpdatesRoute = SettingsUpdatesRouteImport.update({
   path: '/settings/updates',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SettingsSyncRoute = SettingsSyncRouteImport.update({
-  id: '/settings/sync',
-  path: '/settings/sync',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SettingsSubtitlesRoute = SettingsSubtitlesRouteImport.update({
   id: '/settings/subtitles',
   path: '/settings/subtitles',
@@ -93,6 +90,21 @@ const CollectionNetworkRoute = CollectionNetworkRouteImport.update({
   path: '/collection/$network',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsSyncIndexRoute = SettingsSyncIndexRouteImport.update({
+  id: '/settings/sync/',
+  path: '/settings/sync/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsSyncSetupRoute = SettingsSyncSetupRouteImport.update({
+  id: '/settings/sync/setup',
+  path: '/settings/sync/setup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsSyncSyncIdRoute = SettingsSyncSyncIdRouteImport.update({
+  id: '/settings/sync/$syncId',
+  path: '/settings/sync/$syncId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/favorites': typeof FavoritesRoute
@@ -104,10 +116,12 @@ export interface FileRoutesByFullPath {
   '/collection/$network': typeof CollectionNetworkRoute
   '/room/$roomId': typeof RoomRoomIdRoute
   '/settings/subtitles': typeof SettingsSubtitlesRoute
-  '/settings/sync': typeof SettingsSyncRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/': typeof LayoutIndexRoute
   '/settings': typeof SettingsIndexRoute
+  '/settings/sync/$syncId': typeof SettingsSyncSyncIdRoute
+  '/settings/sync/setup': typeof SettingsSyncSetupRoute
+  '/settings/sync': typeof SettingsSyncIndexRoute
 }
 export interface FileRoutesByTo {
   '/favorites': typeof FavoritesRoute
@@ -119,10 +133,12 @@ export interface FileRoutesByTo {
   '/collection/$network': typeof CollectionNetworkRoute
   '/room/$roomId': typeof RoomRoomIdRoute
   '/settings/subtitles': typeof SettingsSubtitlesRoute
-  '/settings/sync': typeof SettingsSyncRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/': typeof LayoutIndexRoute
   '/settings': typeof SettingsIndexRoute
+  '/settings/sync/$syncId': typeof SettingsSyncSyncIdRoute
+  '/settings/sync/setup': typeof SettingsSyncSetupRoute
+  '/settings/sync': typeof SettingsSyncIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -136,10 +152,12 @@ export interface FileRoutesById {
   '/collection/$network': typeof CollectionNetworkRoute
   '/room/$roomId': typeof RoomRoomIdRoute
   '/settings/subtitles': typeof SettingsSubtitlesRoute
-  '/settings/sync': typeof SettingsSyncRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/_layout/': typeof LayoutIndexRoute
   '/settings/': typeof SettingsIndexRoute
+  '/settings/sync/$syncId': typeof SettingsSyncSyncIdRoute
+  '/settings/sync/setup': typeof SettingsSyncSetupRoute
+  '/settings/sync/': typeof SettingsSyncIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -153,10 +171,12 @@ export interface FileRouteTypes {
     | '/collection/$network'
     | '/room/$roomId'
     | '/settings/subtitles'
-    | '/settings/sync'
     | '/settings/updates'
     | '/'
     | '/settings'
+    | '/settings/sync/$syncId'
+    | '/settings/sync/setup'
+    | '/settings/sync'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/favorites'
@@ -168,10 +188,12 @@ export interface FileRouteTypes {
     | '/collection/$network'
     | '/room/$roomId'
     | '/settings/subtitles'
-    | '/settings/sync'
     | '/settings/updates'
     | '/'
     | '/settings'
+    | '/settings/sync/$syncId'
+    | '/settings/sync/setup'
+    | '/settings/sync'
   id:
     | '__root__'
     | '/_layout'
@@ -184,10 +206,12 @@ export interface FileRouteTypes {
     | '/collection/$network'
     | '/room/$roomId'
     | '/settings/subtitles'
-    | '/settings/sync'
     | '/settings/updates'
     | '/_layout/'
     | '/settings/'
+    | '/settings/sync/$syncId'
+    | '/settings/sync/setup'
+    | '/settings/sync/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -201,9 +225,11 @@ export interface RootRouteChildren {
   CollectionNetworkRoute: typeof CollectionNetworkRoute
   RoomRoomIdRoute: typeof RoomRoomIdRoute
   SettingsSubtitlesRoute: typeof SettingsSubtitlesRoute
-  SettingsSyncRoute: typeof SettingsSyncRoute
   SettingsUpdatesRoute: typeof SettingsUpdatesRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
+  SettingsSyncSyncIdRoute: typeof SettingsSyncSyncIdRoute
+  SettingsSyncSetupRoute: typeof SettingsSyncSetupRoute
+  SettingsSyncIndexRoute: typeof SettingsSyncIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -278,13 +304,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsUpdatesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/settings/sync': {
-      id: '/settings/sync'
-      path: '/settings/sync'
-      fullPath: '/settings/sync'
-      preLoaderRoute: typeof SettingsSyncRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/settings/subtitles': {
       id: '/settings/subtitles'
       path: '/settings/subtitles'
@@ -304,6 +323,27 @@ declare module '@tanstack/react-router' {
       path: '/collection/$network'
       fullPath: '/collection/$network'
       preLoaderRoute: typeof CollectionNetworkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/sync/': {
+      id: '/settings/sync/'
+      path: '/settings/sync'
+      fullPath: '/settings/sync'
+      preLoaderRoute: typeof SettingsSyncIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/sync/setup': {
+      id: '/settings/sync/setup'
+      path: '/settings/sync/setup'
+      fullPath: '/settings/sync/setup'
+      preLoaderRoute: typeof SettingsSyncSetupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/sync/$syncId': {
+      id: '/settings/sync/$syncId'
+      path: '/settings/sync/$syncId'
+      fullPath: '/settings/sync/$syncId'
+      preLoaderRoute: typeof SettingsSyncSyncIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -331,9 +371,11 @@ const rootRouteChildren: RootRouteChildren = {
   CollectionNetworkRoute: CollectionNetworkRoute,
   RoomRoomIdRoute: RoomRoomIdRoute,
   SettingsSubtitlesRoute: SettingsSubtitlesRoute,
-  SettingsSyncRoute: SettingsSyncRoute,
   SettingsUpdatesRoute: SettingsUpdatesRoute,
   SettingsIndexRoute: SettingsIndexRoute,
+  SettingsSyncSyncIdRoute: SettingsSyncSyncIdRoute,
+  SettingsSyncSetupRoute: SettingsSyncSetupRoute,
+  SettingsSyncIndexRoute: SettingsSyncIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
