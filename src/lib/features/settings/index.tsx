@@ -9,10 +9,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { isNativePlatform } from "@/lib/utils/native";
 import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
 
-const SETTINGS = [
+interface Setting {
+  name: string;
+  sub: Array<{
+    name: string;
+    href: string;
+    nativeOnly?: boolean;
+  }>;
+}
+
+const SETTINGS: Setting[] = [
   {
     name: "App",
     sub: [
@@ -27,6 +37,7 @@ const SETTINGS = [
       {
         name: "Subtitles",
         href: "/settings/subtitles",
+        nativeOnly: true,
       },
       {
         name: "Sync",
@@ -48,23 +59,27 @@ export default function AppSettingsFeature() {
           <div className="grid gap-4">
             <h3 className="text-lg font-semibold">{setting.name}</h3>
 
-            {setting.sub.map((subMenu) => (
-              <Link to={subMenu.href}>
-                <Button variant="ghost" className="justify-between w-full px-0">
-                  <span>{subMenu.name}</span>
-                  <ChevronRight className="w-4 h-4" />
-                </Button>
-              </Link>
-            ))}
+            {setting.sub.map((subMenu) => {
+              if (subMenu.nativeOnly && !isNativePlatform()) {
+                return null;
+              }
+
+              return (
+                <Link to={subMenu.href}>
+                  <Button
+                    variant="ghost"
+                    className="justify-between w-full px-0"
+                  >
+                    <span>{subMenu.name}</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+              );
+            })}
           </div>
         ))}
       </CardContent>
-      <CardFooter className="flex flex-col gap-2">
-        <Button className="w-full">Save Changes</Button>
-        <Button variant="outline" className="w-full bg-transparent">
-          Reset to Defaults
-        </Button>
-      </CardFooter>
+      <CardFooter className="flex flex-col gap-2"></CardFooter>
     </Card>
   );
 }

@@ -13,7 +13,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useP2P } from "@/lib/hooks/useP2P";
 import { useSyncStore } from "@/lib/stores/sync.store";
-import { p2pEventEmitter } from "@/lib/utils/p2pEvents";
 import { QrCode, RefreshCw, Shield, Smartphone, Wifi } from "lucide-react";
 import { toDataURL } from "qrcode";
 import { useEffect, useState } from "react";
@@ -24,7 +23,6 @@ export default function P2PSyncSetupFeature() {
   const { createRoomId, createRoom } = useP2P();
   const setSyncId = useSyncStore((state) => state.setSyncId);
   const syncId = useSyncStore((state) => state.syncId);
-  const setSetup = useSyncStore((state) => state.setSetup);
 
   useEffect(() => {
     if (!qrCodeData) {
@@ -39,27 +37,6 @@ export default function P2PSyncSetupFeature() {
       clearInterval(interval);
     };
   }, []);
-
-  useEffect(() => {
-    if (!syncId) return;
-
-    const { getAction, room, sendAction } = createRoom(syncId);
-
-    getAction((data) => {
-      console.log(data);
-    });
-
-    p2pEventEmitter.addListener("status", (status) => {
-      switch (status) {
-        case "JOINED":
-          setSetup(true);
-          break;
-
-        default:
-          break;
-      }
-    });
-  }, [syncId]);
 
   function generateRoomId() {
     const id = createRoomId();

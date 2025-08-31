@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
@@ -20,8 +21,6 @@ import {
   Clock,
   Download,
   Loader2,
-  Settings,
-  Upload,
   Users,
   Wifi,
   WifiOff,
@@ -37,6 +36,7 @@ export default function SyncSettingsFeature() {
   const [lastSyncTime, setLastSyncTime] = useState("2 minutes ago");
   const { toast } = useToast();
   const peers = useSyncStore((state) => state.peers);
+  const syncId = useSyncStore((state) => state.syncId);
   const availableCollections = useSyncStore(
     (state) => state.availableCollections
   );
@@ -114,9 +114,6 @@ export default function SyncSettingsFeature() {
               Manage your settings synchronization across devices
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Settings className="h-6 w-6 text-muted-foreground" />
-          </div>
         </div>
 
         {/* Sync Status Panel */}
@@ -151,7 +148,22 @@ export default function SyncSettingsFeature() {
                 {isSyncing ? "Syncing" : "Up to date"}
               </Badge>
             </div>
-
+            <div className="space-y-1">
+              <p className="text-sm font-medium">
+                Sync ID (Share this ID to connect other devices)
+              </p>
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                <Input className="max-w-xs" value={syncId} readOnly />
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    navigator.clipboard.writeText(syncId ?? "");
+                  }}
+                >
+                  Copy
+                </Button>
+              </p>
+            </div>
             {isSyncing && (
               <div className="space-y-2">
                 <Progress value={syncProgress} className="h-2" />
@@ -163,7 +175,7 @@ export default function SyncSettingsFeature() {
           </CardContent>
         </Card>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2 opacity-20 cursor-not-allowed pointer-events-none">
           {/* Export Functionality */}
           <Card>
             <CardHeader>
@@ -236,25 +248,6 @@ export default function SyncSettingsFeature() {
                   onCheckedChange={handleP2PConnect}
                 />
               </div>
-
-              <Button
-                onClick={handleSync}
-                disabled={!isP2PEnabled || isSyncing}
-                variant="secondary"
-                className="w-full"
-              >
-                {isSyncing ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Syncing...
-                  </>
-                ) : (
-                  <>
-                    <Upload className="mr-2 h-4 w-4" />
-                    Sync Now
-                  </>
-                )}
-              </Button>
             </CardContent>
           </Card>
         </div>
