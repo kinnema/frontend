@@ -175,9 +175,9 @@ export default function SyncSettingsFeature() {
           </CardContent>
         </Card>
 
-        <div className="grid gap-6 md:grid-cols-2 opacity-20 cursor-not-allowed pointer-events-none">
+        <div className="grid gap-6 md:grid-cols-2">
           {/* Export Functionality */}
-          <Card>
+          <Card className="opacity-20 cursor-not-allowed pointer-events-none">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Download className="h-5 w-5 text-primary" />
