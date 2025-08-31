@@ -1,6 +1,4 @@
 import { ISubtitleResult } from "@/lib/types/subtitle.type";
-import { appCacheDir, join } from "@tauri-apps/api/path";
-import { BaseDirectory, mkdir } from "@tauri-apps/plugin-fs";
 
 export abstract class AbstractSubtitleService {
   protected tempDir: string | null = null;
@@ -16,21 +14,21 @@ export abstract class AbstractSubtitleService {
     if (this.tempDir) {
       return this.tempDir;
     }
+    const appDir = await window.electronAPI.fs.tempDir();
+    if (!appDir) {
+      throw new Error("Failed to get temp directory from Electron API");
+    }
+    const tempDir = await window.electronAPI.fs.join(appDir, "subtitles");
 
     try {
-      const appDir = await appCacheDir();
-      const tempDir = await join(appDir, "subtitles");
-
-      await mkdir("subtitles", {
-        recursive: true,
-        baseDir: BaseDirectory.AppCache,
-      });
+      await window.electronAPI.fs.createDir("subtitles");
 
       this.tempDir = tempDir;
       return tempDir;
     } catch (error) {
-      console.error("Failed to create temporary directory:", error);
-      throw error;
+      console.log("Temp dir already exists, skipping");
+
+      return tempDir;
     }
   }
 

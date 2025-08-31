@@ -1,6 +1,10 @@
 import { Capacitor } from "@capacitor/core";
-import { isTauri } from "@tauri-apps/api/core";
+
+export const isElectron = () => {
+  console.log(window.electronAPI);
+  return typeof window !== "undefined" && window.electronAPI !== undefined;
+};
 
 export function isNativePlatform() {
-  return isTauri() || Capacitor.isNativePlatform();
+  return isElectron() || Capacitor.isNativePlatform();
 }

@@ -2,13 +2,24 @@
   "name": "frontend",
   "version": "0.2.0",
   "private": true,
+  "main": "electron/dist/main.js",
+  "homepage": "./",
   "packageManager": "pnpm@10.15.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "start": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "generate-api": "npx @openapitools/openapi-generator-cli generate -i openapi.yaml -g typescript-fetch -o lib/api"
+    "generate-api": "npx @openapitools/openapi-generator-cli generate -i openapi.yaml -g typescript-fetch -o lib/api",
+    "electron:compile": "cd electron && tsc",
+    "electron:compile:watch": "cd electron && tsc --watch",
+    "electron": "pnpm electron:compile && NODE_ENV=development electron electron/dist/main.js",
+    "electron:dev": "concurrently \"pnpm dev\" \"pnpm electron:compile:watch\" \"wait-on http://localhost:3000 && wait-on electron/dist/main.js && NODE_ENV=development electron electron/dist/main.js\"",
+    "electron:build": "pnpm electron:compile && ELECTRON=true pnpm build && electron-builder",
+    "electron:build:win": "pnpm electron:compile && ELECTRON=true pnpm build && electron-builder --win",
+    "electron:build:mac": "pnpm electron:compile && ELECTRON=true pnpm build && electron-builder --mac",
+    "electron:build:linux": "pnpm electron:compile && ELECTRON=true pnpm build && electron-builder --linux",
+    "dev:electron": "pnpm electron:dev"
   },
   "dependencies": {
     "@capacitor-community/safe-area": "^7.0.0-alpha.1",
@@ -39,9 +50,6 @@
     "@tanstack/router-devtools": "^1.129.5",
     "@tanstack/router-vite-plugin": "^1.129.5",
     "@tanstack/zod-adapter": "^1.129.8",
-    "@tauri-apps/api": "^2.8.0",
-    "@tauri-apps/plugin-fs": "~2.4.2",
-    "@tauri-apps/plugin-shell": "~2.3.1",
     "@typescript-eslint/eslint-plugin": "^8.38.0",
     "@typescript-eslint/parser": "^8.38.0",
     "@vitejs/plugin-react-swc": "^3.11.0",
@@ -87,7 +95,6 @@
   "devDependencies": {
     "@capacitor/cli": "^7.4.2",
     "@tanstack/router-plugin": "^1.130.10",
-    "@tauri-apps/cli": "^2.8.2",
     "@types/events": "^3.0.3",
     "@types/lodash": "^4.17.4",
     "@types/node": "^20",
@@ -96,18 +103,33 @@
     "@types/react-dom": "19.0.3",
     "@types/react-modal": "^3.16.3",
     "@types/semver": "^7.7.0",
+    "@types/unzipper": "^0.10.11",
     "autoprefixer": "^10.4.21",
+    "concurrently": "^9.2.1",
     "dotenv": "^17.2.0",
+    "electron": "^37.4.0",
+    "electron-builder": "^26.0.12",
     "postcss": "^8.5.6",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^3.4.17",
+    "ts-node": "^10.9.2",
     "typescript": "^5",
+    "unzipper": "^0.12.3",
     "vite-plugin-node-polyfills": "^0.24.0",
     "vite-plugin-pwa": "^1.0.2",
-    "vite-plugin-top-level-await": "^1.6.0"
+    "vite-plugin-top-level-await": "^1.6.0",
+    "wait-on": "^8.0.4"
   },
   "overrides": {
     "@types/react": "19.0.8",
     "@types/react-dom": "19.0.3"
-  }
+  },
+  "build": {
+    "extends": "./electron-builder.json"
+  },
+  "files": [
+    "*.js",
+    "dist",
+    "node_modules"
+  ]
 }

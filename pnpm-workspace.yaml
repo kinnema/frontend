@@ -1,6 +1,7 @@
 onlyBuiltDependencies:
   - '@firebase/util'
   - '@swc/core'
+  - electron-winstaller
   - esbuild
   - protobufjs
   - rxdb
