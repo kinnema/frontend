@@ -2,7 +2,7 @@ import { BehaviorSubject } from "rxjs";
 
 export enum AvailableCollectionForSync {
   LastWatchedCollection = "lastWatched",
-  FavoritesCollection = "favorites",
+  FavoritesCollection = "favorite",
 }
 
 export interface ICollectionSettingSync {

@@ -8,8 +8,8 @@ import type {
   WebRTCMessage,
 } from "rxdb/plugins/replication-webrtc";
 import { Subject } from "rxjs";
-import type { BaseRoomConfig } from "trystero";
-import { joinRoom, Room } from "trystero";
+import type { BaseRoomConfig } from "trystero/torrent";
+import { joinRoom, Room } from "trystero/torrent";
 
 type PeerId = string;
 
