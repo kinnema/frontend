@@ -10,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useP2P } from "@/lib/hooks/useP2P";
 import { useSyncStore } from "@/lib/stores/sync.store";
-import { p2pEventEmitter } from "@/lib/utils/p2pEvents";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
@@ -24,7 +23,6 @@ function RouteComponent() {
   const setSyncId = useSyncStore((state) => state.setSyncId);
   const syncId = useSyncStore((state) => state.syncId);
   const [manualSyncId, setManualSyncId] = useState("");
-  const setSetup = useSyncStore((state) => state.setSetup);
 
   // Set syncId from URL on component mount
   useEffect(() => {
@@ -42,17 +40,6 @@ function RouteComponent() {
 
     getAction((data: unknown) => {
       console.log("Data received from peer:", data);
-    });
-
-    p2pEventEmitter.addListener("status", (status) => {
-      switch (status) {
-        case "JOINED":
-          setSetup(true);
-          break;
-
-        default:
-          break;
-      }
     });
 
     // We can also send a message back
