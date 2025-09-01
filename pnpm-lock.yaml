@@ -197,6 +197,9 @@ importers:
       typed-emitter:
         specifier: ^2.1.0
         version: 2.1.0
+      unzipper:
+        specifier: ^0.12.3
+        version: 0.12.3
       uuid:
         specifier: ^11.1.0
         version: 11.1.0
@@ -279,9 +282,6 @@ importers:
       typescript:
         specifier: ^5
         version: 5.9.2
-      unzipper:
-        specifier: ^0.12.3
-        version: 0.12.3
       vite-plugin-node-polyfills:
         specifier: ^0.24.0
         version: 0.24.0(rollup@2.79.2)(vite@7.0.6(@types/node@20.19.9)(jiti@1.21.7)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))
