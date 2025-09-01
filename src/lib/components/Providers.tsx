@@ -51,14 +51,13 @@ export const Providers = ({
   }, []);
 
   useEffect(() => {
-    pluginManager.events.subscribe((event: IPluginEventData) => {
+    const sub = pluginManager.events.subscribe((event: IPluginEventData) => {
       console.log("Received event:", event);
       setData((prev) => [...prev, event]);
     });
 
     return () => {
-      pluginManager.events.unsubscribe();
-      pluginManager.events;
+      sub.unsubscribe();
     };
   }, []);
 

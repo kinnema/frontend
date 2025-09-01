@@ -1,9 +1,10 @@
-import EventEmitter from "events";
-import TypedEmitter from "typed-emitter";
+import { finalize } from "rxjs";
+import { Subject } from "rxjs/internal/Subject";
 
-type VideoEvents = {
-  loadVideo: (videoUrl: string) => void;
-};
+export const loadedVideoUrl$ = new Subject<string | undefined>();
 
-export const videoEventEmitter =
-  new EventEmitter() as TypedEmitter<VideoEvents>;
+loadedVideoUrl$.pipe(
+  finalize(() => {
+    loadedVideoUrl$.next(undefined);
+  })
+);

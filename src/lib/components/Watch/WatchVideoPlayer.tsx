@@ -1,7 +1,7 @@
 import { useHlsPlayer } from "@/lib/hooks";
 import { useWatchStore } from "@/lib/stores/watch.store";
 import { isNativePlatform } from "@/lib/utils/native";
-import { videoEventEmitter } from "@/lib/utils/videoEvents";
+import { loadedVideoUrl$ } from "@/lib/utils/videoEvents";
 import MediaThemeSutro from "player.style/sutro/react";
 import { useEffect } from "react";
 
@@ -42,7 +42,10 @@ export function WatchVideoPlayer({
         await document.exitPictureInPicture();
       }
     };
-    videoEventEmitter.addListener("loadVideo", async (url) => {
+
+    const sub = loadedVideoUrl$.subscribe(async (url) => {
+      if (!url) return;
+
       await loadSource(url);
 
       videoRef.current?.addEventListener("loadeddata", handleLoadedData);
@@ -53,7 +56,7 @@ export function WatchVideoPlayer({
     return () => {
       document.exitPictureInPicture();
       document.removeEventListener("visibilitychange", pipMode);
-      videoEventEmitter.removeAllListeners();
+      sub.unsubscribe();
       videoRef.current?.removeEventListener("loadeddata", handleLoadedData);
       destroy();
     };

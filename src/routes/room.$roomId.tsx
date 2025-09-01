@@ -12,7 +12,7 @@ import {
   P2PCreateAction,
 } from "@/lib/types/p2p.types";
 import { p2pEventEmitter } from "@/lib/utils/p2pEvents";
-import { videoEventEmitter } from "@/lib/utils/videoEvents";
+import { loadedVideoUrl$ } from "@/lib/utils/videoEvents";
 import { createFileRoute, redirect, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -222,8 +222,7 @@ function RouteComponent() {
         console.log("P2P: RECEIVED INFO", data);
         if (data.command === "DATA") {
           setVideoRoomDetails(data.payload as IWatchTogetherRoom);
-          videoEventEmitter.emit(
-            "loadVideo",
+          loadedVideoUrl$.next(
             (data.payload as IWatchTogetherRoom).watchLink ?? ""
           );
         }
@@ -262,7 +261,7 @@ function RouteComponent() {
   useEffect(() => {
     if (peers.length > 0 && isRoomCreator && roomStore) {
       console.log("P2P VIDEO", "Loading video", roomStore.watchLink);
-      videoEventEmitter.emit("loadVideo", roomStore.watchLink);
+      loadedVideoUrl$.next(roomStore.watchLink);
     }
   }, [peers, roomStore, isRoomCreator]);
 

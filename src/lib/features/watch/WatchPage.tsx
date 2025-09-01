@@ -13,7 +13,7 @@ import TmdbService from "@/lib/services/tmdb.service";
 import { useWatchStore } from "@/lib/stores/watch.store";
 import { Episode, ITmdbSerieDetails } from "@/lib/types/tmdb";
 import { isNativePlatform } from "@/lib/utils/native";
-import { videoEventEmitter } from "@/lib/utils/videoEvents";
+import { loadedVideoUrl$ } from "@/lib/utils/videoEvents";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { v4 } from "uuid";
@@ -44,7 +44,7 @@ export default function ChapterPage({
 
   useEffect(() => {
     if (selectedWatchLink) {
-      videoEventEmitter.emit("loadVideo", selectedWatchLink);
+      loadedVideoUrl$.next(selectedWatchLink);
     }
   }, [selectedWatchLink]);
 
