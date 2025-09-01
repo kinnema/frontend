@@ -64,7 +64,6 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "eventemitter3": "^5.0.1",
-    "events": "^3.3.0",
     "hls.js": "^1.6.7",
     "i18next": "^23.11.5",
     "idb-keyval": "^6.2.2",
@@ -97,7 +96,6 @@
   "devDependencies": {
     "@capacitor/cli": "^7.4.2",
     "@tanstack/router-plugin": "^1.130.10",
-    "@types/events": "^3.0.3",
     "@types/lodash": "^4.17.4",
     "@types/node": "^20",
     "@types/qrcode": "^1.5.5",
