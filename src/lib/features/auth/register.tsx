@@ -1,7 +1,5 @@
 "use client";
 
-import { registerServerAction } from "@/app/actions/auth/registerAction";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -9,9 +7,8 @@ import {
   REGISTER_FORM_VALIDATION,
 } from "@/lib/forms/register.form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
-import { startTransition, useActionState, useEffect } from "react";
+import { startTransition } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 export default function RegisterModule() {
@@ -25,40 +22,40 @@ export default function RegisterModule() {
   });
   const toast = useToast();
   const navigate = useNavigate();
-  const [state, action, pending] = useActionState(registerServerAction, {
-    message: "",
-    success: false,
-  });
+  // const [state, action, pending] = useActionState(registerServerAction, {
+  //   message: "",
+  //   success: false,
+  // });
 
-  useEffect(() => {
-    if (state.success) {
-      toast.toast({
-        title: "Kayıt başarılı",
-        description: "Lütfen Giris Yapiniz, yönlendiriliyorsunuz...",
-        variant: "default",
-      });
+  // useEffect(() => {
+  //   if (state.success) {
+  //     toast.toast({
+  //       title: "Kayıt başarılı",
+  //       description: "Lütfen Giris Yapiniz, yönlendiriliyorsunuz...",
+  //       variant: "default",
+  //     });
 
-      startTransition(() => {
-        setTimeout(() => {
-          router.back();
-        }, 1000);
-      });
+  //     startTransition(() => {
+  //       setTimeout(() => {
+  //         router.back();
+  //       }, 1000);
+  //     });
 
-      return;
-    }
+  //     return;
+  //   }
 
-    if (state.message) {
-      toast.toast({
-        title: "Kayıt başarısız",
-        description: state.message,
-        variant: "destructive",
-      });
-    }
-  }, [state]);
+  //   if (state.message) {
+  //     toast.toast({
+  //       title: "Kayıt başarısız",
+  //       description: state.message,
+  //       variant: "destructive",
+  //     });
+  //   }
+  // }, [state]);
 
   const onSubmit: SubmitHandler<REGISTER_FORM_INPUTS> = async (data) => {
     startTransition(() => {
-      action(data);
+      // action(data);
     });
   };
 
@@ -114,7 +111,7 @@ export default function RegisterModule() {
           )}
         </div>
 
-        <Button type="submit" disabled={pending}>
+        {/* <Button type="submit" disabled={pending}>
           {pending ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -123,7 +120,7 @@ export default function RegisterModule() {
           ) : (
             "Kayıt ol"
           )}
-        </Button>
+        </Button> */}
       </form>
     </div>
   );

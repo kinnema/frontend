@@ -7,7 +7,6 @@ import { Loading } from "@/lib/components/Loading";
 import { FavoriteButton } from "@/lib/components/User/FavoriteButton";
 import { tmdbPoster } from "@/lib/helpers";
 import TmdbService from "@/lib/services/tmdb.service";
-import { useAuthStore } from "@/lib/stores/auth.store";
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { ITmdbSerieDetails } from "@/lib/types/tmdb";
 import { useQuery } from "@tanstack/react-query";
@@ -22,8 +21,6 @@ interface IProps {
 }
 
 export function SerieDialogFeature({ params }: IProps) {
-  const isAuthenticated = useAuthStore((state) => state.isLoggedIn);
-
   const tmdbDetailsData = useQuery<ITmdbSerieDetails>({
     queryKey: ["tmdb-details-with-season", params.slug, params.tmdbId],
     queryFn: async () => {
