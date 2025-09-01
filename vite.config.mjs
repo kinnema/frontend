@@ -2,12 +2,10 @@ import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react-swc";
 import { defineConfig } from "vite";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
-import { VitePWA } from "vite-plugin-pwa";
 import topLevelAwait from "vite-plugin-top-level-await";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 const isElectron = process.env.ELECTRON === "true";
-const isTauri = process.env.TAURI_ENV_ARCH !== undefined;
 
 export default defineConfig({
   plugins: [
@@ -22,16 +20,6 @@ export default defineConfig({
       autoCodeSplitting: true,
     }),
     react(),
-    VitePWA({
-      registerType: "autoUpdate",
-      manifest: "public/manifest.json",
-      minify: true,
-      disable: isTauri || isElectron,
-      workbox: {
-        //FIXME: delete this
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
-      },
-    }),
   ],
 
   define: {

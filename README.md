@@ -14,7 +14,6 @@ Kinnema is a modern movie application that provide users with a seamless experie
 - **Continue Watching:** Resume watching from where you left off.
 - **Responsive UI:** Optimized for all devices with a clean, modern design.
 - **API Integration:** Powered by TMDB for rich metadata and streaming links.
-
 - **Desktop / Electron support:** Desktop builds and improved Electron initialization and routing for a native desktop experience. (See <attachments> above for file contents.)
 - **Multilingual (i18n):** Integrated i18next for multilingual support and translations. (See <attachments> above for file contents.)
 - **Subtitles manager:** Added a subtitle manager for better subtitle handling, encoding support, and configuration. (See <attachments> above for file contents.)
@@ -27,13 +26,12 @@ Kinnema is a modern movie application that provide users with a seamless experie
 
 ## Tech Stack
 
-- **Framework:** [Next.js](https://nextjs.org/)
+- **Framework:** Vite/React
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS
 - **API:** TMDB
-- **State Management:** Custom hooks and stores
+- **State Management:** Custom hooks and Zustand
 - **Icons:** Lucide-react
-- **PWA:** Manifest and service worker support
 
 ## Project Structure
 

@@ -117,7 +117,6 @@
     "ts-node": "^10.9.2",
     "typescript": "^5",
     "vite-plugin-node-polyfills": "^0.24.0",
-    "vite-plugin-pwa": "^1.0.2",
     "vite-plugin-top-level-await": "^1.6.0",
     "wait-on": "^8.0.4"
   },
