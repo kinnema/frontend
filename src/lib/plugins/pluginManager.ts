@@ -1,12 +1,11 @@
 import { CapacitorHttp } from "@capacitor/core";
-import EventEmitter from "eventemitter3";
-import TypedEventEmitter from "typed-emitter";
+import { Subject } from "rxjs";
 import { IPluginEndpointResponse } from "../types/plugin.type";
-import { IPluginEventEmitter } from "../types/pluginEvents.type";
+import { IPluginEventData } from "../types/pluginEvents.type";
 import { usePluginRegistry } from "./usePluginRegistry";
 
 export class PluginManager {
-  eventEmitter = new EventEmitter() as TypedEventEmitter<IPluginEventEmitter>;
+  events = new Subject<IPluginEventData>();
   pluginRegistry = usePluginRegistry;
   async fetchSource(params: { id: string; season?: number; chapter?: number }) {
     try {
@@ -58,7 +57,7 @@ export class PluginManager {
     if (params.chapter) {
       url.searchParams.set("chapter", params.chapter.toString());
     }
-    this.eventEmitter.emit("event", {
+    this.events.next({
       type: "trying_provider",
       data: {
         pluginId: plugin.id,
@@ -70,7 +69,7 @@ export class PluginManager {
     });
 
     if (response.status === 404) {
-      this.eventEmitter.emit("event", {
+      this.events.next({
         type: "provider_failed",
         data: {
           pluginId: plugin.id,
@@ -80,7 +79,7 @@ export class PluginManager {
     }
 
     if (response.status !== 200) {
-      this.eventEmitter.emit("event", {
+      this.events.next({
         type: "provider_failed",
         data: {
           pluginId: plugin.id,
@@ -92,7 +91,7 @@ export class PluginManager {
     const { data, type, subtitles } =
       (await response.data) as IPluginEndpointResponse;
 
-    this.eventEmitter.emit("event", {
+    this.events.next({
       type: "provider_success",
       data: {
         pluginId: plugin.id,

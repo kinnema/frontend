@@ -6,11 +6,16 @@ interface IPluginEventEmitterTryingPayload {
 
 type IPluginEventEmitterFailedPayload = IPluginEventEmitterTryingPayload;
 
-interface IPluginEventEmitterSuccessPayload {
+export interface IPluginEventEmitterSuccessPayload {
   pluginId: string;
   url: string;
   subtitles?: IPluginEndpointSubtitle[];
 }
+
+export type IPluginEventType =
+  | "trying_provider"
+  | "provider_success"
+  | "provider_failed";
 
 export interface IPluginEventEmitterTryingProvider {
   type: "trying_provider";
@@ -35,4 +40,11 @@ export type IPluginEvent =
 export type IPluginEventEmitter = {
   event: (event: IPluginEvent) => void;
   end: () => void;
+};
+export type IPluginEventData = {
+  type: IPluginEventType;
+  data:
+    | IPluginEventEmitterTryingPayload
+    | IPluginEventEmitterSuccessPayload
+    | IPluginEventEmitterFailedPayload;
 };

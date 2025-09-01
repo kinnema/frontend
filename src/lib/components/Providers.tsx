@@ -7,7 +7,10 @@ import { pluginManager } from "../plugins/pluginManager";
 import { usePluginRegistry } from "../plugins/usePluginRegistry";
 import { useWatchStore } from "../stores/watch.store";
 import { IPlugin } from "../types/plugin.type";
-import { IPluginEvent } from "../types/pluginEvents.type";
+import {
+  IPluginEventData,
+  IPluginEventEmitterSuccessPayload,
+} from "../types/pluginEvents.type";
 import { isNativePlatform } from "../utils/native";
 
 const MotionCard = motion.create(Card);
@@ -24,7 +27,7 @@ export const Providers = ({
   const setSubtitles = useWatchStore((state) => state.setSubtitles);
   const [providers, setProviders] = useState<IPlugin[]>([]);
   const { getPluginsByType } = usePluginRegistry();
-  const [data, setData] = useState<IPluginEvent[]>([]);
+  const [data, setData] = useState<IPluginEventData[]>([]);
 
   // Fetch providers and events from the store
   useEffect(() => {
@@ -48,13 +51,14 @@ export const Providers = ({
   }, []);
 
   useEffect(() => {
-    pluginManager.eventEmitter.on("event", (event: IPluginEvent) => {
+    pluginManager.events.subscribe((event: IPluginEventData) => {
       console.log("Received event:", event);
       setData((prev) => [...prev, event]);
     });
 
     return () => {
-      pluginManager.eventEmitter.removeAllListeners();
+      pluginManager.events.unsubscribe();
+      pluginManager.events;
     };
   }, []);
 
@@ -99,11 +103,12 @@ export const Providers = ({
               whileTap={{ scale: isSuccess || isLoading ? 0.98 : 1 }}
               onClick={() => {
                 if (isSuccess && event?.type === "provider_success") {
+                  const data = event.data as IPluginEventEmitterSuccessPayload;
                   const watchData = {
-                    provider: event.data.pluginId,
-                    url: event.data.url,
+                    provider: data.pluginId,
+                    url: data.url,
                   };
-                  setSubtitles(event.data.subtitles);
+                  setSubtitles(data.subtitles);
                   setSelectedWatchLink(watchData.url);
                 }
               }}
