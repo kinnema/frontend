@@ -20,6 +20,7 @@ import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as SettingsUpdatesRouteImport } from './routes/settings/updates'
 import { Route as SettingsSubtitlesRouteImport } from './routes/settings/subtitles'
+import { Route as SettingsLanguageRouteImport } from './routes/settings/language'
 import { Route as RoomRoomIdRouteImport } from './routes/room.$roomId'
 import { Route as CollectionNetworkRouteImport } from './routes/collection.$network'
 import { Route as SettingsSyncIndexRouteImport } from './routes/settings/sync/index'
@@ -80,6 +81,11 @@ const SettingsSubtitlesRoute = SettingsSubtitlesRouteImport.update({
   path: '/settings/subtitles',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsLanguageRoute = SettingsLanguageRouteImport.update({
+  id: '/settings/language',
+  path: '/settings/language',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RoomRoomIdRoute = RoomRoomIdRouteImport.update({
   id: '/room/$roomId',
   path: '/room/$roomId',
@@ -115,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/test-room': typeof TestRoomRoute
   '/collection/$network': typeof CollectionNetworkRoute
   '/room/$roomId': typeof RoomRoomIdRoute
+  '/settings/language': typeof SettingsLanguageRoute
   '/settings/subtitles': typeof SettingsSubtitlesRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/': typeof LayoutIndexRoute
@@ -132,6 +139,7 @@ export interface FileRoutesByTo {
   '/test-room': typeof TestRoomRoute
   '/collection/$network': typeof CollectionNetworkRoute
   '/room/$roomId': typeof RoomRoomIdRoute
+  '/settings/language': typeof SettingsLanguageRoute
   '/settings/subtitles': typeof SettingsSubtitlesRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/': typeof LayoutIndexRoute
@@ -151,6 +159,7 @@ export interface FileRoutesById {
   '/test-room': typeof TestRoomRoute
   '/collection/$network': typeof CollectionNetworkRoute
   '/room/$roomId': typeof RoomRoomIdRoute
+  '/settings/language': typeof SettingsLanguageRoute
   '/settings/subtitles': typeof SettingsSubtitlesRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/_layout/': typeof LayoutIndexRoute
@@ -170,6 +179,7 @@ export interface FileRouteTypes {
     | '/test-room'
     | '/collection/$network'
     | '/room/$roomId'
+    | '/settings/language'
     | '/settings/subtitles'
     | '/settings/updates'
     | '/'
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/test-room'
     | '/collection/$network'
     | '/room/$roomId'
+    | '/settings/language'
     | '/settings/subtitles'
     | '/settings/updates'
     | '/'
@@ -205,6 +216,7 @@ export interface FileRouteTypes {
     | '/test-room'
     | '/collection/$network'
     | '/room/$roomId'
+    | '/settings/language'
     | '/settings/subtitles'
     | '/settings/updates'
     | '/_layout/'
@@ -224,6 +236,7 @@ export interface RootRouteChildren {
   TestRoomRoute: typeof TestRoomRoute
   CollectionNetworkRoute: typeof CollectionNetworkRoute
   RoomRoomIdRoute: typeof RoomRoomIdRoute
+  SettingsLanguageRoute: typeof SettingsLanguageRoute
   SettingsSubtitlesRoute: typeof SettingsSubtitlesRoute
   SettingsUpdatesRoute: typeof SettingsUpdatesRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
@@ -311,6 +324,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsSubtitlesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/language': {
+      id: '/settings/language'
+      path: '/settings/language'
+      fullPath: '/settings/language'
+      preLoaderRoute: typeof SettingsLanguageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/room/$roomId': {
       id: '/room/$roomId'
       path: '/room/$roomId'
@@ -370,6 +390,7 @@ const rootRouteChildren: RootRouteChildren = {
   TestRoomRoute: TestRoomRoute,
   CollectionNetworkRoute: CollectionNetworkRoute,
   RoomRoomIdRoute: RoomRoomIdRoute,
+  SettingsLanguageRoute: SettingsLanguageRoute,
   SettingsSubtitlesRoute: SettingsSubtitlesRoute,
   SettingsUpdatesRoute: SettingsUpdatesRoute,
   SettingsIndexRoute: SettingsIndexRoute,

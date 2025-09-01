@@ -7,20 +7,24 @@ interface INavLinks {
   name: string;
   href?: string;
   type?: "link" | "divider";
+  translationKey?: string;
 }
 
 export const NAV_LINKS: INavLinks[] = [
   {
     name: "Ana Sayfa",
     href: "/",
+    translationKey: "nav.home",
   },
   {
     name: "Ayarlar",
     href: "/settings",
+    translationKey: "nav.settings",
   },
   {
     name: "Eklentiler",
     href: "/plugins",
+    translationKey: "nav.plugins",
   },
   {
     name: uniqueId(),

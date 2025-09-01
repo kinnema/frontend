@@ -7,11 +7,13 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Loading } from "../../components/Loading";
 import TmdbService from "../../services/tmdb.service";
 import { ITmdbSearchResults, Result } from "../../types/tmdb";
 
 export function SearchFeature() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState<string>("");
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchParams = useSearch({ from: "/search" });
@@ -59,7 +61,7 @@ export function SearchFeature() {
               ref={searchInputRef}
               type="search"
               defaultValue={search}
-              placeholder="Film, dizi ve belgesel ara..."
+              placeholder={t("search.placeholder")}
               className="pl-10 bg-zinc-900 border-zinc-800 text-white w-full"
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -82,7 +84,7 @@ export function SearchFeature() {
               ))
             ) : isFetched && data?.results.length === 0 ? (
               <div className="col-span-5 text-center text-gray-500">
-                Arama sonuç bulunamadı.
+                {t("search.noResults")}
               </div>
             ) : (
               data?.results.map((show) => (

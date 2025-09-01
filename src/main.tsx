@@ -9,6 +9,7 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import React from "react";
 import ReactDOM from "react-dom/client";
+import "./lib/i18n";
 import { isElectron } from "./lib/utils/native";
 import { routeTree } from "./routeTree.gen";
 
