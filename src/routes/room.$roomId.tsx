@@ -22,7 +22,7 @@ import {
   DataPayload,
   Room,
   selfId,
-} from "trystero";
+} from "trystero/torrent";
 
 export const Route = createFileRoute("/room/$roomId")({
   component: RouteComponent,

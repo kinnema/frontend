@@ -1,4 +1,4 @@
-import { BaseRoomConfig, RelayConfig, TurnConfig } from "trystero";
+import type { BaseRoomConfig, RelayConfig, TurnConfig } from "trystero/torrent";
 
 const password = import.meta.env.VITE_P2P_KEY;
 const _TURN_SERVER =

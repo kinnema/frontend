@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TestRoomRouteImport } from './routes/test-room'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PluginsRouteImport } from './routes/plugins'
@@ -27,11 +26,6 @@ import { Route as SettingsSyncIndexRouteImport } from './routes/settings/sync/in
 import { Route as SettingsSyncSetupRouteImport } from './routes/settings/sync/setup'
 import { Route as SettingsSyncSyncIdRouteImport } from './routes/settings/sync/$syncId'
 
-const TestRoomRoute = TestRoomRouteImport.update({
-  id: '/test-room',
-  path: '/test-room',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
@@ -118,7 +112,6 @@ export interface FileRoutesByFullPath {
   '/plugins': typeof PluginsRoute
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
-  '/test-room': typeof TestRoomRoute
   '/collection/$network': typeof CollectionNetworkRoute
   '/room/$roomId': typeof RoomRoomIdRoute
   '/settings/language': typeof SettingsLanguageRoute
@@ -136,7 +129,6 @@ export interface FileRoutesByTo {
   '/plugins': typeof PluginsRoute
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
-  '/test-room': typeof TestRoomRoute
   '/collection/$network': typeof CollectionNetworkRoute
   '/room/$roomId': typeof RoomRoomIdRoute
   '/settings/language': typeof SettingsLanguageRoute
@@ -156,7 +148,6 @@ export interface FileRoutesById {
   '/plugins': typeof PluginsRoute
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
-  '/test-room': typeof TestRoomRoute
   '/collection/$network': typeof CollectionNetworkRoute
   '/room/$roomId': typeof RoomRoomIdRoute
   '/settings/language': typeof SettingsLanguageRoute
@@ -176,7 +167,6 @@ export interface FileRouteTypes {
     | '/plugins'
     | '/register'
     | '/search'
-    | '/test-room'
     | '/collection/$network'
     | '/room/$roomId'
     | '/settings/language'
@@ -194,7 +184,6 @@ export interface FileRouteTypes {
     | '/plugins'
     | '/register'
     | '/search'
-    | '/test-room'
     | '/collection/$network'
     | '/room/$roomId'
     | '/settings/language'
@@ -213,7 +202,6 @@ export interface FileRouteTypes {
     | '/plugins'
     | '/register'
     | '/search'
-    | '/test-room'
     | '/collection/$network'
     | '/room/$roomId'
     | '/settings/language'
@@ -233,7 +221,6 @@ export interface RootRouteChildren {
   PluginsRoute: typeof PluginsRoute
   RegisterRoute: typeof RegisterRoute
   SearchRoute: typeof SearchRoute
-  TestRoomRoute: typeof TestRoomRoute
   CollectionNetworkRoute: typeof CollectionNetworkRoute
   RoomRoomIdRoute: typeof RoomRoomIdRoute
   SettingsLanguageRoute: typeof SettingsLanguageRoute
@@ -247,13 +234,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/test-room': {
-      id: '/test-room'
-      path: '/test-room'
-      fullPath: '/test-room'
-      preLoaderRoute: typeof TestRoomRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/search': {
       id: '/search'
       path: '/search'
@@ -387,7 +367,6 @@ const rootRouteChildren: RootRouteChildren = {
   PluginsRoute: PluginsRoute,
   RegisterRoute: RegisterRoute,
   SearchRoute: SearchRoute,
-  TestRoomRoute: TestRoomRoute,
   CollectionNetworkRoute: CollectionNetworkRoute,
   RoomRoomIdRoute: RoomRoomIdRoute,
   SettingsLanguageRoute: SettingsLanguageRoute,
