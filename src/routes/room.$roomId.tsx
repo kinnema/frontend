@@ -11,10 +11,11 @@ import {
   P2PAction,
   P2PCreateAction,
 } from "@/lib/types/p2p.types";
-import { p2pEventEmitter } from "@/lib/utils/p2pEvents";
+import { p2pEvents } from "@/lib/utils/p2pEvents";
 import { loadedVideoUrl$ } from "@/lib/utils/videoEvents";
 import { createFileRoute, redirect, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Subscription } from "rxjs";
 import {
   ActionReceiver,
   ActionSender,
@@ -124,11 +125,9 @@ function RouteComponent() {
 
     if (!videoRef.current) return;
 
-    console.log("ROOM COMMAND: ", payload);
-
     switch (command) {
       case "PAUSE":
-        videoRef.current.currentTime = data as number;
+        videoRef.current?.pause();
         break;
 
       case "PLAY":
@@ -164,6 +163,12 @@ function RouteComponent() {
   }
 
   function handleTimeUpdate() {
+    if (!sendRoomAction.current || !videoRef.current) return;
+
+    sendRoomAction.current({
+      command: "PLAY",
+      payload: videoRef.current?.currentTime ?? 0,
+    });
     setCurrentVideoTime(formatTime(videoRef.current?.currentTime ?? 0));
   }
 
@@ -177,6 +182,9 @@ function RouteComponent() {
       P2PAction.INFO,
       _room
     );
+    let statusSubscription: Subscription;
+    let loadedVideoSubscription: Subscription;
+    let commandSubscription: Subscription;
 
     if (!_infoAction) return;
 
@@ -189,32 +197,38 @@ function RouteComponent() {
         adminId: selfId,
       });
 
-      p2pEventEmitter.addListener("status", async (status, peerId) => {
-        if (status === "JOINED") {
-          addPeer(peerId);
-          await sendRoomDetails(peerId);
+      statusSubscription = p2pEvents.status$.subscribe(
+        async ({ status, peerId }) => {
+          if (status === "JOINED") {
+            addPeer(peerId);
+            await sendRoomDetails(peerId);
+          }
+
+          if (status === "LEAVED") {
+            removePeer(peerId);
+          }
         }
-
-        if (status === "LEAVED") {
-          removePeer(peerId);
-        }
-      });
-
-      p2pEventEmitter.addListener("loadedVideo", async (url) => {
-        videoRef.current?.addEventListener("timeupdate", handleTimeUpdate);
-
-        videoRef.current?.addEventListener("play", commander_OnVideoPlay);
-
-        videoRef.current?.addEventListener("pause", commander_OnVideoPause);
-      });
-    } else {
-      p2pEventEmitter.addListener("command", (command, payload) =>
-        slave_handleRoomCommands({ command, payload })
       );
 
-      p2pEventEmitter.addListener("loadedVideo", async (url) => {
-        videoRef.current?.addEventListener("timeupdate", handleTimeUpdate);
-      });
+      loadedVideoSubscription = p2pEvents.loadedVideo$.subscribe(
+        async (url) => {
+          videoRef.current?.addEventListener("timeupdate", handleTimeUpdate);
+
+          videoRef.current?.addEventListener("play", commander_OnVideoPlay);
+
+          videoRef.current?.addEventListener("pause", commander_OnVideoPause);
+        }
+      );
+    } else {
+      commandSubscription = p2pEvents.command$.subscribe(
+        ({ command, payload }) => slave_handleRoomCommands({ command, payload })
+      );
+
+      loadedVideoSubscription = p2pEvents.loadedVideo$.subscribe(
+        async (url) => {
+          videoRef.current?.addEventListener("timeupdate", handleTimeUpdate);
+        }
+      );
 
       getInfo((data) => {
         listenPeerData(selfId, data);
@@ -228,19 +242,24 @@ function RouteComponent() {
         }
       });
 
-      p2pEventEmitter.addListener("status", async (status, peerId) => {
-        if (status === "JOINED") {
-          addPeer(peerId);
-        }
+      statusSubscription = p2pEvents.status$.subscribe(
+        async ({ status, peerId }) => {
+          if (status === "JOINED") {
+            addPeer(peerId);
+          }
 
-        if (status === "LEAVED") {
-          removePeer(peerId);
+          if (status === "LEAVED") {
+            removePeer(peerId);
+          }
         }
-      });
+      );
     }
 
     return () => {
-      p2pEventEmitter.removeAllListeners();
+      statusSubscription?.unsubscribe();
+      loadedVideoSubscription?.unsubscribe();
+      commandSubscription?.unsubscribe();
+
       videoRef.current?.removeEventListener("play", commander_OnVideoPlay);
       videoRef.current?.removeEventListener("pause", commander_OnVideoPause);
       videoRef.current?.removeEventListener("timeupdate", handleTimeUpdate);
@@ -287,7 +306,7 @@ function RouteComponent() {
                     <WatchVideoPlayer
                       videoRef={videoRef}
                       handleLoadedData={() => {
-                        p2pEventEmitter.emit("loadedVideo", "qwe");
+                        p2pEvents.loadedVideo$.next({ videoUrl: "qwe" });
                       }}
                       posterPath=""
                       onPlay={() => {}}

@@ -8,7 +8,7 @@ import {
   P2PCreateAction,
 } from "../types/p2p.types";
 import { getP2pConfig } from "../utils/p2p/config";
-import { p2pEventEmitter } from "../utils/p2pEvents";
+import { p2pEvents } from "../utils/p2pEvents";
 
 export function useP2P() {
   const room = useRef<Room | undefined>(undefined);
@@ -38,19 +38,22 @@ export function useP2P() {
 
     _room.onPeerJoin((peerId: string) => {
       console.log("Peer joined");
-      p2pEventEmitter.emit("status", "JOINED", peerId);
+      p2pEvents.status$.next({ status: "JOINED", peerId });
     });
 
     _room.onPeerLeave((peerId: string) => {
       console.log("Peer left");
-      p2pEventEmitter.emit("status", "LEAVED", peerId);
+      p2pEvents.status$.next({ status: "LEAVED", peerId });
     });
 
     getAction((data) => {
       const _data = data as unknown as IP2PCommand;
       console.log(_data);
 
-      p2pEventEmitter.emit("command", _data.command, _data.payload);
+      p2pEvents.command$.next({
+        command: _data.command,
+        payload: _data.payload,
+      });
     });
 
     return { sendAction, getAction, room: _room };
@@ -66,18 +69,21 @@ export function useP2P() {
       const _data = data as unknown as IP2PCommand;
       console.log(_data);
 
-      p2pEventEmitter.emit("command", _data.command, _data.payload);
+      p2pEvents.command$.next({
+        command: _data.command,
+        payload: _data.payload,
+      });
     });
 
     _room.onPeerJoin((peerId: string) => {
       console.log("Peer joined");
-      p2pEventEmitter.emit("status", "JOINED", peerId);
+      p2pEvents.status$.next({ status: "JOINED", peerId });
     });
 
     _room.onPeerLeave((peerId: string) => {
       console.log("Peer left");
 
-      p2pEventEmitter.emit("status", "LEAVED", peerId);
+      p2pEvents.status$.next({ status: "LEAVED", peerId });
     });
 
     return { sendAction };
