@@ -15,7 +15,9 @@ function createWindow(): void {
       preload: path.join(__dirname, "preload.js"),
       webSecurity: false, // Disable web security to bypass CORS
     },
-    icon: path.join(__dirname, "../public/icons/icon-256x256.png"),
+    icon: isDev
+      ? path.join(__dirname, "../public/icons/icon-256x256.png")
+      : path.join(app.getAppPath(), "public/icons/icon-256x256.png"),
     titleBarStyle: "default",
     show: false, // Don't show until ready-to-show
   });
@@ -48,7 +50,39 @@ function createWindow(): void {
     // Open DevTools in development
     mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.loadURL(`file://${path.join(__dirname, "../dist/index.html")}`);
+    // Use app.getAppPath() to get the correct path in production
+    const appPath = app.getAppPath();
+    const htmlPath = path.join(appPath, "dist", "index.html");
+    console.log("Loading HTML from:", htmlPath);
+    mainWindow.loadURL(`file://${htmlPath}`);
+
+    // Handle client-side routing - intercept navigation and redirect to index.html
+    // mainWindow.webContents.on(
+    //   "did-fail-load",
+    //   (event, errorCode, errorDescription, validatedURL) => {
+    //     console.error(
+    //       "Failed to load:",
+    //       validatedURL,
+    //       "Error:",
+    //       errorDescription
+    //     );
+
+    //     // If it's a navigation error (code -3, -6, or -105) and not the main HTML file,
+    //     // redirect to index.html to let React router handle it
+    //     if (
+    //       (errorCode === -3 || errorCode === -6 || errorCode === -105) &&
+    //       !validatedURL.includes("index.html") &&
+    //       validatedURL.startsWith("file://")
+    //     ) {
+    //       console.log("Redirecting to index.html for client-side routing");
+    //       mainWindow.loadURL(`file://${htmlPath}`);
+    //     }
+    //   }
+    // );
+
+    mainWindow.webContents.on("did-finish-load", () => {
+      console.log("Page loaded successfully");
+    });
   }
 
   // Show window when ready to prevent visual flash
@@ -66,6 +100,7 @@ function createWindow(): void {
   mainWindow.webContents.on("will-navigate", (event, navigationUrl) => {
     const parsedUrl = new URL(navigationUrl);
 
+    // Allow file:// URLs for local navigation and localhost for dev
     if (
       parsedUrl.origin !== "http://localhost:3000" &&
       !navigationUrl.startsWith("file://")
