@@ -10,7 +10,6 @@
     "build": "vite build",
     "start": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "generate-api": "npx @openapitools/openapi-generator-cli generate -i openapi.yaml -g typescript-fetch -o ./src/lib/api",
     "electron:compile": "cd electron && tsc",
     "electron:compile:watch": "cd electron && tsc --watch",
     "electron": "pnpm electron:compile && NODE_ENV=development electron electron/dist/main.js",
