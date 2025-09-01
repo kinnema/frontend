@@ -13,9 +13,10 @@ import TmdbService from "@/lib/services/tmdb.service";
 import { useWatchStore } from "@/lib/stores/watch.store";
 import { Episode, ITmdbSerieDetails } from "@/lib/types/tmdb";
 import { isNativePlatform } from "@/lib/utils/native";
-import { videoEventEmitter } from "@/lib/utils/videoEvents";
+import { loadedVideoUrl$ } from "@/lib/utils/videoEvents";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { v4 } from "uuid";
 interface IProps {
   params: {
@@ -31,6 +32,7 @@ interface IProps {
 export default function ChapterPage({
   params: { videoRef, ...params },
 }: IProps) {
+  const { t } = useTranslation();
   const season = params.season;
   const chapter = params.chapter;
   const [isPlaying, setIsPlaying] = useState(false);
@@ -44,7 +46,7 @@ export default function ChapterPage({
 
   useEffect(() => {
     if (selectedWatchLink) {
-      videoEventEmitter.emit("loadVideo", selectedWatchLink);
+      loadedVideoUrl$.next(selectedWatchLink);
     }
   }, [selectedWatchLink]);
 
@@ -130,7 +132,7 @@ export default function ChapterPage({
   };
 
   if (tmdbData.isError || tmdbEpisodeData.isError) {
-    return <div className="text-red-500">Dizi bulunamadı</div>;
+    return <div className="text-red-500">{t("watch.seriesNotFound")}</div>;
   }
 
   if (tmdbData.isPending || tmdbEpisodeData.isPending) {

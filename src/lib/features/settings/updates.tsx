@@ -21,7 +21,6 @@ import { QUERY_KEYS } from "@/lib/utils/queryKeys";
 import { BundleInfo, CapacitorUpdater } from "@capgo/capacitor-updater";
 import { ToastAction } from "@radix-ui/react-toast";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { isTauri } from "@tauri-apps/api/core";
 import DOMPurify from "dompurify";
 import { Download, Info, Loader2 } from "lucide-react";
 import { marked } from "marked";
@@ -99,10 +98,6 @@ export default function AppUpdatesFeature() {
         description: "Are you even on a native platform?",
       });
 
-      return;
-    }
-
-    if (isTauri()) {
       return;
     }
 

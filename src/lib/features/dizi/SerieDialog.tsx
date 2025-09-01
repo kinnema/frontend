@@ -7,12 +7,12 @@ import { Loading } from "@/lib/components/Loading";
 import { FavoriteButton } from "@/lib/components/User/FavoriteButton";
 import { tmdbPoster } from "@/lib/helpers";
 import TmdbService from "@/lib/services/tmdb.service";
-import { useAuthStore } from "@/lib/stores/auth.store";
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { ITmdbSerieDetails } from "@/lib/types/tmdb";
 import { useQuery } from "@tanstack/react-query";
 // Image component replaced with img tag
 import { useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
   params: {
@@ -22,8 +22,7 @@ interface IProps {
 }
 
 export function SerieDialogFeature({ params }: IProps) {
-  const isAuthenticated = useAuthStore((state) => state.isLoggedIn);
-
+  const { t } = useTranslation();
   const tmdbDetailsData = useQuery<ITmdbSerieDetails>({
     queryKey: ["tmdb-details-with-season", params.slug, params.tmdbId],
     queryFn: async () => {
@@ -63,7 +62,7 @@ export function SerieDialogFeature({ params }: IProps) {
     );
   }, [activeSeasonTab, tmdbDetailsData, isTurkishProvider, serieNetwork]);
 
-  if (tmdbDetailsData.isError) return <div>Error</div>;
+  if (tmdbDetailsData.isError) return <div>{t("common.error")}</div>;
 
   if (tmdbDetailsData.isPending) return <Loading fullscreen />;
 
@@ -85,7 +84,7 @@ export function SerieDialogFeature({ params }: IProps) {
             {tmdbDetailsData.data.networks.map((network) => (
               <p key={network.id}>{network.name}</p>
             ))}
-            orijinal dizisi
+            {t("series.originalSeries")}
           </span>
           <h1 className="text-4xl font-bold mb-2">
             {tmdbDetailsData.data.name}

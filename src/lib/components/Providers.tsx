@@ -2,12 +2,16 @@
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card } from "../../components/ui/card";
 import { pluginManager } from "../plugins/pluginManager";
 import { usePluginRegistry } from "../plugins/usePluginRegistry";
 import { useWatchStore } from "../stores/watch.store";
 import { IPlugin } from "../types/plugin.type";
-import { IPluginEvent } from "../types/pluginEvents.type";
+import {
+  IPluginEventData,
+  IPluginEventEmitterSuccessPayload,
+} from "../types/pluginEvents.type";
 import { isNativePlatform } from "../utils/native";
 
 const MotionCard = motion.create(Card);
@@ -17,6 +21,7 @@ export const Providers = ({
 }: {
   params: { id: string; season: number; chapter: number };
 }) => {
+  const { t } = useTranslation();
   const toast = useToast();
   const setSelectedWatchLink = useWatchStore(
     (state) => state.setSelectedWatchLink
@@ -24,7 +29,7 @@ export const Providers = ({
   const setSubtitles = useWatchStore((state) => state.setSubtitles);
   const [providers, setProviders] = useState<IPlugin[]>([]);
   const { getPluginsByType } = usePluginRegistry();
-  const [data, setData] = useState<IPluginEvent[]>([]);
+  const [data, setData] = useState<IPluginEventData[]>([]);
 
   // Fetch providers and events from the store
   useEffect(() => {
@@ -48,22 +53,21 @@ export const Providers = ({
   }, []);
 
   useEffect(() => {
-    pluginManager.eventEmitter.on("event", (event: IPluginEvent) => {
+    const sub = pluginManager.events.subscribe((event: IPluginEventData) => {
       console.log("Received event:", event);
       setData((prev) => [...prev, event]);
     });
 
     return () => {
-      pluginManager.eventEmitter.removeAllListeners();
+      sub.unsubscribe();
     };
   }, []);
 
   return (
     <div className="flex flex-col gap-2 w-full m-auto max-w-md p-5 md:p-0">
-      <h1 className="text-2xl font-bold">Kaynaklar</h1>
+      <h1 className="text-2xl font-bold">{t("providers.title")}</h1>
       <p className="text-sm text-muted-foreground">
-        Aşağıdaki kaynakları kullanarak dizi izleyebilirsiniz, herhangi birine
-        tiklamaniz yeterlidir.
+        {t("providers.description")}
       </p>
       <div className="mt-10 flex flex-col gap-3">
         {providers.map((provider) => {
@@ -99,11 +103,12 @@ export const Providers = ({
               whileTap={{ scale: isSuccess || isLoading ? 0.98 : 1 }}
               onClick={() => {
                 if (isSuccess && event?.type === "provider_success") {
+                  const data = event.data as IPluginEventEmitterSuccessPayload;
                   const watchData = {
-                    provider: event.data.pluginId,
-                    url: event.data.url,
+                    provider: data.pluginId,
+                    url: data.url,
                   };
-                  setSubtitles(event.data.subtitles);
+                  setSubtitles(data.subtitles);
                   setSelectedWatchLink(watchData.url);
                 }
               }}
@@ -128,8 +133,8 @@ export const Providers = ({
                   : isSuccess
                   ? "Video bulundu"
                   : isLoading
-                  ? "Video aranıyor..."
-                  : "Bekleniyor..."}
+                  ? t("providers.searchingVideo")
+                  : t("providers.waiting")}
               </span>
             </MotionCard>
           );

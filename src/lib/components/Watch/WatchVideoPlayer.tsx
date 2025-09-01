@@ -1,7 +1,8 @@
 import { useHlsPlayer } from "@/lib/hooks";
 import { useWatchStore } from "@/lib/stores/watch.store";
 import { isNativePlatform } from "@/lib/utils/native";
-import { videoEventEmitter } from "@/lib/utils/videoEvents";
+import { loadedVideoUrl$ } from "@/lib/utils/videoEvents";
+import MediaThemeSutro from "player.style/sutro/react";
 import { useEffect } from "react";
 
 interface IProps {
@@ -33,85 +34,63 @@ export function WatchVideoPlayer({
     },
   });
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     if (!subtitles) {
-  //       if (isTauri()) {
-  //         toast({
-  //           title: "Do you want subtitles?",
-
-  //           action: (
-  //             <ToastAction
-  //               altText="share"
-  //               onClick={() => {
-  //                 subdlService.getSubtitles(1396, 1, 1).then((subtitles) => {
-  //                   console.log("hoppa", subtitles);
-
-  //                   if (!subtitles) return;
-  //                   toast({
-  //                     title: "Subtitles loaded",
-  //                     description: "Subtitles loaded successfully",
-  //                   });
-  //                   setSubtitles([
-  //                     {
-  //                       lang: "tr",
-  //                       url: subtitles,
-  //                     },
-  //                   ]);
-  //                 });
-  //               }}
-  //             >
-  //               Git
-  //             </ToastAction>
-  //           ),
-  //         });
-  //       }
-  //     }
-  //   }, 3000);
-  // }, []);
-
   useEffect(() => {
-    videoEventEmitter.addListener("loadVideo", async (url) => {
-      console.log("loadVideo", url);
+    const pipMode = async () => {
+      if (document.visibilityState === "hidden") {
+        await videoRef.current?.requestPictureInPicture();
+      } else {
+        await document.exitPictureInPicture();
+      }
+    };
+
+    const sub = loadedVideoUrl$.subscribe(async (url) => {
+      if (!url) return;
+
       await loadSource(url);
 
       videoRef.current?.addEventListener("loadeddata", handleLoadedData);
     });
 
+    document.addEventListener("visibilitychange", pipMode);
+
     return () => {
-      videoEventEmitter.removeAllListeners();
+      document.exitPictureInPicture();
+      document.removeEventListener("visibilitychange", pipMode);
+      sub.unsubscribe();
       videoRef.current?.removeEventListener("loadeddata", handleLoadedData);
       destroy();
     };
   }, []);
 
-  console.log("subtitlessss", subtitles);
-
   return (
     <>
-      <video
-        className="w-full h-full object-contain"
-        ref={videoRef}
-        poster={posterPath}
-        controls
-        onPlay={onPlay}
-        onPause={onPause}
-        onTimeUpdate={handleProgress}
-      >
-        {subtitles?.map((subtitle) => {
-          if (isNativePlatform()) {
-            return (
-              <track
-                default
-                kind="subtitles"
-                label={subtitle.lang}
-                srcLang={subtitle.lang}
-                src={subtitle.url}
-              />
-            );
-          }
-        })}
-      </video>
+      <MediaThemeSutro className="w-full h-full object-contain">
+        <video
+          slot="media"
+          className="w-full h-full object-contain"
+          ref={videoRef}
+          poster={posterPath}
+          onPlay={onPlay}
+          onPause={onPause}
+          onTimeUpdate={handleProgress}
+          disablePictureInPicture={false}
+          playsInline
+        >
+          {subtitles?.map((subtitle) => {
+            if (isNativePlatform()) {
+              return (
+                <track
+                  default
+                  kind="subtitles"
+                  label={subtitle.lang}
+                  srcLang={subtitle.lang}
+                  src={subtitle.url}
+                />
+              );
+            }
+          })}
+        </video>
+      </MediaThemeSutro>
     </>
   );
 }

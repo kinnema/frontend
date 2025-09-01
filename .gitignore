@@ -42,3 +42,13 @@ next-env.d.ts
 /public/workbox-*.*
 dist
 dev-dist
+
+# Electron build outputs
+dist-electron
+electron/dist
+electron-builder.env
+*.dmg
+*.exe
+*.AppImage
+*.deb
+*.rpm

@@ -1,19 +1,15 @@
 "use client";
 
-import { loginServerAction } from "@/app/actions/auth/loginAction";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { ApiAuthLoginPost200Response } from "@/lib/api";
 import {
   LOGIN_FORM_INPUTS,
   LOGIN_FORM_VALIDATION,
 } from "@/lib/forms/login.form";
-import { useAuthStore } from "@/lib/stores/auth.store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { startTransition, useActionState, useEffect } from "react";
+import { startTransition } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 export default function LoginModule() {
@@ -26,41 +22,40 @@ export default function LoginModule() {
   } = useForm<LOGIN_FORM_INPUTS>({
     resolver: zodResolver(LOGIN_FORM_VALIDATION),
   });
-  const setUser = useAuthStore((state) => state.setUser);
-  const [state, action, pending] = useActionState(loginServerAction, {
-    message: "",
-    success: false,
-    data: undefined,
-  });
+  // const [state, action, pending] = useActionState(loginServerAction, {
+  //   message: "",
+  //   success: false,
+  //   data: undefined,
+  // });
 
-  useEffect(() => {
-    if (state.success) {
-      setUser(state.data as ApiAuthLoginPost200Response);
-      toast.toast({
-        title: "Giriş başarılı",
-        description: "Yönlendirilliyorsunuz...",
-        variant: "default",
-      });
+  // useEffect(() => {
+  //   if (state.success) {
+  //     setUser(state.data as ApiAuthLoginPost200Response);
+  //     toast.toast({
+  //       title: "Giriş başarılı",
+  //       description: "Yönlendirilliyorsunuz...",
+  //       variant: "default",
+  //     });
 
-      setTimeout(() => {
-        router.back();
-      }, 1000);
+  //     setTimeout(() => {
+  //       router.back();
+  //     }, 1000);
 
-      return;
-    }
+  //     return;
+  //   }
 
-    if (state.message) {
-      toast.toast({
-        title: "Giriş başarısız",
-        description: state.message,
-        variant: "destructive",
-      });
-    }
-  }, [state]);
+  //   if (state.message) {
+  //     toast.toast({
+  //       title: "Giriş başarısız",
+  //       description: state.message,
+  //       variant: "destructive",
+  //     });
+  //   }
+  // }, [state]);
 
   const onSubmitForm: SubmitHandler<LOGIN_FORM_INPUTS> = (data) => {
     startTransition(() => {
-      action(data);
+      // action(data);
     });
   };
 
@@ -87,11 +82,11 @@ export default function LoginModule() {
         <p className="text-pink-800 text-xs mt-2">{errors.password?.message}</p>
       </div>
       <div className="flex flex-row gap-5 self-end">
-        <Button type="button" variant="secondary" onClick={() => router.back()}>
+        {/* <Button type="button" variant="secondary" onClick={() => router.back()}>
           Kapat
-        </Button>
+        </Button> */}
 
-        <Button type="submit" disabled={pending}>
+        {/* <Button type="submit" disabled={pending}>
           {pending ? (
             <>
               <Loader2 className="animate-spin" />
@@ -100,12 +95,12 @@ export default function LoginModule() {
           ) : (
             "Giriş yap"
           )}
-        </Button>
+        </Button> */}
       </div>
 
       <hr />
       <span className="text-center">veya...</span>
-      <Link href="/register" passHref legacyBehavior>
+      <Link to="/register">
         <Button className="mb-5" type="button">
           Kayit olun
         </Button>

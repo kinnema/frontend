@@ -2,19 +2,14 @@
 
 import { MainNav } from "@/components/main-nav";
 import { Button } from "@/components/ui/button";
-import { UserNav } from "@/components/user-nav";
 import { useToast } from "@/hooks/use-toast";
+import { Link, useRouterState } from "@tanstack/react-router";
 import classNames from "classnames";
 import { Menu, Search, SearchIcon } from "lucide-react";
-import { Link, useRouterState } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { NAV_LINKS } from "../constants";
-import { useAuthStore } from "../stores/auth.store";
-
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  const logout = useAuthStore((state) => state.logOut);
   const pathName = useRouterState({ select: (s) => s.location.pathname });
   const oldPathname = useRef<string>(undefined);
   const toast = useToast();
@@ -39,7 +34,7 @@ export function Header() {
 
   function onPressLogout(): void {
     setMenuOpen(false);
-    logout();
+    // logout();
 
     toast.toast({
       title: "Çıkış yapıldı",
@@ -77,13 +72,13 @@ export function Header() {
             <MainNav />
           </div>
           <div className="flex items-center gap-4">
-            {isLoggedIn ? (
+            {/* {isLoggedIn ? (
               <UserNav />
             ) : (
               <Link to="/" search={{ modal: 'login' }}>
                 <Button>Giriş Yap</Button>
               </Link>
-            )}
+            )} */}
             <Link to="/search">
               <Button
                 variant="ghost"
@@ -157,9 +152,9 @@ export function Header() {
             })}
           </ul>
 
-          <div className="m-auto">
+          {/* <div className="m-auto">
             {isLoggedIn && <Button onClick={onPressLogout}>Çıkış Yap</Button>}
-          </div>
+          </div> */}
         </div>
       </div>
     </>

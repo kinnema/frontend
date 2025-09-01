@@ -1,0 +1,88 @@
+{
+  "nav": {
+    "home": "Ana Sayfa",
+    "settings": "Ayarlar",
+    "plugins": "Eklentiler"
+  },
+  "footer": {
+    "copyright": "© 2024 Kinnema. Tüm hakları saklıdır.",
+    "privacy": "Gizlilik",
+    "terms": "Kullanım Şartları",
+    "help": "Yardım Merkezi"
+  },
+  "common": {
+    "error": "Hata",
+    "loading": "Yükleniyor...",
+    "cancel": "İptal",
+    "save": "Kaydet",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "add": "Ekle",
+    "remove": "Kaldır",
+    "search": "Ara",
+    "filter": "Filtrele",
+    "sort": "Sırala",
+    "next": "Sonraki",
+    "previous": "Önceki",
+    "back": "Geri"
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "description": "Uygulama tercihlerinizi yönetin.",
+    "app": "Uygulama",
+    "plugins": "Eklentiler",
+    "updates": "Güncellemeler",
+    "subtitles": "Altyazılar",
+    "sync": "Senkronizasyon",
+    "language": "Dil"
+  },
+  "series": {
+    "networkSeries": "Ağ Dizileri",
+    "originalSeries": "orijinal dizisi"
+  },
+  "search": {
+    "placeholder": "Film, dizi ve belgesel ara...",
+    "noResults": "Arama sonuç bulunamadı."
+  },
+  "watch": {
+    "seriesNotFound": "Dizi bulunamadı"
+  },
+  "providers": {
+    "title": "Kaynaklar",
+    "description": "Aşağıdaki kaynakları kullanarak dizi izleyebilirsiniz, herhangi birine tiklamanız yeterlidir.",
+    "searchingVideo": "Video aranıyor...",
+    "waiting": "Bekleniyor..."
+  },
+  "plugins": {
+    "managerTitle": "Eklenti Yöneticisi",
+    "urlPlaceholder": "Eklenti URL'si",
+    "addPlugin": "Eklenti Ekle",
+    "adding": "Ekleniyor...",
+    "addError": "Eklenti eklenirken bir hata oluştu",
+    "updating": "Güncelleniyor...",
+    "updateAll": "Tüm Eklentileri Güncelle",
+    "update": "Güncelle",
+    "noPlugins": "Herhangi bir eklenti bulunamadı",
+    "status": "Eklenti Durumu",
+    "actions": "Aksiyonlar",
+    "remove": "Kaldır"
+  },
+  "favorites": {
+    "removeError": "Favorilerden kaldırılırken bir hata oluştu",
+    "added": "Favorilere eklendi",
+    "addError": "Favorilere eklenirken bir hata oluştu",
+    "addToFavorites": "Favorilere ekle"
+  },
+  "waitPeers": {
+    "joiningRoom": "Odaya katılıyor",
+    "pleaseWait": "Lütfen odaya bağlanırken bekleyiniz",
+    "waitingPeers": "Diğer eşler bekleniyor...",
+    "mayTakeTime": "Bu biraz zaman alabilir, lütfen pencereyi kapatmayın."
+  },
+  "language": {
+    "description": "Uygulama için tercih ettiğiniz dili seçin",
+    "selectLanguage": "Dil Seçin",
+    "currentLanguage": "Mevcut dil",
+    "restartNote": "Değişiklikler hemen uygulanacaktır"
+  }
+}

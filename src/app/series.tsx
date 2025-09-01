@@ -9,22 +9,22 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Loading } from "@/lib/components/Loading";
-import { slugify, tmdbPoster } from "@/lib/helpers";
+import { tmdbPoster } from "@/lib/helpers";
 import TmdbService from "@/lib/services/tmdb.service";
 import { TmdbNetworks } from "@/lib/types/networks";
 import { useQuery } from "@tanstack/react-query";
 import classNames from "classnames";
-import Image from "next/image";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
   network: TmdbNetworks;
 }
 
 export function CollectionSeries({ network }: IProps) {
-  const searchParams = useSearchParams();
-  const page = Number(searchParams.get("page") ?? 1);
+  const { t } = useTranslation();
+  // For TanStack Router, we need to use search params differently
+  // This might need to be updated based on how the route is set up
+  const page = 1; // Default to page 1 for now
 
   const { data, isPending, isError } = useQuery({
     queryKey: ["network-series", network, page],
@@ -33,7 +33,7 @@ export function CollectionSeries({ network }: IProps) {
 
   if (isPending) return <Loading fullscreen />;
 
-  if (isError) return <div>Error</div>;
+  if (isError) return <div>{t("common.error")}</div>;
 
   const totalPages = Math.ceil((data?.total_results ?? 0) / 20);
 
@@ -46,11 +46,7 @@ export function CollectionSeries({ network }: IProps) {
       </div>
       <div className="mt-4 flex flex-wrap justify-center md:justify-start gap-3 md:gap-5">
         {data.results.map((serie) => (
-          <Link
-            href={`/dizi/${slugify(serie.original_name)}/${serie.id}`}
-            key={serie.id}
-            className="overflow-hidden"
-          >
+          <div key={serie.id} className="overflow-hidden">
             <div
               className={classNames(
                 "flex flex-col rounded-xl overflow-hidden cursor-pointer group select-none relative w-[150px] md:w-60 h-[200px] md:h-80",
@@ -65,7 +61,7 @@ export function CollectionSeries({ network }: IProps) {
                 </div>
               </div>
 
-              <Image
+              <img
                 src={tmdbPoster(serie.poster_path ?? "")}
                 className="h-full w-full object-cover"
                 alt={serie.original_name}
@@ -74,7 +70,7 @@ export function CollectionSeries({ network }: IProps) {
                 loading="lazy"
               />
             </div>
-          </Link>
+          </div>
         ))}
       </div>
 
