@@ -161,6 +161,9 @@ importers:
       motion:
         specifier: ^11.18.1
         version: 11.18.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      player.style:
+        specifier: ^0.2.0
+        version: 0.2.0(react@19.0.0)
       qrcode:
         specifier: ^1.5.4
         version: 1.5.4
@@ -3205,6 +3208,11 @@ packages:
   caniuse-lite@1.0.30001731:
     resolution: {integrity: sha512-lDdp2/wrOmTRWuoB5DpfNkC0rJDU8DqRa6nYL6HK6sytw70QMopt/NIc/9SM7ylItlBWfACXk0tEn37UWM/+mg==}
 
+  ce-la-react@0.3.1:
+    resolution: {integrity: sha512-g0YwpZDPIwTwFumGTzNHcgJA6VhFfFCJkSNdUdC04br2UfU+56JDrJrJva3FZ7MToB4NDHAFBiPE/PZdNl1mQA==}
+    peerDependencies:
+      react: '>=17.0.0'
+
   chai@4.5.0:
     resolution: {integrity: sha512-RITGBfijLkBddZvnn8jdqoTypxvqbOLYQkGGxXzeFjVHvudaPw0HNFD9x928/eUwYWd2dPCugVqspGALTZZQKw==}
     engines: {node: '>=4'}
@@ -4742,6 +4750,9 @@ packages:
   md5.js@1.3.5:
     resolution: {integrity: sha512-xitP+WxNPcTTOgnTJcrhM0xvdPepipPSf3I8EIpGKeFLjt3PlJLIDG3u8EX53ZIubkb+5U2+3rELYpEhHhzdkg==}
 
+  media-chrome@4.13.0:
+    resolution: {integrity: sha512-DfX/Hwxjae/tEHjr1tVnV/6XDFHriMXI1ev8Ji4Z/YwXnqMhNfRtvNsMjefnQK5pkMS/9hC+jmdS+VDWZfsSIw==}
+
   memory-pager@1.5.0:
     resolution: {integrity: sha512-ZS4Bp4r/Zoeq6+NLJpP+0Zzm0pR8whtGPf1XExKLJBAczGMnSi3It14OiNCStjQjM6NU1okjQGSxgEZN8eBYKg==}
 
@@ -5191,6 +5202,9 @@ packages:
   pkg-dir@5.0.0:
     resolution: {integrity: sha512-NPE8TDbzl/3YQYY7CSS228s3g2ollTFnc+Qi3tqmqJp9Vg2ovUpixcJEo2HJScN2Ez+kEaal6y70c0ehqJBJeA==}
     engines: {node: '>=10'}
+
+  player.style@0.2.0:
+    resolution: {integrity: sha512-Ngoaz49TClptMr8HDA2IFmjT3Iq6R27QEUH/C+On33L59RSF3dCLefBYB1Au2RDZQJ6oVFpc1sXaPVpp7fEzzA==}
 
   plist@3.1.0:
     resolution: {integrity: sha512-uysumyrvkUX0rX/dEVqt8gC3sTBzd4zoWfLeS29nb53imdaXVvLINYXTI2GNqzaMuvacNx4uJQ8+b3zXR0pkgQ==}
@@ -10112,6 +10126,10 @@ snapshots:
 
   caniuse-lite@1.0.30001731: {}
 
+  ce-la-react@0.3.1(react@19.0.0):
+    dependencies:
+      react: 19.0.0
+
   chai@4.5.0:
     dependencies:
       assertion-error: 1.1.0
@@ -11950,6 +11968,12 @@ snapshots:
       inherits: 2.0.4
       safe-buffer: 5.2.1
 
+  media-chrome@4.13.0(react@19.0.0):
+    dependencies:
+      ce-la-react: 0.3.1(react@19.0.0)
+    transitivePeerDependencies:
+      - react
+
   memory-pager@1.5.0: {}
 
   merge-options@3.0.4:
@@ -12405,6 +12429,12 @@ snapshots:
   pkg-dir@5.0.0:
     dependencies:
       find-up: 5.0.0
+
+  player.style@0.2.0(react@19.0.0):
+    dependencies:
+      media-chrome: 4.13.0(react@19.0.0)
+    transitivePeerDependencies:
+      - react
 
   plist@3.1.0:
     dependencies:
