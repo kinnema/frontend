@@ -8,8 +8,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { TmdbImage } from "@/lib/components/Image";
 import { Loading } from "@/lib/components/Loading";
-import { tmdbPoster } from "@/lib/helpers";
 import TmdbService from "@/lib/services/tmdb.service";
 import { TmdbNetworks } from "@/lib/types/networks";
 import { useQuery } from "@tanstack/react-query";
@@ -61,8 +61,8 @@ export function CollectionSeries({ network }: IProps) {
                 </div>
               </div>
 
-              <img
-                src={tmdbPoster(serie.poster_path ?? "")}
+              <TmdbImage
+                src={serie.poster_path ?? ""}
                 className="h-full w-full object-cover"
                 alt={serie.original_name}
                 width={300}

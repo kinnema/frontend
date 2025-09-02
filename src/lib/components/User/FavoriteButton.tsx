@@ -74,8 +74,6 @@ export function FavoriteButton({ tmdbData }: IProps) {
     });
   }
 
-  console.log(favorites.data);
-
   const isFavorite = favorites.data ? true : false;
 
   return (

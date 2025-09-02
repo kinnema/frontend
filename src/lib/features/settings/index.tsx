@@ -72,7 +72,7 @@ export default function AppSettingsFeature() {
       </CardHeader>
       <CardContent className="grid gap-6">
         {SETTINGS.map((setting) => (
-          <div className="grid gap-4">
+          <div className="grid gap-4" key={setting.name}>
             <h3 className="text-lg font-semibold">
               {setting.translationKey
                 ? t(setting.translationKey)
@@ -85,7 +85,7 @@ export default function AppSettingsFeature() {
               }
 
               return (
-                <Link to={subMenu.href}>
+                <Link to={subMenu.href} key={subMenu.name}>
                   <Button
                     variant="ghost"
                     className="justify-between w-full px-0"

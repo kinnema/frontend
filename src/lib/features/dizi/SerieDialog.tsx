@@ -3,9 +3,9 @@
 import SeasonEpisodes from "@/app/dizi/[slug]/components/SeasonEpisodes";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TmdbImage } from "@/lib/components/Image";
 import { Loading } from "@/lib/components/Loading";
 import { FavoriteButton } from "@/lib/components/User/FavoriteButton";
-import { tmdbPoster } from "@/lib/helpers";
 import TmdbService from "@/lib/services/tmdb.service";
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { ITmdbSerieDetails } from "@/lib/types/tmdb";
@@ -70,9 +70,9 @@ export function SerieDialogFeature({ params }: IProps) {
     <>
       <div className="relative h-[50vh] bg-black">
         <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10" />
-        <img
+        <TmdbImage
           className="w-full h-full object-cover"
-          src={tmdbPoster(tmdbDetailsData.data.poster_path!)}
+          src={tmdbDetailsData.data.poster_path!}
           alt={tmdbDetailsData.data.overview}
           width={600}
           height={500}

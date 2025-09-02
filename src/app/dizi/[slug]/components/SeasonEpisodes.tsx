@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
+import { TmdbImage } from "@/lib/components/Image";
 import { Loading } from "@/lib/components/Loading";
-import { slugify, tmdbPoster } from "@/lib/helpers";
+import { slugify } from "@/lib/helpers";
 import { useLastWatched } from "@/lib/hooks/database/useLastWatched";
 import TmdbService from "@/lib/services/tmdb.service";
 import { ILastWatched } from "@/lib/types/lastWatched.type";
@@ -30,7 +31,6 @@ export default function SeasonEpisodes({ id, season, serie_name }: IProps) {
   useEffect(() => {
     getAllLastWatched().then((r) => {
       setLastWatched(r);
-      console.log(r);
     });
   }, []);
 
@@ -61,8 +61,8 @@ export default function SeasonEpisodes({ id, season, serie_name }: IProps) {
             className="flex w-full gap-4 p-4 hover:bg-white/5 rounded-lg transition-colors text-left"
           >
             <div className="relative w-40 aspect-video rounded-lg overflow-hidden">
-              <img
-                src={tmdbPoster(episode.still_path)}
+              <TmdbImage
+                src={episode.still_path ?? ""}
                 alt={episode.name}
                 className="object-cover w-full h-full"
                 loading="lazy"

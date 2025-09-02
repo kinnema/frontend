@@ -6,7 +6,7 @@ import { Providers } from "@/lib/components/Providers";
 import { SubtitleSelectDialog } from "@/lib/components/Watch/SubtitleSelectDialog";
 import { WatchTogether } from "@/lib/components/Watch/WatchTogether";
 import { WatchVideoPlayer } from "@/lib/components/Watch/WatchVideoPlayer";
-import { tmdbPoster } from "@/lib/helpers";
+import { tmdbPosterResponsive } from "@/lib/helpers";
 import { useLastWatched } from "@/lib/hooks/database/useLastWatched";
 import TmdbService from "@/lib/services/tmdb.service";
 // import { useLastWatchedStore } from "@/lib/stores/lastWatched.store";
@@ -178,7 +178,9 @@ export default function ChapterPage({
                 <WatchVideoPlayer
                   videoRef={videoRef}
                   handleLoadedData={handleLoadedData}
-                  posterPath={tmdbPoster(tmdbEpisodeData.data.still_path)}
+                  posterPath={
+                    tmdbPosterResponsive(tmdbEpisodeData.data.still_path).src
+                  }
                   onPlay={onPlay}
                   onPause={onPause}
                   handleProgress={handleProgress}
