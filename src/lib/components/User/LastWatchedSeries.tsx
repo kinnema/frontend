@@ -32,8 +32,8 @@ export function LastWatchedSeries() {
   }, []);
 
   // async function getLastWatched() {
-  function handleRemove(id: number) {
-    removeLastWatched(id);
+  function handleRemove(tmdbId: number, id: string) {
+    removeLastWatched(tmdbId, id);
     toast.toast({
       title: "İzleme listesinden kaldırıldı",
       description: "İzleme listesinden kaldırıldı",
@@ -57,7 +57,7 @@ export function LastWatchedSeries() {
             key={s.tmdbId}
             withTimeline={true}
             progress={Math.floor((s.atSecond / s.totalSeconds) * 100)}
-            onRemove={() => handleRemove(s.tmdbId)}
+            onRemove={() => handleRemove(s.tmdbId, s.id)}
             linkProps={{
               search: {
                 watchSlug: slugify(s.name),

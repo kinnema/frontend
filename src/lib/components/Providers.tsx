@@ -38,24 +38,22 @@ export const Providers = ({
         title: "Uyarı",
         description:
           "Lutfen daha iyi bir kullanim icin uygulamamizi kullaniniz",
-        duration: 3000,
+        duration: 1500,
       });
     }
 
     console.log("Fetching providers for series...", getPluginsByType("series"));
     setProviders(getPluginsByType("series"));
 
+    const sub = pluginManager.events.subscribe((event: IPluginEventData) => {
+      console.log("Received event:", event);
+      setData((prev) => [event, ...prev]);
+    });
+
     pluginManager.fetchSource({
       id: params.id,
       season: params.season,
       chapter: params.chapter,
-    });
-  }, []);
-
-  useEffect(() => {
-    const sub = pluginManager.events.subscribe((event: IPluginEventData) => {
-      console.log("Received event:", event);
-      setData((prev) => [...prev, event]);
     });
 
     return () => {
@@ -71,17 +69,7 @@ export const Providers = ({
       </p>
       <div className="mt-10 flex flex-col gap-3">
         {providers.map((provider) => {
-          const event = [...data]
-            .reverse()
-            .find(
-              (d) =>
-                (d.type === "trying_provider" &&
-                  d.data.pluginId === provider.id) ||
-                (d.type === "provider_failed" &&
-                  d.data.pluginId === provider.id) ||
-                (d.type === "provider_success" &&
-                  d.data.pluginId === provider.id)
-            );
+          const event = [...data].find((d) => d.data.pluginId === provider.id);
 
           const hasError = event?.type === "provider_failed";
           const isLoading = event?.type === "trying_provider";

@@ -1,5 +1,6 @@
 import BackButtonHandler from "@/lib/components/App/BackButtonHandler";
 import { useAppStore } from "@/lib/stores/app.store";
+import { useSyncStore } from "@/lib/stores/sync.store";
 import { SafeArea } from "@capacitor-community/safe-area";
 import { Capacitor } from "@capacitor/core";
 import { StatusBar, Style } from "@capacitor/status-bar";
@@ -19,10 +20,16 @@ if (Capacitor.isNativePlatform()) {
 
 export function Providers({ children }: PropsWithChildren) {
   const initTheme = useAppStore((state) => state.initTheme);
+  const setNostrConnectionStatus = useSyncStore(
+    (state) => state.setNostrConnectionStatus
+  );
 
   useEffect(() => {
     initTheme();
-  }, []);
+
+    // Initialize Nostr connection status
+    setNostrConnectionStatus("disconnected");
+  }, [initTheme, setNostrConnectionStatus]);
 
   return (
     <>

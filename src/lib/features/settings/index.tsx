@@ -1,5 +1,6 @@
 "use client";
 
+import { SyncStatus } from "@/components/sync/sync-status";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -90,11 +91,16 @@ export default function AppSettingsFeature() {
                     variant="ghost"
                     className="justify-between w-full px-0"
                   >
-                    <span>
-                      {subMenu.translationKey
-                        ? t(subMenu.translationKey)
-                        : subMenu.name}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span>
+                        {subMenu.translationKey
+                          ? t(subMenu.translationKey)
+                          : subMenu.name}
+                      </span>
+                      {subMenu.name === "Sync" && (
+                        <SyncStatus showDetails={false} />
+                      )}
+                    </div>
                     <ChevronRight className="w-4 h-4" />
                   </Button>
                 </Link>
