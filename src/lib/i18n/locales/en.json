@@ -1,0 +1,88 @@
+{
+  "nav": {
+    "home": "Home",
+    "settings": "Settings",
+    "plugins": "Plugins"
+  },
+  "footer": {
+    "copyright": "© 2024 Kinnema. All rights reserved.",
+    "privacy": "Privacy",
+    "terms": "Terms of Service",
+    "help": "Help Center"
+  },
+  "common": {
+    "error": "Error",
+    "loading": "Loading...",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "remove": "Remove",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "next": "Next",
+    "previous": "Previous",
+    "back": "Back"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Manage your app preferences.",
+    "app": "App",
+    "language": "Language",
+    "plugins": "Plugins",
+    "updates": "Updates",
+    "subtitles": "Subtitles",
+    "sync": "Sync"
+  },
+  "series": {
+    "networkSeries": "Network Series",
+    "originalSeries": "original series"
+  },
+  "search": {
+    "placeholder": "Search for movies, series and documentaries...",
+    "noResults": "No search results found."
+  },
+  "watch": {
+    "seriesNotFound": "Series not found"
+  },
+  "providers": {
+    "title": "Sources",
+    "description": "You can watch the series using the sources below, just click on any of them.",
+    "searchingVideo": "Searching for video...",
+    "waiting": "Waiting..."
+  },
+  "plugins": {
+    "managerTitle": "Plugin Manager",
+    "urlPlaceholder": "Plugin URL",
+    "addPlugin": "Add Plugin",
+    "adding": "Adding...",
+    "addError": "Error occurred while adding plugin",
+    "updating": "Updating...",
+    "updateAll": "Update All Plugins",
+    "update": "Update",
+    "noPlugins": "No plugins found",
+    "status": "Plugin Status",
+    "actions": "Actions",
+    "remove": "Remove"
+  },
+  "favorites": {
+    "removeError": "Error occurred while removing from favorites",
+    "added": "Added to favorites",
+    "addError": "Error occurred while adding to favorites",
+    "addToFavorites": "Add to favorites"
+  },
+  "waitPeers": {
+    "joiningRoom": "Joining room",
+    "pleaseWait": "Please wait while connecting to the room",
+    "waitingPeers": "Waiting for other peers...",
+    "mayTakeTime": "This may take some time, please don't close the window."
+  },
+  "language": {
+    "description": "Choose your preferred language for the application",
+    "selectLanguage": "Select Language",
+    "currentLanguage": "Current language",
+    "restartNote": "Changes will be applied immediately"
+  }
+}

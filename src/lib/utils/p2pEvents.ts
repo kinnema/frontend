@@ -1,5 +1,4 @@
-import EventEmitter from "events";
-import TypedEmitter from "typed-emitter";
+import { Subject } from "rxjs";
 import { Commands, Status } from "../types/p2p.types";
 
 type P2PEvents = {
@@ -8,4 +7,12 @@ type P2PEvents = {
   loadedVideo: (videoUrl?: string) => void;
 };
 
-export const p2pEventEmitter = new EventEmitter() as TypedEmitter<P2PEvents>;
+const status$ = new Subject<{ status: Status; peerId: string }>();
+const command$ = new Subject<{ command: Commands; payload: unknown }>();
+const loadedVideo$ = new Subject<{ videoUrl?: string }>();
+
+export const p2pEvents = {
+  status$,
+  command$,
+  loadedVideo$,
+};

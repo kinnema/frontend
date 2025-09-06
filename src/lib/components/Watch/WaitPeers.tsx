@@ -10,8 +10,10 @@ import { Input } from "@/components/ui/input";
 import { share } from "@/lib/utils/share";
 import { Check, Loader2, Share2 } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export function WaitPeers({ roomId }: { roomId: string }) {
+  const { t } = useTranslation();
   const roomUrl = _createUrl(roomId);
 
   function _createUrl(roomId: string) {
@@ -38,14 +40,16 @@ export function WaitPeers({ roomId }: { roomId: string }) {
     <div className="flex items-center justify-center p-4">
       <Card className="w-full max-w-md text-center">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">Odaya katiliyor</CardTitle>
-          <CardDescription>Lutfen odaya baglanirken bekleyiniz</CardDescription>
+          <CardTitle className="text-2xl font-bold">
+            {t("waitPeers.joiningRoom")}
+          </CardTitle>
+          <CardDescription>{t("waitPeers.pleaseWait")}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center space-y-4 py-8">
           <Loader2 className="h-12 w-12 animate-spin text-primary" />
-          <p className="text-lg font-medium">Diger esler bekleniyor...</p>
+          <p className="text-lg font-medium">{t("waitPeers.waitingPeers")}</p>
           <p className="text-sm text-muted-foreground">
-            Bu biraz zaman alabilir, lutfen pencereyi kapatmayin.
+            {t("waitPeers.mayTakeTime")}
           </p>
           <div className="flex w-full max-w-sm items-center space-x-2">
             <Input

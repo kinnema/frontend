@@ -1,4 +1,4 @@
-import { HlsConfig } from "hls.js";
+import type { HlsConfig } from "hls.js";
 import { createCapacitorHttpLoader } from "../loaders";
 
 /**

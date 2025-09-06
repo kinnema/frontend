@@ -1,7 +1,8 @@
 "use client";
 
 import { Progress } from "@/components/ui/progress";
-import { slugify, tmdbPoster } from "@/lib/helpers";
+import { TmdbImage } from "@/lib/components/Image";
+import { slugify } from "@/lib/helpers";
 import { IShowCard } from "@/lib/types/show_card";
 import { Link, ToOptions } from "@tanstack/react-router";
 import { X } from "lucide-react";
@@ -42,8 +43,8 @@ export function ShowCard({
               <X className="text-white" />
             </Button>
           )}
-          <img
-            src={tmdbPoster(show.image!)}
+          <TmdbImage
+            src={show.image ?? ""}
             alt={show.title}
             width={200}
             height={300}

@@ -12,6 +12,7 @@ import {
 import { isNativePlatform } from "@/lib/utils/native";
 import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface Setting {
   name: string;
@@ -19,45 +20,64 @@ interface Setting {
     name: string;
     href: string;
     nativeOnly?: boolean;
+    translationKey?: string;
   }>;
+  translationKey?: string;
 }
 
 const SETTINGS: Setting[] = [
   {
     name: "App",
+    translationKey: "settings.app",
     sub: [
+      {
+        name: "Language",
+        href: "/settings/language",
+        translationKey: "settings.language",
+      },
       {
         name: "Plugins",
         href: "/plugins",
+        translationKey: "settings.plugins",
       },
       {
         name: "Updates",
         href: "updates",
+        translationKey: "settings.updates",
       },
       {
         name: "Subtitles",
         href: "/settings/subtitles",
         nativeOnly: true,
+        translationKey: "settings.subtitles",
       },
       {
         name: "Sync",
         href: "/settings/sync",
+        translationKey: "settings.sync",
       },
     ],
   },
 ];
 
 export default function AppSettingsFeature() {
+  const { t } = useTranslation();
   return (
     <Card className="w-full max-w-md mx-auto my-8 md:my-12">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold">Settings</CardTitle>
-        <CardDescription>Manage your app preferences.</CardDescription>
+        <CardTitle className="text-2xl font-bold">
+          {t("settings.title")}
+        </CardTitle>
+        <CardDescription>{t("settings.description")}</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-6">
         {SETTINGS.map((setting) => (
-          <div className="grid gap-4">
-            <h3 className="text-lg font-semibold">{setting.name}</h3>
+          <div className="grid gap-4" key={setting.name}>
+            <h3 className="text-lg font-semibold">
+              {setting.translationKey
+                ? t(setting.translationKey)
+                : setting.name}
+            </h3>
 
             {setting.sub.map((subMenu) => {
               if (subMenu.nativeOnly && !isNativePlatform()) {
@@ -65,12 +85,16 @@ export default function AppSettingsFeature() {
               }
 
               return (
-                <Link to={subMenu.href}>
+                <Link to={subMenu.href} key={subMenu.name}>
                   <Button
                     variant="ghost"
                     className="justify-between w-full px-0"
                   >
-                    <span>{subMenu.name}</span>
+                    <span>
+                      {subMenu.translationKey
+                        ? t(subMenu.translationKey)
+                        : subMenu.name}
+                    </span>
                     <ChevronRight className="w-4 h-4" />
                   </Button>
                 </Link>

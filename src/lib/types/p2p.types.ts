@@ -1,4 +1,8 @@
-import { ActionProgress, ActionReceiver, ActionSender } from "trystero";
+import type {
+  ActionProgress,
+  ActionReceiver,
+  ActionSender,
+} from "trystero/torrent";
 
 export type Commands =
   | "CHECK_ADMIN"

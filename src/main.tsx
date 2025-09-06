@@ -1,9 +1,16 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { RouterProvider, createRouter } from "@tanstack/react-router";
+import {
+  RouterProvider,
+  createBrowserHistory,
+  createHashHistory,
+  createRouter,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import React from "react";
 import ReactDOM from "react-dom/client";
+import "./lib/i18n";
+import { isElectron } from "./lib/utils/native";
 import { routeTree } from "./routeTree.gen";
 
 const queryClient = new QueryClient({
@@ -14,12 +21,15 @@ const queryClient = new QueryClient({
   },
 });
 
+const history = isElectron() ? createHashHistory() : createBrowserHistory();
+
 // Create a new router instance
 const router = createRouter({
   routeTree,
   context: {
     queryClient,
   },
+  history,
 });
 
 // Register the router instance for type safety

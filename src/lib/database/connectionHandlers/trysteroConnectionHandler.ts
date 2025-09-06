@@ -8,16 +8,10 @@ import type {
   WebRTCMessage,
 } from "rxdb/plugins/replication-webrtc";
 import { Subject } from "rxjs";
-import type { BaseRoomConfig } from "trystero/torrent";
-import { joinRoom, Room } from "trystero/torrent";
+import type { BaseRoomConfig, Room } from "trystero/torrent";
+import { joinRoom } from "trystero/torrent";
 
 type PeerId = string;
-
-interface MessagePayload {
-  type?: string;
-  data?: any;
-  result?: boolean;
-}
 
 interface HandlerConfig {
   config: BaseRoomConfig;

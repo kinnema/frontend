@@ -1,7 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { slugify, tmdbPoster } from "@/lib/helpers";
+import { TmdbImage } from "@/lib/components/Image";
+import { slugify } from "@/lib/helpers";
 import TmdbService from "@/lib/services/tmdb.service";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
@@ -43,8 +44,8 @@ export function FeaturedCarousel() {
               <section className="relative h-[calc(100vh-35vh)] overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10" />
                 <div className={`absolute inset-0`}>
-                  <img
-                    src={tmdbPoster(item.poster_path!)}
+                  <TmdbImage
+                    src={item.poster_path ?? ""}
                     alt={item.original_name}
                     width={1024}
                     height={768}

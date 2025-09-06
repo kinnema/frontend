@@ -1,13 +1,5 @@
 import { useSubtitleStore } from "@/lib/stores/subtitle.store";
-import { join } from "@tauri-apps/api/path";
-import {
-  mkdir,
-  readDir,
-  readFile,
-  remove,
-  writeFile,
-} from "@tauri-apps/plugin-fs";
-import { Command } from "@tauri-apps/plugin-shell";
+
 import { ISubdlResponse, ISubtitleResult } from "../../types/subtitle.type";
 import { AbstractSubtitleService } from "./abstract.service";
 
@@ -45,11 +37,14 @@ export class SubDlService extends AbstractSubtitleService {
     season_number: number,
     episode_number: number
   ): Promise<string | null> {
-    const entries = await readDir(dirPath);
+    const entries = await window.electronAPI.fs.readDir(dirPath);
+
+    console.log("entries", entries, dirPath);
 
     for (const entry of entries) {
       console.log(entry.name, `S0${season_number}E0${episode_number}`);
-      const entryPath = await join(dirPath, entry.name);
+      const entryPath = await window.electronAPI.fs.join(dirPath, entry.name);
+      console.log("qqq", entryPath, entry);
       if (entry.isDirectory) {
         const srtPath = await this.findSrtFile(
           entryPath,
@@ -80,9 +75,9 @@ export class SubDlService extends AbstractSubtitleService {
     const uniqueId = `${tmdbId}-${seasonNumber}-${episodeNumber}-${Date.now()}`;
     const tempDir = await this.getTempDir();
     const zipFileName = `${uniqueId}.zip`;
-    const zipFilePath = await join(tempDir, zipFileName);
-    const extractionDir = await join(tempDir, uniqueId);
-    console.log(zipFilePath);
+    const zipFilePath = await window.electronAPI.fs.join(tempDir, zipFileName);
+    const extractionDir = await window.electronAPI.fs.join(tempDir, uniqueId);
+
     try {
       const response = await fetch(`https://dl.subdl.com${url}`, {
         method: "GET",
@@ -90,19 +85,11 @@ export class SubDlService extends AbstractSubtitleService {
 
       const data = await response.arrayBuffer();
 
-      await writeFile(zipFilePath, new Uint8Array(data));
+      await window.electronAPI.fs.createFile(zipFilePath, new Uint8Array(data));
 
-      await mkdir(extractionDir, { recursive: true });
+      await window.electronAPI.fs.createDir(extractionDir);
 
-      const command = Command.create("unzip-command", [
-        zipFilePath,
-        "-d",
-        extractionDir,
-      ]);
-      const output = await command.execute();
-      if (output.code !== 0) {
-        throw new Error(`Failed to unzip file: ${output.stderr}`);
-      }
+      await window.electronAPI.fs.unzipSubtitle(zipFilePath, extractionDir);
 
       const srtFilePath = await this.findSrtFile(
         extractionDir,
@@ -116,7 +103,9 @@ export class SubDlService extends AbstractSubtitleService {
 
       console.log("srt", srtFilePath);
 
-      const subtitleContentBytes = await readFile(srtFilePath);
+      const subtitleContentBytes = await window.electronAPI.fs.readFile(
+        srtFilePath
+      );
 
       const subtitleContentString = new TextDecoder().decode(
         subtitleContentBytes
@@ -132,8 +121,10 @@ export class SubDlService extends AbstractSubtitleService {
       throw error;
     } finally {
       // Cleanup the temporary files
-      await remove(zipFilePath).catch(console.error);
-      await remove(extractionDir, { recursive: true }).catch(console.error);
+      await window.electronAPI.fs.removeFile(zipFilePath).catch(console.error);
+      await window.electronAPI.fs
+        .removeFile(extractionDir)
+        .catch(console.error);
     }
   }
 }

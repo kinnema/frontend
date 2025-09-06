@@ -71,7 +71,7 @@ export function useHlsPlayer({
       if (toast) {
         toast.toast({
           title: "Compatibility Error",
-          description: "Bu cihaz HLS video formatını desteklemiyor.",
+          description: "This device does not support HLS video format.",
           variant: "destructive",
         });
       }

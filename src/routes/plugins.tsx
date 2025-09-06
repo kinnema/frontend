@@ -20,8 +20,10 @@ import { usePluginRegistry } from "@/lib/plugins/usePluginRegistry";
 import { createFileRoute } from "@tanstack/react-router";
 import { ChevronDown, Loader2Icon } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function PluginManager() {
+  const { t } = useTranslation();
   const {
     plugins,
     registerPlugin,
@@ -44,7 +46,7 @@ function PluginManager() {
       await registerPlugin(pluginUrl);
       setPluginUrl("");
     } catch (err: any) {
-      setError("Eklenti eklenirken bir hata oluştu");
+      setError(t("plugins.addError"));
     } finally {
       setLoading(false);
     }
@@ -68,7 +70,7 @@ function PluginManager() {
 
   return (
     <div className="p-10">
-      <h1 className="font-semibold text-2xl">Eklenti Yöneticisi</h1>
+      <h1 className="font-semibold text-2xl">{t("plugins.managerTitle")}</h1>
       <form
         onSubmit={handleAddPlugin}
         className="flex items-center mb-4 gap-10"
@@ -76,14 +78,14 @@ function PluginManager() {
         <Input
           className="my-5"
           type="url"
-          placeholder="Eklenti URL'si"
+          placeholder={t("plugins.urlPlaceholder")}
           value={pluginUrl}
           onChange={(e) => setPluginUrl(e.target.value)}
           required
         />
         <Button type="submit" disabled={loading}>
           {loading && <Loader2Icon className="animate-spin mr-2" />}
-          {loading ? "Ekleniyor" : "Eklenti Ekle"}
+          {loading ? t("plugins.adding") : t("plugins.addPlugin")}
         </Button>
       </form>
       {error && <div className="text-red-500 my-5">{error}</div>}
@@ -98,13 +100,13 @@ function PluginManager() {
           <Loader2Icon className="animate-spin mr-2" />
         )}
         {isUpdating?.isUpdating && isUpdating.pluginId === "*"
-          ? "Guncelleniyor"
-          : "Tum Eklentileri Guncelle"}
+          ? t("plugins.updating")
+          : t("plugins.updateAll")}
       </Button>
 
       <ul className="flex md:flex-row flex-col gap-5">
         {Object.values(plugins).length === 0 && (
-          <li>Herhangi bir eklenti bulunamadi</li>
+          <li>{t("plugins.noPlugins")}</li>
         )}
         {Object.values(plugins).map((plugin) => (
           <li key={plugin.name}>
@@ -129,7 +131,7 @@ function PluginManager() {
                       }
                     />
                     <Label htmlFor={`enable-plugin-${plugin.id}`}>
-                      Eklenti Durumu
+                      {t("plugins.status")}
                     </Label>
                   </div>
                   <DropdownMenu>
@@ -140,19 +142,19 @@ function PluginManager() {
                         onClick={() => unregisterPlugin(plugin.id)}
                       >
                         <ChevronDown size={230} />
-                        Aksiyonlar
+                        {t("plugins.actions")}
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       <DropdownMenuItem
                         onClick={() => handlePluginUpdate(plugin.id)}
                       >
-                        Guncelle
+                        {t("plugins.update")}
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => unregisterPlugin(plugin.id)}
                       >
-                        Kaldir
+                        {t("plugins.remove")}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

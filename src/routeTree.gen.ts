@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TestRoomRouteImport } from './routes/test-room'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PluginsRouteImport } from './routes/plugins'
@@ -20,17 +19,13 @@ import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as SettingsUpdatesRouteImport } from './routes/settings/updates'
 import { Route as SettingsSubtitlesRouteImport } from './routes/settings/subtitles'
+import { Route as SettingsLanguageRouteImport } from './routes/settings/language'
 import { Route as RoomRoomIdRouteImport } from './routes/room.$roomId'
 import { Route as CollectionNetworkRouteImport } from './routes/collection.$network'
 import { Route as SettingsSyncIndexRouteImport } from './routes/settings/sync/index'
 import { Route as SettingsSyncSetupRouteImport } from './routes/settings/sync/setup'
 import { Route as SettingsSyncSyncIdRouteImport } from './routes/settings/sync/$syncId'
 
-const TestRoomRoute = TestRoomRouteImport.update({
-  id: '/test-room',
-  path: '/test-room',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
@@ -80,6 +75,11 @@ const SettingsSubtitlesRoute = SettingsSubtitlesRouteImport.update({
   path: '/settings/subtitles',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsLanguageRoute = SettingsLanguageRouteImport.update({
+  id: '/settings/language',
+  path: '/settings/language',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RoomRoomIdRoute = RoomRoomIdRouteImport.update({
   id: '/room/$roomId',
   path: '/room/$roomId',
@@ -112,9 +112,9 @@ export interface FileRoutesByFullPath {
   '/plugins': typeof PluginsRoute
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
-  '/test-room': typeof TestRoomRoute
   '/collection/$network': typeof CollectionNetworkRoute
   '/room/$roomId': typeof RoomRoomIdRoute
+  '/settings/language': typeof SettingsLanguageRoute
   '/settings/subtitles': typeof SettingsSubtitlesRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/': typeof LayoutIndexRoute
@@ -129,9 +129,9 @@ export interface FileRoutesByTo {
   '/plugins': typeof PluginsRoute
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
-  '/test-room': typeof TestRoomRoute
   '/collection/$network': typeof CollectionNetworkRoute
   '/room/$roomId': typeof RoomRoomIdRoute
+  '/settings/language': typeof SettingsLanguageRoute
   '/settings/subtitles': typeof SettingsSubtitlesRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/': typeof LayoutIndexRoute
@@ -148,9 +148,9 @@ export interface FileRoutesById {
   '/plugins': typeof PluginsRoute
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
-  '/test-room': typeof TestRoomRoute
   '/collection/$network': typeof CollectionNetworkRoute
   '/room/$roomId': typeof RoomRoomIdRoute
+  '/settings/language': typeof SettingsLanguageRoute
   '/settings/subtitles': typeof SettingsSubtitlesRoute
   '/settings/updates': typeof SettingsUpdatesRoute
   '/_layout/': typeof LayoutIndexRoute
@@ -167,9 +167,9 @@ export interface FileRouteTypes {
     | '/plugins'
     | '/register'
     | '/search'
-    | '/test-room'
     | '/collection/$network'
     | '/room/$roomId'
+    | '/settings/language'
     | '/settings/subtitles'
     | '/settings/updates'
     | '/'
@@ -184,9 +184,9 @@ export interface FileRouteTypes {
     | '/plugins'
     | '/register'
     | '/search'
-    | '/test-room'
     | '/collection/$network'
     | '/room/$roomId'
+    | '/settings/language'
     | '/settings/subtitles'
     | '/settings/updates'
     | '/'
@@ -202,9 +202,9 @@ export interface FileRouteTypes {
     | '/plugins'
     | '/register'
     | '/search'
-    | '/test-room'
     | '/collection/$network'
     | '/room/$roomId'
+    | '/settings/language'
     | '/settings/subtitles'
     | '/settings/updates'
     | '/_layout/'
@@ -221,9 +221,9 @@ export interface RootRouteChildren {
   PluginsRoute: typeof PluginsRoute
   RegisterRoute: typeof RegisterRoute
   SearchRoute: typeof SearchRoute
-  TestRoomRoute: typeof TestRoomRoute
   CollectionNetworkRoute: typeof CollectionNetworkRoute
   RoomRoomIdRoute: typeof RoomRoomIdRoute
+  SettingsLanguageRoute: typeof SettingsLanguageRoute
   SettingsSubtitlesRoute: typeof SettingsSubtitlesRoute
   SettingsUpdatesRoute: typeof SettingsUpdatesRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
@@ -234,13 +234,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/test-room': {
-      id: '/test-room'
-      path: '/test-room'
-      fullPath: '/test-room'
-      preLoaderRoute: typeof TestRoomRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/search': {
       id: '/search'
       path: '/search'
@@ -311,6 +304,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsSubtitlesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/language': {
+      id: '/settings/language'
+      path: '/settings/language'
+      fullPath: '/settings/language'
+      preLoaderRoute: typeof SettingsLanguageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/room/$roomId': {
       id: '/room/$roomId'
       path: '/room/$roomId'
@@ -367,9 +367,9 @@ const rootRouteChildren: RootRouteChildren = {
   PluginsRoute: PluginsRoute,
   RegisterRoute: RegisterRoute,
   SearchRoute: SearchRoute,
-  TestRoomRoute: TestRoomRoute,
   CollectionNetworkRoute: CollectionNetworkRoute,
   RoomRoomIdRoute: RoomRoomIdRoute,
+  SettingsLanguageRoute: SettingsLanguageRoute,
   SettingsSubtitlesRoute: SettingsSubtitlesRoute,
   SettingsUpdatesRoute: SettingsUpdatesRoute,
   SettingsIndexRoute: SettingsIndexRoute,

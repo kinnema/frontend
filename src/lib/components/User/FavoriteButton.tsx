@@ -7,6 +7,7 @@ import { QUERY_KEYS } from "@/lib/utils/queryKeys";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Heart, Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import { useTranslation } from "react-i18next";
 import { v4 } from "uuid";
 
 interface IProps {
@@ -14,6 +15,7 @@ interface IProps {
 }
 
 export function FavoriteButton({ tmdbData }: IProps) {
+  const { t } = useTranslation();
   const { addFavorite, getFavorite, removeFavorite, getFavoriteByTmdb } =
     useFavorites(tmdbData.id);
 
@@ -32,7 +34,7 @@ export function FavoriteButton({ tmdbData }: IProps) {
     },
     onError: () => {
       toast({
-        title: "Favorilerden kaldirilirken bir hata oluştu",
+        title: t("favorites.removeError"),
         variant: "destructive",
       });
     },
@@ -42,13 +44,13 @@ export function FavoriteButton({ tmdbData }: IProps) {
     mutationFn: (data: IAddFavorite) => addFavorite(data),
     onSuccess: async () => {
       toast({
-        title: "Favorilere eklendi",
+        title: t("favorites.added"),
         variant: "default",
       });
     },
     onError: () => {
       toast({
-        title: "Favorilere eklenirken bir hata oluştu",
+        title: t("favorites.addError"),
         variant: "destructive",
       });
     },
@@ -71,8 +73,6 @@ export function FavoriteButton({ tmdbData }: IProps) {
       id: favorites.data?.id,
     });
   }
-
-  console.log(favorites.data);
 
   const isFavorite = favorites.data ? true : false;
 
@@ -133,7 +133,7 @@ export function FavoriteButton({ tmdbData }: IProps) {
               >
                 <Heart className="h-6 w-6" />
               </motion.div>
-              Favorilere ekle
+              {t("favorites.addToFavorites")}
             </motion.span>
           )}
         </AnimatePresence>

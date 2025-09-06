@@ -5,7 +5,10 @@ import { zodI18nMap } from "zod-i18n-map";
 import translation from "zod-i18n-map/locales/tr/zod.json";
 
 // lng and resources key depend on your locale.
-i18next.init({
+// Note: This is separate from the main i18n setup for UI texts
+const zodI18n = i18next.createInstance();
+
+zodI18n.init({
   lng: "tr",
   resources: {
     tr: { zod: translation },
