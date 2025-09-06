@@ -18,6 +18,7 @@ import { AvailableCollectionForSync } from "@/lib/database/replication/available
 import { rxdbReplicationFactory } from "@/lib/database/replication/replicationFactory";
 import { getDb } from "@/lib/database/rxdb";
 import { useSyncStore } from "@/lib/stores/sync.store";
+import { Link } from "@tanstack/react-router";
 import clsx from "clsx";
 import {
   AlertCircle,
@@ -49,6 +50,7 @@ export default function SyncSettingsFeature() {
   // Nostr sync state
   const isNostrEnabled = useSyncStore((state) => state.isNostrEnabled);
   const setIsNostrEnabled = useSyncStore((state) => state.setIsNostrEnabled);
+  const nostrId = localStorage.getItem("nostr-secret-key") || "";
   const nostrConnectionStatus = useSyncStore(
     (state) => state.nostrConnectionStatus
   );
@@ -274,6 +276,22 @@ export default function SyncSettingsFeature() {
                 </Button>
               </p>
             </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium">
+                Nostr ID (Share this ID to connect other devices)
+              </p>
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                <Input className="max-w-xs" value={nostrId} readOnly />
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    navigator.clipboard.writeText(nostrId ?? "");
+                  }}
+                >
+                  Copy
+                </Button>
+              </p>
+            </div>
             {isSyncing && (
               <div className="space-y-2">
                 <Progress value={syncProgress} className="h-2" />
@@ -435,6 +453,11 @@ export default function SyncSettingsFeature() {
                         "Pull"
                       )}
                     </Button>
+                    <Link to="/settings/sync/nostr">
+                      <Button size="sm" variant="outline" className="flex-1">
+                        Settings
+                      </Button>
+                    </Link>
                   </div>
                   <Button
                     size="sm"
@@ -451,6 +474,7 @@ export default function SyncSettingsFeature() {
                       "Full Sync"
                     )}
                   </Button>
+
                   {lastNostrSync && (
                     <p className="text-xs text-muted-foreground">
                       Last sync: {new Date(lastNostrSync).toLocaleString()}

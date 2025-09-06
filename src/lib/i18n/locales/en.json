@@ -84,5 +84,29 @@
     "selectLanguage": "Select Language",
     "currentLanguage": "Current language",
     "restartNote": "Changes will be applied immediately"
+  },
+  "nostr": {
+    "manageRelays": "Manage Nostr Relays",
+    "description": "Configure your relay connections for optimal performance and network reach.",
+    "addNewRelay": "Add New Relay",
+    "addRelayDescription": "Enter a WebSocket URL to add a new Nostr relay to your configuration.",
+    "relayUrlPlaceholder": "Enter relay URL (e.g., wss://relay.example.com)",
+    "addRelay": "Add Relay",
+    "activeRelays": "Active Relays",
+    "activeRelaysDescription": "Manage your current relay connections. Connected relays are actively syncing data.",
+    "noRelaysConfigured": "No relays configured",
+    "addFirstRelay": "Add your first relay above to get started.",
+    "connected": "connected",
+    "disconnected": "disconnected",
+    "relayRemoved": "Relay removed",
+    "relayRemovedDescription": "Relay has been removed from your list",
+    "success": "Success",
+    "relayAddedSuccessfully": "Relay added successfully",
+    "error": "Error",
+    "enterRelayUrl": "Please enter a relay URL",
+    "invalidRelayUrl": "Relay URL must start with wss:// or ws://",
+    "helpText": "Need help? Check the",
+    "documentationLink": "Nostr relay documentation",
+    "helpTextEnd": "for more information about configuring relays."
   }
 }

@@ -24,6 +24,7 @@ import { Route as RoomRoomIdRouteImport } from './routes/room.$roomId'
 import { Route as CollectionNetworkRouteImport } from './routes/collection.$network'
 import { Route as SettingsSyncIndexRouteImport } from './routes/settings/sync/index'
 import { Route as SettingsSyncSetupRouteImport } from './routes/settings/sync/setup'
+import { Route as SettingsSyncNostrRouteImport } from './routes/settings/sync/nostr'
 import { Route as SettingsSyncSyncIdRouteImport } from './routes/settings/sync/$syncId'
 
 const SearchRoute = SearchRouteImport.update({
@@ -100,6 +101,11 @@ const SettingsSyncSetupRoute = SettingsSyncSetupRouteImport.update({
   path: '/settings/sync/setup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsSyncNostrRoute = SettingsSyncNostrRouteImport.update({
+  id: '/settings/sync/nostr',
+  path: '/settings/sync/nostr',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsSyncSyncIdRoute = SettingsSyncSyncIdRouteImport.update({
   id: '/settings/sync/$syncId',
   path: '/settings/sync/$syncId',
@@ -120,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/settings/sync/$syncId': typeof SettingsSyncSyncIdRoute
+  '/settings/sync/nostr': typeof SettingsSyncNostrRoute
   '/settings/sync/setup': typeof SettingsSyncSetupRoute
   '/settings/sync': typeof SettingsSyncIndexRoute
 }
@@ -137,6 +144,7 @@ export interface FileRoutesByTo {
   '/': typeof LayoutIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/settings/sync/$syncId': typeof SettingsSyncSyncIdRoute
+  '/settings/sync/nostr': typeof SettingsSyncNostrRoute
   '/settings/sync/setup': typeof SettingsSyncSetupRoute
   '/settings/sync': typeof SettingsSyncIndexRoute
 }
@@ -156,6 +164,7 @@ export interface FileRoutesById {
   '/_layout/': typeof LayoutIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/settings/sync/$syncId': typeof SettingsSyncSyncIdRoute
+  '/settings/sync/nostr': typeof SettingsSyncNostrRoute
   '/settings/sync/setup': typeof SettingsSyncSetupRoute
   '/settings/sync/': typeof SettingsSyncIndexRoute
 }
@@ -175,6 +184,7 @@ export interface FileRouteTypes {
     | '/'
     | '/settings'
     | '/settings/sync/$syncId'
+    | '/settings/sync/nostr'
     | '/settings/sync/setup'
     | '/settings/sync'
   fileRoutesByTo: FileRoutesByTo
@@ -192,6 +202,7 @@ export interface FileRouteTypes {
     | '/'
     | '/settings'
     | '/settings/sync/$syncId'
+    | '/settings/sync/nostr'
     | '/settings/sync/setup'
     | '/settings/sync'
   id:
@@ -210,6 +221,7 @@ export interface FileRouteTypes {
     | '/_layout/'
     | '/settings/'
     | '/settings/sync/$syncId'
+    | '/settings/sync/nostr'
     | '/settings/sync/setup'
     | '/settings/sync/'
   fileRoutesById: FileRoutesById
@@ -228,6 +240,7 @@ export interface RootRouteChildren {
   SettingsUpdatesRoute: typeof SettingsUpdatesRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
   SettingsSyncSyncIdRoute: typeof SettingsSyncSyncIdRoute
+  SettingsSyncNostrRoute: typeof SettingsSyncNostrRoute
   SettingsSyncSetupRoute: typeof SettingsSyncSetupRoute
   SettingsSyncIndexRoute: typeof SettingsSyncIndexRoute
 }
@@ -339,6 +352,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsSyncSetupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/sync/nostr': {
+      id: '/settings/sync/nostr'
+      path: '/settings/sync/nostr'
+      fullPath: '/settings/sync/nostr'
+      preLoaderRoute: typeof SettingsSyncNostrRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings/sync/$syncId': {
       id: '/settings/sync/$syncId'
       path: '/settings/sync/$syncId'
@@ -374,6 +394,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsUpdatesRoute: SettingsUpdatesRoute,
   SettingsIndexRoute: SettingsIndexRoute,
   SettingsSyncSyncIdRoute: SettingsSyncSyncIdRoute,
+  SettingsSyncNostrRoute: SettingsSyncNostrRoute,
   SettingsSyncSetupRoute: SettingsSyncSetupRoute,
   SettingsSyncIndexRoute: SettingsSyncIndexRoute,
 }

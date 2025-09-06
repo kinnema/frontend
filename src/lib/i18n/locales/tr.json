@@ -84,5 +84,29 @@
     "selectLanguage": "Dil Seçin",
     "currentLanguage": "Mevcut dil",
     "restartNote": "Değişiklikler hemen uygulanacaktır"
+  },
+  "nostr": {
+    "manageRelays": "Nostr Relay'lerini Yönet",
+    "description": "Optimal performans ve ağ erişimi için relay bağlantılarınızı yapılandırın.",
+    "addNewRelay": "Yeni Relay Ekle",
+    "addRelayDescription": "Yapılandırmanıza yeni bir Nostr relay'i eklemek için bir WebSocket URL'si girin.",
+    "relayUrlPlaceholder": "Relay URL'si girin (örneğin, wss://relay.example.com)",
+    "addRelay": "Relay Ekle",
+    "activeRelays": "Aktif Relay'ler",
+    "activeRelaysDescription": "Mevcut relay bağlantılarınızı yönetin. Bağlı relay'ler aktif olarak veri senkronize ediyor.",
+    "noRelaysConfigured": "Hiç relay yapılandırılmamış",
+    "addFirstRelay": "Başlamak için yukarıdan ilk relay'inizi ekleyin.",
+    "connected": "bağlı",
+    "disconnected": "bağlantısız",
+    "relayRemoved": "Relay kaldırıldı",
+    "relayRemovedDescription": "Relay listenizden kaldırıldı",
+    "success": "Başarılı",
+    "relayAddedSuccessfully": "Relay başarıyla eklendi",
+    "error": "Hata",
+    "enterRelayUrl": "Lütfen bir relay URL'si girin",
+    "invalidRelayUrl": "Relay URL'si wss:// veya ws:// ile başlamalı",
+    "helpText": "Yardıma mı ihtiyacınız var? Kontrol edin",
+    "documentationLink": "Nostr relay dokümantasyonu",
+    "helpTextEnd": "relay yapılandırma hakkında daha fazla bilgi için."
   }
 }

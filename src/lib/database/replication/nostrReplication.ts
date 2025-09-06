@@ -1,3 +1,4 @@
+import { useSyncStore } from "@/lib/stores/sync.store";
 import {
   SimplePool,
   finalizeEvent,
@@ -8,12 +9,6 @@ import {
   type Event,
 } from "nostr-tools";
 import { KinnemaCollections, getDb } from "../rxdb";
-
-const RELAY_URLS = [
-  "wss://relay.damus.io",
-  "wss://nostr-pub.wellorder.net",
-  "wss://relay.nostr.band",
-];
 
 interface SyncResult {
   total: number;
@@ -44,6 +39,12 @@ export class NostrReplicationManager {
     this.pool = new SimplePool();
     this.deviceId = this.getOrCreateDeviceId();
     this.initializeKeys();
+  }
+
+  private fetchRelayUrls(): string[] {
+    const stored = useSyncStore.getState().nostrRelayUrls || [];
+
+    return stored.map((r) => r.url);
   }
 
   private getOrCreateDeviceId(): string {
@@ -125,6 +126,8 @@ export class NostrReplicationManager {
         );
 
         if (verifyEvent(event)) {
+          const RELAY_URLS = this.fetchRelayUrls();
+
           const publishPromises = this.pool.publish(RELAY_URLS, event);
           await Promise.allSettled(publishPromises);
           successCount++;
@@ -147,7 +150,7 @@ export class NostrReplicationManager {
 
     let updatedCount = 0;
     const errors: string[] = [];
-
+    const RELAY_URLS = this.fetchRelayUrls();
     try {
       const events: Event[] = [];
       const deletionEvents: Event[] = [];
@@ -331,6 +334,8 @@ export class NostrReplicationManager {
       );
 
       if (verifyEvent(deletionEvent)) {
+        const RELAY_URLS = this.fetchRelayUrls();
+
         const publishPromises = this.pool.publish(RELAY_URLS, deletionEvent);
         await Promise.allSettled(publishPromises);
         return { total: 1, deleted: 1, errors: [] };
@@ -391,6 +396,8 @@ export class NostrReplicationManager {
   ): Promise<Event | null> {
     try {
       const events: Event[] = [];
+      const RELAY_URLS = this.fetchRelayUrls();
+
       const sub = this.pool.subscribeMany(
         RELAY_URLS,
         [
@@ -444,6 +451,8 @@ export class NostrReplicationManager {
   }
 
   async cleanup(): Promise<void> {
+    const RELAY_URLS = this.fetchRelayUrls();
+
     this.pool.close(RELAY_URLS);
   }
 
@@ -457,6 +466,8 @@ export class NostrReplicationManager {
     try {
       // First, fetch all your sync events
       const allEvents: Event[] = [];
+      const RELAY_URLS = this.fetchRelayUrls();
+
       const sub = this.pool.subscribeMany(
         RELAY_URLS,
         [
@@ -533,6 +544,8 @@ export class NostrReplicationManager {
 
     try {
       const events: Event[] = [];
+      const RELAY_URLS = this.fetchRelayUrls();
+
       const sub = this.pool.subscribeMany(
         RELAY_URLS,
         [

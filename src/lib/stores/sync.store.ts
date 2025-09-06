@@ -6,6 +6,7 @@ import {
   ICollectionSettingSync,
 } from "../database/replication/availableReplications";
 import { SyncObservables } from "../observables/sync.observable";
+import { IRelay } from "../types/sync.type";
 
 export const useSyncStore = create<SyncStore & SyncStoreActions>()(
   persist(
@@ -46,6 +47,12 @@ export const useSyncStore = create<SyncStore & SyncStoreActions>()(
         SyncObservables.nostrSyncInProgress$.next(inProgress);
         set({ nostrSyncInProgress: inProgress });
       },
+      setNostrRelayUrls: (urls: IRelay[]) => set({ nostrRelayUrls: urls }),
+      nostrRelayUrls: [
+        { id: "1", url: "wss://relay.damus.io", status: "connected" },
+        { id: "2", url: "wss://nos.lol", status: "connected" },
+        { id: "3", url: "wss://relay.snort.social", status: "disconnected" },
+      ],
     }),
     {
       name: "sync-store",
@@ -88,6 +95,7 @@ interface SyncStore {
   nostrConnectionStatus: "connecting" | "connected" | "disconnected" | "error";
   lastNostrSync?: number;
   nostrSyncInProgress: boolean;
+  nostrRelayUrls?: IRelay[];
 }
 
 interface SyncStoreActions {
@@ -105,4 +113,5 @@ interface SyncStoreActions {
   ) => void;
   setLastNostrSync: (timestamp: number) => void;
   setNostrSyncInProgress: (inProgress: boolean) => void;
+  setNostrRelayUrls: (urls: IRelay[]) => void;
 }
