@@ -10,6 +10,7 @@ export interface ICollectionSettingSync {
   description: string;
   key: AvailableCollectionForSync;
   enabled: boolean;
+  replicationTypes: string[];
 }
 
 export const availableCollectionsForSync = [
@@ -18,12 +19,14 @@ export const availableCollectionsForSync = [
     name: "Last Watched",
     description: "Your last watched items",
     enabled: false,
+    replicationTypes: ["webrtc"],
   },
   {
     key: AvailableCollectionForSync["FavoritesCollection"],
     name: "Favorites",
     description: "Your favorite items",
     enabled: false,
+    replicationTypes: ["webrtc"],
   },
 ];
 

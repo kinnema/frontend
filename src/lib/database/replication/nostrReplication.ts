@@ -1,3 +1,4 @@
+import { nostrId$ } from "@/lib/rxjs/nostrObservables";
 import { useSyncStore } from "@/lib/stores/sync.store";
 import {
   SimplePool,
@@ -8,6 +9,7 @@ import {
   verifyEvent,
   type Event,
 } from "nostr-tools";
+import { lastValueFrom } from "rxjs";
 import { KinnemaCollections, getDb } from "../rxdb";
 
 interface SyncResult {
@@ -60,26 +62,22 @@ export class NostrReplicationManager {
 
   private async initializeKeys(): Promise<void> {
     try {
-      const stored = localStorage.getItem("nostr-secret-key");
+      const nostrId = await lastValueFrom(nostrId$);
+      const stored = nostrId;
       let sk: Uint8Array;
 
       if (stored) {
-        try {
-          sk = nip19.decode(stored).data as Uint8Array;
-        } catch {
-          sk = generateSecretKey();
-          localStorage.setItem("nostr-secret-key", nip19.nsecEncode(sk));
-        }
+        sk = nip19.decode(stored).data as Uint8Array;
       } else {
         sk = generateSecretKey();
-        localStorage.setItem("nostr-secret-key", nip19.nsecEncode(sk));
+        nostrId$.next(nip19.nsecEncode(sk));
       }
 
       this.secretKey = sk;
       this.publicKey = getPublicKey(sk);
       this.isInitialized = true;
     } catch (error) {
-      console.error("Failed to initialize Nostr keys:", error);
+      throw new Error("Failed to initialize Nostr keys");
     }
   }
 

@@ -14,6 +14,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useNostr } from "@/hooks/useNostr";
 import { useNostrSync } from "@/hooks/useNostrSync";
+import { NostrIdInput } from "@/lib/components/NostrId";
 import { AvailableCollectionForSync } from "@/lib/database/replication/availableReplications";
 import { rxdbReplicationFactory } from "@/lib/database/replication/replicationFactory";
 import { getDb } from "@/lib/database/rxdb";
@@ -162,49 +163,55 @@ export default function SyncSettingsFeature() {
       return;
     }
 
-    try {
-      let result;
-      switch (type) {
-        case "push":
-          result = await syncToNostr("lastWatched");
-          toast({
-            title: t("sync.toast.pushComplete"),
-            description: t("sync.toast.pushDescription", {
-              synced: result.synced,
-              total: result.total,
-            }),
-          });
-          break;
-        case "pull":
-          result = await syncFromNostr("lastWatched");
-          toast({
-            title: t("sync.toast.pullComplete"),
-            description: t("sync.toast.pullDescription", {
-              updated: result.updated,
-              total: result.total,
-            }),
-          });
-          break;
-        case "full":
-          result = await fullSync("lastWatched");
-          toast({
-            title: t("sync.toast.fullSyncComplete"),
-            description: t("sync.toast.fullSyncDescription", {
-              pushSynced: result.push.synced,
-              pushTotal: result.push.total,
-              pullUpdated: result.pull.updated,
-              pullTotal: result.pull.total,
-            }),
-          });
-          break;
+    for (const collection of availableCollections) {
+      if (!collection.enabled) {
+        return;
       }
-      setLastNostrSync(Date.now());
-    } catch (error) {
-      toast({
-        title: t("sync.toast.syncFailed"),
-        description: t("sync.toast.syncFailedDescription"),
-        variant: "destructive",
-      });
+
+      try {
+        let result;
+        switch (type) {
+          case "push":
+            result = await syncToNostr(collection.key);
+            toast({
+              title: t("sync.toast.pushComplete"),
+              description: t("sync.toast.pushDescription", {
+                synced: result.synced,
+                total: result.total,
+              }),
+            });
+            break;
+          case "pull":
+            result = await syncFromNostr(collection.key);
+            toast({
+              title: t("sync.toast.pullComplete"),
+              description: t("sync.toast.pullDescription", {
+                updated: result.updated,
+                total: result.total,
+              }),
+            });
+            break;
+          case "full":
+            result = await fullSync(collection.key);
+            toast({
+              title: t("sync.toast.fullSyncComplete"),
+              description: t("sync.toast.fullSyncDescription", {
+                pushSynced: result.push.synced,
+                pushTotal: result.push.total,
+                pullUpdated: result.pull.updated,
+                pullTotal: result.pull.total,
+              }),
+            });
+            break;
+        }
+        setLastNostrSync(Date.now());
+      } catch (error) {
+        toast({
+          title: t("sync.toast.syncFailed"),
+          description: t("sync.toast.syncFailedDescription"),
+          variant: "destructive",
+        });
+      }
     }
   };
 
@@ -287,20 +294,7 @@ export default function SyncSettingsFeature() {
                 </Button>
               </p>
             </div>
-            <div className="space-y-1">
-              <p className="text-sm font-medium">{t("sync.nostrIdLabel")}</p>
-              <p className="text-xs text-muted-foreground flex items-center gap-1">
-                <Input className="max-w-xs" value={nostrId} readOnly />
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    navigator.clipboard.writeText(nostrId ?? "");
-                  }}
-                >
-                  {t("sync.copy")}
-                </Button>
-              </p>
-            </div>
+            <NostrIdInput />
             {isSyncing && (
               <div className="space-y-2">
                 <Progress value={syncProgress} className="h-2" />
