@@ -178,7 +178,9 @@
       "syncFailed": "Senkronizasyon Başarısız",
       "syncFailedDescription": "Nostr relay'leri ile senkronizasyon başarısız oldu",
       "syncCompleted": "Senkronizasyon tamamlandı",
-      "syncCompletedDescription": "Tüm ayarlar başarıyla senkronize edildi."
+      "syncCompletedDescription": "Tüm ayarlar başarıyla senkronize edildi.",
+      "invalidNostrId": "Geçersiz Nostr ID'si",
+      "invalidNostrIdDescription": "Lütfen geçerli bir Nostr ID'si girin"
     }
   }
 }

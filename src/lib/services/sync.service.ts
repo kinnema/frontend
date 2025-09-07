@@ -1,7 +1,6 @@
 import { get } from "idb-keyval";
 import { NostrReplicationManager } from "../database/replication/nostrReplication";
 import { KinnemaCollections } from "../database/rxdb";
-import { SyncObservables } from "../observables/sync.observable";
 import { useSyncStore } from "../stores/sync.store";
 import { SYNC_CONNECTION_STATUS } from "../types/sync.type";
 
@@ -18,7 +17,7 @@ export class SyncService {
   }
 
   static async setSecretKey(secretKey: string): Promise<void> {
-    SyncObservables.nostrId$.next(secretKey);
+    this.instance.syncStore.setNostrSecretKey(secretKey);
   }
 
   static async getSecretKey(): Promise<string | null> {

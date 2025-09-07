@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 import {
   availableCollectionsForSync,
   availableCollectionsForSync$,
@@ -7,6 +7,7 @@ import {
 } from "../database/replication/availableReplications";
 import { SyncObservables } from "../observables/sync.observable";
 import { IRelay, SYNC_CONNECTION_STATUS } from "../types/sync.type";
+import { indexedDbZustandStorage } from "./stores/indexedDb";
 
 export const useSyncStore = create<SyncStore & SyncStoreActions>()(
   persist(
@@ -32,19 +33,16 @@ export const useSyncStore = create<SyncStore & SyncStoreActions>()(
       clearPeers: () => set({ peers: [] }),
       // Nostr sync actions
       setIsNostrEnabled: (isEnabled: boolean) => {
-        SyncObservables.isNostrEnabled$.next(isEnabled);
         set({ isNostrEnabled: isEnabled });
       },
       setNostrPublicKey: (publicKey: string) =>
         set({ nostrPublicKey: publicKey }),
       setNostrConnectionStatus: (status) => {
-        SyncObservables.nostrConnectionStatus$.next(status);
         set({ nostrConnectionStatus: status });
       },
       setLastNostrSync: (timestamp: number) =>
         set({ lastNostrSync: timestamp }),
       setNostrSyncInProgress: (inProgress: boolean) => {
-        SyncObservables.nostrSyncInProgress$.next(inProgress);
         set({ nostrSyncInProgress: inProgress });
       },
       setNostrRelayUrls: (urls: IRelay[]) => set({ nostrRelayUrls: urls }),
@@ -53,11 +51,13 @@ export const useSyncStore = create<SyncStore & SyncStoreActions>()(
         { id: "2", url: "wss://nos.lol", status: "connected" },
         { id: "3", url: "wss://relay.snort.social", status: "disconnected" },
       ],
+      setNostrSecretKey: (secretKey: string) =>
+        set({ nostrSecretKey: secretKey }),
     }),
     {
       name: "sync-store",
       version: 0.1,
-
+      storage: createJSONStorage(() => indexedDbZustandStorage),
       onRehydrateStorage: (state) => {
         console.log("hydration starts");
 
@@ -70,14 +70,6 @@ export const useSyncStore = create<SyncStore & SyncStoreActions>()(
             availableCollectionsForSync$.next(state.availableCollections);
             SyncObservables.isEnabled$.next(
               state.isP2PEnabled || state.isNostrEnabled
-            );
-            // Restore Nostr observables
-            SyncObservables.isNostrEnabled$.next(state.isNostrEnabled || false);
-            SyncObservables.nostrConnectionStatus$.next(
-              state.nostrConnectionStatus || "disconnected"
-            );
-            SyncObservables.nostrSyncInProgress$.next(
-              state.nostrSyncInProgress || false
             );
           }
         };
@@ -92,6 +84,7 @@ interface SyncStore {
   isP2PEnabled: boolean;
   availableCollections: ICollectionSettingSync[];
   // Nostr sync status
+  nostrSecretKey?: string;
   isNostrEnabled: boolean;
   nostrPublicKey?: string;
   nostrConnectionStatus: SYNC_CONNECTION_STATUS;
@@ -114,4 +107,5 @@ interface SyncStoreActions {
   setLastNostrSync: (timestamp: number) => void;
   setNostrSyncInProgress: (inProgress: boolean) => void;
   setNostrRelayUrls: (urls: IRelay[]) => void;
+  setNostrSecretKey: (secretKey: string) => void;
 }

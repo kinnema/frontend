@@ -1,23 +1,37 @@
-import { availableCollectionsForSync$ } from "../database/replication/availableReplications";
 import { SyncService } from "../services/sync.service";
+import { useSyncStore } from "../stores/sync.store";
 import { SYNC_CONNECTION_STATUS, SYNC_STATUS } from "../types/sync.type";
 
 self.onmessage = async (event) => {
-  console.log("HOST: Worker received event:", event);
-
   const { action, data } = event.data;
   console.log("HOST: Worker received action:", action, data);
 
   const nostrManager = new SyncService();
-  const collections = availableCollectionsForSync$.getValue();
 
   if (action === "sync") {
+    const collections = useSyncStore.getState().availableCollections;
     self.postMessage({ action: "status", data: SYNC_STATUS.SYNCING });
+    const promises = [];
+
     for (const collection of collections) {
-      await nostrManager.fullNostrSync(collection.key);
+      if (
+        collection.enabled &&
+        collection.enabledReplicationTypes.includes("nostr")
+      ) {
+        console.log(
+          `Worker: Starting Nostr sync for collection ${collection.key}`
+        );
+
+        promises.push(nostrManager.fullNostrSync(collection.key));
+      }
     }
 
-    self.postMessage({ action: "complete", data: "Nostr sync completed!" });
+    await Promise.all(promises);
+
+    self.postMessage({
+      action: "complete",
+      data: await Promise.all(promises.map(async (p) => p.then((s) => s))),
+    });
     self.postMessage({ action: "status", data: SYNC_STATUS.COMPLETE });
   }
 

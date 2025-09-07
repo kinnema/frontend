@@ -178,7 +178,9 @@
       "syncFailed": "Sync Failed",
       "syncFailedDescription": "Failed to sync with Nostr relays",
       "syncCompleted": "Sync completed",
-      "syncCompletedDescription": "All settings have been synchronized successfully."
+      "syncCompletedDescription": "All settings have been synchronized successfully.",
+      "invalidNostrIdTitle": "Invalid Nostr ID",
+      "invalidNostrIdDescription": "Please enter a valid Nostr ID to enable synchronization."
     }
   }
 }

@@ -17,6 +17,7 @@ import { AvailableCollectionForSync } from "@/lib/database/replication/available
 import { rxdbReplicationFactory } from "@/lib/database/replication/replicationFactory";
 import { getDb } from "@/lib/database/rxdb";
 import { useSyncStore } from "@/lib/stores/sync.store";
+import { SYNC_CONNECTION_STATUS } from "@/lib/types/sync.type";
 import clsx from "clsx";
 import { CheckCircle, Clock, Download, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -53,12 +54,12 @@ export default function SyncSettingsFeature() {
   // Sync Nostr connection status with store
   useEffect(() => {
     if (nostrConnected) {
-      setNostrConnectionStatus("connected");
+      setNostrConnectionStatus(SYNC_CONNECTION_STATUS.CONNECTED);
       if (publicKeyNpub) {
         setNostrPublicKey(publicKeyNpub);
       }
     } else {
-      setNostrConnectionStatus("disconnected");
+      setNostrConnectionStatus(SYNC_CONNECTION_STATUS.DISCONNECTED);
     }
   }, [
     nostrConnected,
@@ -136,8 +137,8 @@ export default function SyncSettingsFeature() {
                 </p>
                 <p className="text-xs text-muted-foreground flex items-center gap-1">
                   <Clock className="h-3 w-3" />
-                  {t("sync.lastSynced")}:{" "}
-                  {new Date(lastSyncTime).toLocaleString()}
+                  {t("sync.lastSynced")}:
+                  {new Date(lastSyncTime ?? 0).toLocaleString()}
                 </p>
               </div>
               <Badge variant={isSyncing ? "secondary" : "default"}>

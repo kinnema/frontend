@@ -1,6 +1,4 @@
-import { SyncObservables } from "@/lib/observables/sync.observable";
 import { useSyncStore } from "@/lib/stores/sync.store";
-import { get, set } from "idb-keyval";
 import {
   SimplePool,
   finalizeEvent,
@@ -34,8 +32,8 @@ export class NostrReplicationManager {
   private pool: SimplePool;
   private secretKey: Uint8Array | null = null;
   private publicKey: string | null = null;
-  private deviceId: string = "";
   private isInitialized = false;
+  private syncStore = useSyncStore.getState();
 
   constructor() {
     this.pool = new SimplePool();
@@ -45,38 +43,38 @@ export class NostrReplicationManager {
   private fetchRelayUrls(): string[] {
     const stored = useSyncStore.getState().nostrRelayUrls || [];
 
-    return stored.map((r) => r.url);
-  }
-
-  private async getOrCreateDeviceId(): Promise<string> {
-    let deviceId = await get("kinnema-device-id");
-    if (!deviceId) {
-      deviceId = `device-${Date.now()}-${Math.random()
-        .toString(36)
-        .substring(2)}`;
-      await set("kinnema-device-id", deviceId);
-    }
-    return deviceId;
+    // Filter out invalid URLs and ensure they start with ws:// or wss://
+    return stored
+      .map((r) => r.url)
+      .filter((url) => {
+        try {
+          const parsedUrl = new URL(url);
+          return parsedUrl.protocol === "ws:" || parsedUrl.protocol === "wss:";
+        } catch {
+          console.warn(`Invalid relay URL: ${url}`);
+          return false;
+        }
+      });
   }
 
   private async initializeKeys(): Promise<void> {
     try {
-      this.deviceId = await this.getOrCreateDeviceId();
-      const nostrId = await get<string>("nostr-secret-key");
-      if (nostrId) {
-        SyncObservables.nostrId$.next(nostrId);
-      }
+      const nostrId = this.syncStore.nostrSecretKey;
 
       const stored = nostrId;
       let sk: Uint8Array;
 
       if (stored) {
-        sk = nip19.decode(stored).data as Uint8Array;
+        const decoded = nip19.decode(stored);
+        if (decoded.type === "nsec" && decoded.data instanceof Uint8Array) {
+          sk = decoded.data;
+        } else {
+          throw new Error("Invalid Nostr secret key format");
+        }
       } else {
         sk = generateSecretKey();
         const encodedSk = nip19.nsecEncode(sk);
-        await set("nostr-secret-key", encodedSk);
-        SyncObservables.nostrId$.next(encodedSk);
+        this.syncStore.setNostrSecretKey(encodedSk);
       }
 
       this.secretKey = sk;
@@ -101,9 +99,35 @@ export class NostrReplicationManager {
   ): Promise<SyncResult> {
     await this.ensureInitialized();
 
+    const RELAY_URLS = this.fetchRelayUrls();
+    if (RELAY_URLS.length === 0) {
+      return {
+        total: 0,
+        synced: 0,
+        errors: ["No valid relay URLs configured"],
+      };
+    }
+
     const db = await getDb();
     const collection = db[collectionName];
     const docs = await collection.find().exec();
+    console.log(
+      `🔄 Syncing ${docs.length} items from ${collectionName} to Nostr...`
+    );
+
+    // Log sample document structure for debugging
+    if (docs.length > 0 && docs[0]) {
+      console.log(`📄 Sample ${collectionName} document:`, docs[0].toJSON());
+    }
+
+    if (docs.length === 0) {
+      console.log(`⚠️ No documents found in ${collectionName} collection`);
+      return {
+        total: 0,
+        synced: 0,
+        errors: [`No documents found in ${collectionName} collection`],
+      };
+    }
 
     let successCount = 0;
     const errors: string[] = [];
@@ -116,11 +140,11 @@ export class NostrReplicationManager {
             kind: 30001,
             created_at: Math.floor(Date.now() / 1000),
             tags: [
-              ["d", `${collectionName}-${doc.primary}`],
+              ["d", `${collectionName}-${doc.id}`],
               ["t", "kinnema-sync"],
             ],
             content: JSON.stringify({
-              id: doc.primary,
+              id: doc.id,
               data: docData,
               collection: collectionName,
               syncedAt: Date.now(),
@@ -130,14 +154,28 @@ export class NostrReplicationManager {
         );
 
         if (verifyEvent(event)) {
-          const RELAY_URLS = this.fetchRelayUrls();
+          try {
+            const publishPromises = this.pool.publish(RELAY_URLS, event);
+            const results = await Promise.allSettled(publishPromises);
 
-          const publishPromises = this.pool.publish(RELAY_URLS, event);
-          await Promise.allSettled(publishPromises);
-          successCount++;
+            // Check if any relay succeeded
+            const hasSuccess = results.some(
+              (result) => result.status === "fulfilled" && result.value
+            );
+
+            if (hasSuccess) {
+              successCount++;
+            } else {
+              errors.push(`Failed to publish event for ${doc.id} to any relay`);
+            }
+          } catch (publishError) {
+            errors.push(`Network error publishing ${doc.id}: ${publishError}`);
+          }
+        } else {
+          errors.push(`Failed to verify event for ${doc.id}`);
         }
       } catch (error) {
-        errors.push(`Failed to sync ${doc.primary}: ${error}`);
+        errors.push(`Failed to sync ${doc.id}: ${error}`);
       }
     }
 
@@ -149,12 +187,22 @@ export class NostrReplicationManager {
   ): Promise<PullResult> {
     await this.ensureInitialized();
 
+    const RELAY_URLS = this.fetchRelayUrls();
+    if (RELAY_URLS.length === 0) {
+      return {
+        total: 0,
+        updated: 0,
+        errors: ["No valid relay URLs configured"],
+      };
+    }
+
     const db = await getDb();
     const collection = db[collectionName];
 
     let updatedCount = 0;
     const errors: string[] = [];
-    const RELAY_URLS = this.fetchRelayUrls();
+
+    console.log(`🔄 Syncing ${collectionName} from Nostr relays:`, RELAY_URLS);
     try {
       const events: Event[] = [];
       const deletionEvents: Event[] = [];
@@ -179,16 +227,33 @@ export class NostrReplicationManager {
             if (verifyEvent(event)) {
               if (event.kind === 5) {
                 deletionEvents.push(event);
+                console.log(`🗑️ Added deletion event`);
               } else {
+                console.log("qweqweqweqwe", event);
                 events.push(event);
+                console.log(`📄 Added data event`);
               }
+            } else {
+              console.log(`❌ Event verification failed`);
             }
           },
         }
       );
 
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-      sub.close();
+      // Wait for events to be collected with timeout
+      await new Promise((resolve) => {
+        const timeout = setTimeout(() => {
+          sub.close();
+          resolve(void 0);
+        }, 5000); // Increased timeout for better reliability
+
+        // Close subscription after timeout
+        setTimeout(() => {
+          clearTimeout(timeout);
+          sub.close();
+          resolve(void 0);
+        }, 5000);
+      });
 
       // Process deletion events first
       for (const deletionEvent of deletionEvents) {
@@ -238,7 +303,7 @@ export class NostrReplicationManager {
           }
 
           // Delete items from local database
-          for (const itemId of deletedItemIds) {
+          for (const itemId of Array.from(deletedItemIds)) {
             try {
               const doc = await collection.findOne(itemId).exec();
               if (doc) {
@@ -266,14 +331,24 @@ export class NostrReplicationManager {
       );
 
       // Process remaining active events
+      console.log(
+        `📥 Processing ${activeEvents.length} active events for ${collectionName}`
+      );
       for (const event of activeEvents) {
         try {
           const parsed = JSON.parse(event.content);
+          console.log(
+            `📄 Processing event for collection: ${parsed.collection}, item: ${parsed.id}`
+          );
           if (parsed.collection === collectionName && parsed.data) {
             await collection.upsert(parsed.data);
             updatedCount++;
+            console.log(`✅ Upserted item ${parsed.id} in ${collectionName}`);
+          } else {
+            console.log(`⏭️ Skipping event - collection mismatch or no data`);
           }
         } catch (error) {
+          console.error(`❌ Failed to process event:`, error);
           errors.push(`Failed to process event: ${error}`);
         }
       }
@@ -316,13 +391,24 @@ export class NostrReplicationManager {
         itemId
       );
 
+      if (!eventToDelete) {
+        // If no event found, we can't delete what doesn't exist
+        return {
+          total: 1,
+          deleted: 0,
+          errors: [
+            `No event found for item ${itemId} in collection ${collectionName}`,
+          ],
+        };
+      }
+
       // Create a deletion event (kind 5) with item metadata
       const deletionEvent = finalizeEvent(
         {
           kind: 5, // Deletion event
           created_at: Math.floor(Date.now() / 1000),
           tags: [
-            ...(eventToDelete ? [["e", eventToDelete.id]] : []), // Reference to the event being deleted (if found)
+            ["e", eventToDelete.id], // Reference to the event being deleted
             ["t", "kinnema-sync"],
             ["collection", collectionName], // Add collection info
             ["item", itemId], // Add item ID directly
@@ -455,9 +541,15 @@ export class NostrReplicationManager {
   }
 
   async cleanup(): Promise<void> {
-    const RELAY_URLS = this.fetchRelayUrls();
-
-    this.pool.close(RELAY_URLS);
+    try {
+      const RELAY_URLS = this.fetchRelayUrls();
+      if (RELAY_URLS.length > 0) {
+        await this.pool.close(RELAY_URLS);
+      }
+    } catch (error) {
+      console.warn("Error during pool cleanup:", error);
+      // Don't throw - cleanup should be graceful
+    }
   }
 
   /**

@@ -29,7 +29,6 @@ export function SyncStatus({ showDetails = true, className }: SyncStatusProps) {
   const peers = useSyncStore((state) => state.peers);
   const router = useRouter();
   const getSyncStatus = () => {
-    console.log(nostrConnectionStatus);
     if (nostrSyncInProgress)
       return { status: "syncing", label: "Syncing", color: "secondary" };
     if (isP2PEnabled && peers.length > 0)
