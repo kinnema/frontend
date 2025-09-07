@@ -6,7 +6,7 @@ import {
   ICollectionSettingSync,
 } from "../database/replication/availableReplications";
 import { SyncObservables } from "../observables/sync.observable";
-import { IRelay } from "../types/sync.type";
+import { IRelay, SYNC_CONNECTION_STATUS } from "../types/sync.type";
 
 export const useSyncStore = create<SyncStore & SyncStoreActions>()(
   persist(
@@ -16,7 +16,7 @@ export const useSyncStore = create<SyncStore & SyncStoreActions>()(
       availableCollections: availableCollectionsForSync,
       // Nostr sync default state
       isNostrEnabled: false,
-      nostrConnectionStatus: "disconnected" as const,
+      nostrConnectionStatus: SYNC_CONNECTION_STATUS.DISCONNECTED,
       nostrSyncInProgress: false,
       addPeer: (peers: string) => set({ peers: [...get().peers, peers] }),
       removePeer: (peers: string) =>
@@ -94,7 +94,7 @@ interface SyncStore {
   // Nostr sync status
   isNostrEnabled: boolean;
   nostrPublicKey?: string;
-  nostrConnectionStatus: "connecting" | "connected" | "disconnected" | "error";
+  nostrConnectionStatus: SYNC_CONNECTION_STATUS;
   lastNostrSync?: number;
   nostrSyncInProgress: boolean;
   nostrRelayUrls?: IRelay[];
@@ -110,9 +110,7 @@ interface SyncStoreActions {
   // Nostr sync actions
   setIsNostrEnabled: (isEnabled: boolean) => void;
   setNostrPublicKey: (publicKey: string) => void;
-  setNostrConnectionStatus: (
-    status: "connecting" | "connected" | "disconnected" | "error"
-  ) => void;
+  setNostrConnectionStatus: (status: SYNC_CONNECTION_STATUS) => void;
   setLastNostrSync: (timestamp: number) => void;
   setNostrSyncInProgress: (inProgress: boolean) => void;
   setNostrRelayUrls: (urls: IRelay[]) => void;

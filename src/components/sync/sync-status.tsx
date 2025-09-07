@@ -29,12 +29,15 @@ export function SyncStatus({ showDetails = true, className }: SyncStatusProps) {
   const peers = useSyncStore((state) => state.peers);
   const router = useRouter();
   const getSyncStatus = () => {
+    console.log(nostrConnectionStatus);
     if (nostrSyncInProgress)
       return { status: "syncing", label: "Syncing", color: "secondary" };
     if (isP2PEnabled && peers.length > 0)
       return { status: "connected", label: "P2P Active", color: "default" };
     if (isNostrEnabled && nostrConnectionStatus === "connected")
       return { status: "connected", label: "Nostr Active", color: "default" };
+    if (isNostrEnabled && nostrConnectionStatus === "connecting")
+      return { status: "connected", label: "Connecting", color: "secondary" };
     if ((isP2PEnabled || isNostrEnabled) && nostrConnectionStatus === "error")
       return { status: "error", label: "Error", color: "destructive" };
     if (isP2PEnabled || isNostrEnabled)

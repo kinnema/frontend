@@ -1,6 +1,6 @@
 import { availableCollectionsForSync$ } from "../database/replication/availableReplications";
 import { SyncService } from "../services/sync.service";
-import { SYNC_STATUS } from "../types/sync.type";
+import { SYNC_CONNECTION_STATUS, SYNC_STATUS } from "../types/sync.type";
 
 self.onmessage = async (event) => {
   console.log("HOST: Worker received event:", event);
@@ -22,7 +22,21 @@ self.onmessage = async (event) => {
   }
 
   if (action === "init") {
-    await nostrManager.initializeNostrSync();
+    self.postMessage({
+      action: "connection_status",
+      data: SYNC_CONNECTION_STATUS.CONNECTING,
+    });
+    await nostrManager.initializeNostrSync().catch((error) => {
+      console.error("Worker: Failed to initialize Nostr sync:", error);
+      self.postMessage({
+        action: "connection_status",
+        data: SYNC_CONNECTION_STATUS.ERROR,
+      });
+    });
+    self.postMessage({
+      action: "connection_status",
+      data: SYNC_CONNECTION_STATUS.CONNECTED,
+    });
     self.postMessage({ action: "initialized", data: "Nostr initialized!" });
   }
 };

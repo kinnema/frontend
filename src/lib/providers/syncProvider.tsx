@@ -4,12 +4,13 @@ import { createContext, useContext, useEffect } from "react";
 import { take, tap } from "rxjs";
 import { SyncObservables } from "../observables/sync.observable";
 import { useSyncStore } from "../stores/sync.store";
-import { SYNC_STATUS } from "../types/sync.type";
+import { SYNC_CONNECTION_STATUS, SYNC_STATUS } from "../types/sync.type";
 
 export const syncProviderContext = createContext(new NostrWorker());
 
 export function SyncProvider({ children }: { children: React.ReactNode }) {
   const worker = useContext(syncProviderContext);
+  const isNostrEnabled = useSyncStore((state) => state.isNostrEnabled);
   const setNostrSyncInProgress = useSyncStore(
     (state) => state.setNostrSyncInProgress
   );
@@ -23,12 +24,19 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
       )
       .subscribe();
 
-    worker.onmessage = (event) => {
-      console.log("Worker received action:", event.data);
+    worker.postMessage({ action: "init" });
 
+    worker.onmessage = (event) => {
       const { action, data } = event.data;
 
       switch (action) {
+        case "connection_status":
+          if (data === SYNC_CONNECTION_STATUS.CONNECTED && isNostrEnabled) {
+            // Start initial sync after connection is established
+            worker.postMessage({ action: "sync" });
+          }
+          useSyncStore.getState().setNostrConnectionStatus(data);
+          break;
         case "status":
           switch (data as SYNC_STATUS) {
             case SYNC_STATUS.SYNCING:

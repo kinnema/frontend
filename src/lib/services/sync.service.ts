@@ -2,10 +2,13 @@ import { get } from "idb-keyval";
 import { NostrReplicationManager } from "../database/replication/nostrReplication";
 import { KinnemaCollections } from "../database/rxdb";
 import { SyncObservables } from "../observables/sync.observable";
+import { useSyncStore } from "../stores/sync.store";
+import { SYNC_CONNECTION_STATUS } from "../types/sync.type";
 
 export class SyncService {
   private static instance: SyncService;
   private nostrManager: NostrReplicationManager = new NostrReplicationManager();
+  private syncStore = useSyncStore.getState();
 
   static getInstance(): SyncService {
     if (!SyncService.instance) {
@@ -26,12 +29,14 @@ export class SyncService {
 
   async initializeNostrSync(): Promise<void> {
     try {
-      SyncObservables.nostrConnectionStatus$.next("connecting");
+      this.syncStore.setNostrConnectionStatus(
+        SYNC_CONNECTION_STATUS.CONNECTING
+      );
       this.nostrManager = new NostrReplicationManager();
-      SyncObservables.nostrConnectionStatus$.next("connected");
+      this.syncStore.setNostrConnectionStatus(SYNC_CONNECTION_STATUS.CONNECTED);
     } catch (error) {
       console.error("Failed to initialize Nostr sync:", error);
-      SyncObservables.nostrConnectionStatus$.next("error");
+      this.syncStore.setNostrConnectionStatus(SYNC_CONNECTION_STATUS.ERROR);
     }
   }
 

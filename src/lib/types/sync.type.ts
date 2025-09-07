@@ -10,3 +10,10 @@ export enum SYNC_STATUS {
   ERROR = "ERROR",
   COMPLETE = "COMPLETE",
 }
+
+export enum SYNC_CONNECTION_STATUS {
+  CONNECTING = "connecting",
+  CONNECTED = "connected",
+  DISCONNECTED = "disconnected",
+  ERROR = "error",
+}
