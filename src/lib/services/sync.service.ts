@@ -1,16 +1,27 @@
+import { get } from "idb-keyval";
 import { NostrReplicationManager } from "../database/replication/nostrReplication";
 import { KinnemaCollections } from "../database/rxdb";
 import { SyncObservables } from "../observables/sync.observable";
 
 export class SyncService {
   private static instance: SyncService;
-  private nostrManager: NostrReplicationManager | null = null;
+  private nostrManager: NostrReplicationManager = new NostrReplicationManager();
 
   static getInstance(): SyncService {
     if (!SyncService.instance) {
       SyncService.instance = new SyncService();
     }
     return SyncService.instance;
+  }
+
+  static async setSecretKey(secretKey: string): Promise<void> {
+    SyncObservables.nostrId$.next(secretKey);
+  }
+
+  static async getSecretKey(): Promise<string | null> {
+    const secretKey = await get("nostr-secret-key");
+
+    return secretKey;
   }
 
   async initializeNostrSync(): Promise<void> {
@@ -81,10 +92,21 @@ export class SyncService {
     );
   }
 
-  cleanup(): void {
-    if (this.nostrManager) {
-      this.nostrManager.cleanup();
-      this.nostrManager = null;
+  async deleteAllSyncData() {
+    if (!this.nostrManager) {
+      throw new Error("Nostr manager not initialized");
     }
+    return await this.nostrManager.deleteAllSyncData();
+  }
+  async deleteAllCollectionData(collectionName: keyof KinnemaCollections) {
+    if (!this.nostrManager) {
+      throw new Error("Nostr manager not initialized");
+    }
+
+    return await this.nostrManager.deleteAllCollectionData(collectionName);
+  }
+
+  cleanup(): void {
+    this.nostrManager.cleanup();
   }
 }

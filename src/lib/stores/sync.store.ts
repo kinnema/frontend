@@ -68,7 +68,9 @@ export const useSyncStore = create<SyncStore & SyncStoreActions>()(
           } else {
             if (!state) return;
             availableCollectionsForSync$.next(state.availableCollections);
-            SyncObservables.isEnabled$.next(state.isP2PEnabled);
+            SyncObservables.isEnabled$.next(
+              state.isP2PEnabled || state.isNostrEnabled
+            );
             // Restore Nostr observables
             SyncObservables.isNostrEnabled$.next(state.isNostrEnabled || false);
             SyncObservables.nostrConnectionStatus$.next(

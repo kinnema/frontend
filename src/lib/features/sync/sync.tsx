@@ -9,39 +9,26 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useNostr } from "@/hooks/useNostr";
-import { useNostrSync } from "@/hooks/useNostrSync";
 import { NostrIdInput } from "@/lib/components/NostrId";
 import { AvailableCollectionForSync } from "@/lib/database/replication/availableReplications";
 import { rxdbReplicationFactory } from "@/lib/database/replication/replicationFactory";
 import { getDb } from "@/lib/database/rxdb";
 import { useSyncStore } from "@/lib/stores/sync.store";
-import { Link } from "@tanstack/react-router";
 import clsx from "clsx";
-import {
-  AlertCircle,
-  CheckCircle,
-  Clock,
-  Download,
-  Globe,
-  Loader2,
-  Users,
-  Wifi,
-  WifiOff,
-} from "lucide-react";
+import { CheckCircle, Clock, Download, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { NostrSyncComponent } from "./components/nostrSync.component";
+import { P2PSyncComponent } from "./components/p2pSync.component";
 
 export default function SyncSettingsFeature() {
+  const lastSyncTime = useSyncStore((state) => state.lastNostrSync);
   const [isExporting, setIsExporting] = useState(false);
   const isP2PEnabled = useSyncStore((state) => state.isP2PEnabled);
-  const setIsP2PEnabled = useSyncStore((state) => state.setIsP2PEnabled);
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [syncProgress, setSyncProgress] = useState(0);
-  const [lastSyncTime, setLastSyncTime] = useState("2 minutes ago");
+  const isSyncing = useSyncStore((state) => state.nostrSyncInProgress);
   const { toast } = useToast();
   const { t } = useTranslation();
   const peers = useSyncStore((state) => state.peers);
@@ -49,35 +36,15 @@ export default function SyncSettingsFeature() {
   const availableCollections = useSyncStore(
     (state) => state.availableCollections
   );
-
-  // Nostr sync state
   const isNostrEnabled = useSyncStore((state) => state.isNostrEnabled);
-  const setIsNostrEnabled = useSyncStore((state) => state.setIsNostrEnabled);
-  const nostrId = localStorage.getItem("nostr-secret-key") || "";
-  const nostrConnectionStatus = useSyncStore(
-    (state) => state.nostrConnectionStatus
-  );
+
   const setNostrConnectionStatus = useSyncStore(
     (state) => state.setNostrConnectionStatus
   );
-  const nostrSyncInProgress = useSyncStore(
-    (state) => state.nostrSyncInProgress
-  );
-  const setNostrSyncInProgress = useSyncStore(
-    (state) => state.setNostrSyncInProgress
-  );
-  const lastNostrSync = useSyncStore((state) => state.lastNostrSync);
-  const setLastNostrSync = useSyncStore((state) => state.setLastNostrSync);
   const setNostrPublicKey = useSyncStore((state) => state.setNostrPublicKey);
 
   // Nostr hooks
   const { isConnected: nostrConnected, publicKeyNpub } = useNostr();
-  const {
-    syncToNostr,
-    syncFromNostr,
-    fullSync,
-    isSyncing: nostrSyncActive,
-  } = useNostrSync();
 
   useEffect(() => {
     getDb();
@@ -100,20 +67,24 @@ export default function SyncSettingsFeature() {
     setNostrPublicKey,
   ]);
 
-  // Sync Nostr sync status
-  useEffect(() => {
-    setNostrSyncInProgress(nostrSyncActive);
-  }, [nostrSyncActive, setNostrSyncInProgress]);
-
   const updateCollection = async (
     key: AvailableCollectionForSync,
     enabled: boolean
   ) => {
+    const type =
+      isP2PEnabled && isNostrEnabled
+        ? "all"
+        : isP2PEnabled
+        ? "webrtc"
+        : isNostrEnabled
+        ? "nostr"
+        : "all";
     if (enabled) {
       console.log(`Enabling replication for ${key}`);
-      await rxdbReplicationFactory.enableReplication(key);
+      await rxdbReplicationFactory.enableReplication(key, type);
     } else {
-      await rxdbReplicationFactory.disableReplication(key);
+      console.log(`Disabling replication for ${key}`);
+      await rxdbReplicationFactory.disableReplication(key, type);
     }
   };
 
@@ -127,114 +98,6 @@ export default function SyncSettingsFeature() {
         description: t("sync.toast.exportSuccessDescription"),
       });
     }, 2000);
-  };
-
-  const handleP2PConnect = () => {
-    setIsP2PEnabled(!isP2PEnabled);
-    toast({
-      title: isP2PEnabled
-        ? t("sync.toast.p2pDisconnected")
-        : t("sync.toast.p2pConnected"),
-      description: isP2PEnabled
-        ? t("sync.toast.p2pDisabled")
-        : t("sync.toast.p2pReady"),
-    });
-  };
-
-  const handleNostrToggle = () => {
-    setIsNostrEnabled(!isNostrEnabled);
-    toast({
-      title: isNostrEnabled
-        ? t("sync.toast.nostrDisabled")
-        : t("sync.toast.nostrEnabled"),
-      description: isNostrEnabled
-        ? t("sync.toast.nostrDisabledDescription")
-        : t("sync.toast.nostrReady"),
-    });
-  };
-
-  const handleNostrSync = async (type: "push" | "pull" | "full") => {
-    if (!isNostrEnabled || nostrConnectionStatus !== "connected") {
-      toast({
-        title: t("sync.toast.nostrNotAvailable"),
-        description: t("sync.toast.nostrNotAvailableDescription"),
-        variant: "destructive",
-      });
-      return;
-    }
-
-    for (const collection of availableCollections) {
-      if (!collection.enabled) {
-        return;
-      }
-
-      try {
-        let result;
-        switch (type) {
-          case "push":
-            result = await syncToNostr(collection.key);
-            toast({
-              title: t("sync.toast.pushComplete"),
-              description: t("sync.toast.pushDescription", {
-                synced: result.synced,
-                total: result.total,
-              }),
-            });
-            break;
-          case "pull":
-            result = await syncFromNostr(collection.key);
-            toast({
-              title: t("sync.toast.pullComplete"),
-              description: t("sync.toast.pullDescription", {
-                updated: result.updated,
-                total: result.total,
-              }),
-            });
-            break;
-          case "full":
-            result = await fullSync(collection.key);
-            toast({
-              title: t("sync.toast.fullSyncComplete"),
-              description: t("sync.toast.fullSyncDescription", {
-                pushSynced: result.push.synced,
-                pushTotal: result.push.total,
-                pullUpdated: result.pull.updated,
-                pullTotal: result.pull.total,
-              }),
-            });
-            break;
-        }
-        setLastNostrSync(Date.now());
-      } catch (error) {
-        toast({
-          title: t("sync.toast.syncFailed"),
-          description: t("sync.toast.syncFailedDescription"),
-          variant: "destructive",
-        });
-      }
-    }
-  };
-
-  const handleSync = async () => {
-    setIsSyncing(true);
-    setSyncProgress(0);
-
-    // Simulate sync progress
-    const interval = setInterval(() => {
-      setSyncProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsSyncing(false);
-          setLastSyncTime("Just now");
-          toast({
-            title: t("sync.toast.syncCompleted"),
-            description: t("sync.toast.syncCompletedDescription"),
-          });
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 200);
   };
 
   return (
@@ -273,7 +136,8 @@ export default function SyncSettingsFeature() {
                 </p>
                 <p className="text-xs text-muted-foreground flex items-center gap-1">
                   <Clock className="h-3 w-3" />
-                  {t("sync.lastSynced")}: {lastSyncTime}
+                  {t("sync.lastSynced")}:{" "}
+                  {new Date(lastSyncTime).toLocaleString()}
                 </p>
               </div>
               <Badge variant={isSyncing ? "secondary" : "default"}>
@@ -295,15 +159,6 @@ export default function SyncSettingsFeature() {
               </p>
             </div>
             <NostrIdInput />
-            {isSyncing && (
-              <div className="space-y-2">
-                <Progress value={syncProgress} className="h-2" />
-                <p className="text-xs text-muted-foreground text-center">
-                  {syncProgress}
-                  {t("sync.progressComplete")}
-                </p>
-              </div>
-            )}
           </CardContent>
         </Card>
 
@@ -344,148 +199,10 @@ export default function SyncSettingsFeature() {
           </Card>
 
           {/* P2P Sync */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-secondary" />
-                {t("sync.peerToPeerSync")}
-              </CardTitle>
-              <CardDescription>{t("sync.p2pDescription")}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">
-                    {t("sync.p2pConnection")}
-                  </p>
-                  <p className="text-xs text-muted-foreground flex items-center gap-1">
-                    {isP2PEnabled ? (
-                      <>
-                        <Wifi className="h-3 w-3 text-green-500" />
-                        {t("sync.connected")}
-                      </>
-                    ) : (
-                      <>
-                        <WifiOff className="h-3 w-3 text-muted-foreground" />
-                        {t("sync.disconnected")}
-                      </>
-                    )}
-                  </p>
-                </div>
-                <Switch
-                  checked={isP2PEnabled}
-                  onCheckedChange={handleP2PConnect}
-                />
-              </div>
-            </CardContent>
-          </Card>
+          <P2PSyncComponent />
 
           {/* Nostr Sync */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Globe className="h-5 w-5 text-purple-500" />
-                {t("sync.nostrSync")}
-              </CardTitle>
-              <CardDescription>{t("sync.nostrDescription")}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">
-                    {t("sync.nostrConnection")}
-                  </p>
-                  <p className="text-xs text-muted-foreground flex items-center gap-1">
-                    {nostrConnectionStatus === "connected" ? (
-                      <>
-                        <CheckCircle className="h-3 w-3 text-green-500" />
-                        {t("sync.connected")}
-                      </>
-                    ) : nostrConnectionStatus === "connecting" ? (
-                      <>
-                        <Loader2 className="h-3 w-3 animate-spin text-yellow-500" />
-                        {t("sync.connecting")}
-                      </>
-                    ) : nostrConnectionStatus === "error" ? (
-                      <>
-                        <AlertCircle className="h-3 w-3 text-red-500" />
-                        {t("sync.error")}
-                      </>
-                    ) : (
-                      <>
-                        <WifiOff className="h-3 w-3 text-muted-foreground" />
-                        {t("sync.disconnected")}
-                      </>
-                    )}
-                  </p>
-                </div>
-                <Switch
-                  checked={isNostrEnabled}
-                  onCheckedChange={handleNostrToggle}
-                  disabled={nostrConnectionStatus !== "connected"}
-                />
-              </div>
-              {isNostrEnabled && nostrConnectionStatus === "connected" && (
-                <div className="space-y-2">
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleNostrSync("push")}
-                      disabled={nostrSyncInProgress}
-                      className="flex-1"
-                    >
-                      {nostrSyncInProgress ? (
-                        <Loader2 className="h-3 w-3 animate-spin" />
-                      ) : (
-                        t("sync.push")
-                      )}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleNostrSync("pull")}
-                      disabled={nostrSyncInProgress}
-                      className="flex-1"
-                    >
-                      {nostrSyncInProgress ? (
-                        <Loader2 className="h-3 w-3 animate-spin" />
-                      ) : (
-                        t("sync.pull")
-                      )}
-                    </Button>
-                    <Link to="/settings/sync/nostr">
-                      <Button size="sm" variant="outline" className="flex-1">
-                        {t("sync.settings")}
-                      </Button>
-                    </Link>
-                  </div>
-                  <Button
-                    size="sm"
-                    onClick={() => handleNostrSync("full")}
-                    disabled={nostrSyncInProgress}
-                    className="w-full"
-                  >
-                    {nostrSyncInProgress ? (
-                      <>
-                        <Loader2 className="mr-2 h-3 w-3 animate-spin" />
-                        {t("sync.syncingButton")}
-                      </>
-                    ) : (
-                      t("sync.fullSync")
-                    )}
-                  </Button>
-
-                  {lastNostrSync && (
-                    <p className="text-xs text-muted-foreground">
-                      {t("sync.lastSync")}:{" "}
-                      {new Date(lastNostrSync).toLocaleString()}
-                    </p>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <NostrSyncComponent />
         </div>
 
         <div>
@@ -522,9 +239,9 @@ export default function SyncSettingsFeature() {
                   </div>
                   <Switch
                     checked={collection.enabled}
-                    onCheckedChange={(enabled) =>
-                      updateCollection(collection.key, enabled)
-                    }
+                    onCheckedChange={(enabled) => {
+                      updateCollection(collection.key, enabled);
+                    }}
                     disabled={!isP2PEnabled && !isNostrEnabled}
                   />
                 </div>

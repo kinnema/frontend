@@ -8,4 +8,5 @@ export class SyncObservables {
     "connecting" | "connected" | "disconnected" | "error"
   >("disconnected");
   public static nostrSyncInProgress$ = new BehaviorSubject<boolean>(false);
+  public static nostrId$ = new BehaviorSubject<string>("");
 }

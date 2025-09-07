@@ -1,5 +1,6 @@
-import { nostrId$ } from "@/lib/rxjs/nostrObservables";
+import { SyncObservables } from "@/lib/observables/sync.observable";
 import { useSyncStore } from "@/lib/stores/sync.store";
+import { get, set } from "idb-keyval";
 import {
   SimplePool,
   finalizeEvent,
@@ -9,7 +10,6 @@ import {
   verifyEvent,
   type Event,
 } from "nostr-tools";
-import { lastValueFrom } from "rxjs";
 import { KinnemaCollections, getDb } from "../rxdb";
 
 interface SyncResult {
@@ -34,12 +34,11 @@ export class NostrReplicationManager {
   private pool: SimplePool;
   private secretKey: Uint8Array | null = null;
   private publicKey: string | null = null;
-  private deviceId: string;
+  private deviceId: string = "";
   private isInitialized = false;
 
   constructor() {
     this.pool = new SimplePool();
-    this.deviceId = this.getOrCreateDeviceId();
     this.initializeKeys();
   }
 
@@ -49,20 +48,25 @@ export class NostrReplicationManager {
     return stored.map((r) => r.url);
   }
 
-  private getOrCreateDeviceId(): string {
-    let deviceId = localStorage.getItem("kinnema-device-id");
+  private async getOrCreateDeviceId(): Promise<string> {
+    let deviceId = await get("kinnema-device-id");
     if (!deviceId) {
       deviceId = `device-${Date.now()}-${Math.random()
         .toString(36)
         .substring(2)}`;
-      localStorage.setItem("kinnema-device-id", deviceId);
+      await set("kinnema-device-id", deviceId);
     }
     return deviceId;
   }
 
   private async initializeKeys(): Promise<void> {
     try {
-      const nostrId = await lastValueFrom(nostrId$);
+      this.deviceId = await this.getOrCreateDeviceId();
+      const nostrId = await get<string>("nostr-secret-key");
+      if (nostrId) {
+        SyncObservables.nostrId$.next(nostrId);
+      }
+
       const stored = nostrId;
       let sk: Uint8Array;
 
@@ -70,7 +74,9 @@ export class NostrReplicationManager {
         sk = nip19.decode(stored).data as Uint8Array;
       } else {
         sk = generateSecretKey();
-        nostrId$.next(nip19.nsecEncode(sk));
+        const encodedSk = nip19.nsecEncode(sk);
+        await set("nostr-secret-key", encodedSk);
+        SyncObservables.nostrId$.next(encodedSk);
       }
 
       this.secretKey = sk;

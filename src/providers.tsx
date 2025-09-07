@@ -6,6 +6,7 @@ import { Capacitor } from "@capacitor/core";
 import { StatusBar, Style } from "@capacitor/status-bar";
 import { CapacitorUpdater } from "@capgo/capacitor-updater";
 import { PropsWithChildren, useEffect } from "react";
+import { SyncProvider } from "./lib/providers/syncProvider";
 
 if (Capacitor.isNativePlatform()) {
   CapacitorUpdater.notifyAppReady();
@@ -23,17 +24,24 @@ export function Providers({ children }: PropsWithChildren) {
   const setNostrConnectionStatus = useSyncStore(
     (state) => state.setNostrConnectionStatus
   );
+  const isNostrEnabled = useSyncStore((state) => state.isNostrEnabled);
 
   useEffect(() => {
     initTheme();
 
+    if (isNostrEnabled) {
+      setNostrConnectionStatus("connecting");
+    } else {
+      setNostrConnectionStatus("disconnected");
+    }
+
     // Initialize Nostr connection status
     setNostrConnectionStatus("disconnected");
-  }, [initTheme, setNostrConnectionStatus]);
+  }, [initTheme, isNostrEnabled, setNostrConnectionStatus]);
 
   return (
     <>
-      {children}
+      <SyncProvider>{children}</SyncProvider>
       <BackButtonHandler />
     </>
   );

@@ -3,15 +3,15 @@ import { Input } from "@/components/ui/input";
 import { Check, PencilIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { nostrId$ } from "../rxjs/nostrObservables";
+import { SyncObservables } from "../observables/sync.observable";
 
 export function NostrIdInput() {
-  const [id, setId] = useState(nostrId$.getValue());
+  const [id, setId] = useState(SyncObservables.nostrId$.getValue());
   const [editingId, setEditingId] = useState(false);
   const { t } = useTranslation();
 
   useEffect(() => {
-    const subscription = nostrId$.subscribe((newId) => {
+    const subscription = SyncObservables.nostrId$.subscribe((newId) => {
       setId(newId);
     });
 
@@ -21,12 +21,12 @@ export function NostrIdInput() {
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    nostrId$.next(e.target.value);
+    SyncObservables.nostrId$.next(e.target.value);
     setId(e.target.value);
   };
 
   const saveChanges = () => {
-    nostrId$.next(id);
+    SyncObservables.nostrId$.next(id);
     setEditingId(false);
     setTimeout(() => {
       window.location.reload();

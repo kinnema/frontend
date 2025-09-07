@@ -98,6 +98,7 @@
   },
   "devDependencies": {
     "@capacitor/cli": "^7.4.2",
+    "@rxjs-insights/devtools": "^0.5.1",
     "@tanstack/router-plugin": "^1.130.10",
     "@types/lodash": "^4.17.4",
     "@types/node": "^20",

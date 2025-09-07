@@ -88,14 +88,22 @@ class RxdbReplicationFactory {
     });
   }
 
-  public async enableReplication(collectionKey: AvailableCollectionForSync) {
+  public async enableReplication(
+    collectionKey: AvailableCollectionForSync,
+    type: "nostr" | "webrtc" | "all" = "all"
+  ) {
     const collection = this.syncStore.availableCollections.find(
       (c) => c.key === collectionKey
     );
     if (collection) {
-      for (const type of collection.replicationTypes) {
-        await this.enableReplicationForType(collectionKey, type);
+      if (type === "all") {
+        for (const t of collection.replicationTypes) {
+          await this.enableReplicationForType(collectionKey, t);
+        }
+        return;
       }
+
+      await this.enableReplicationForType(collectionKey, type);
     }
   }
 
@@ -107,7 +115,7 @@ class RxdbReplicationFactory {
     const replication = this.get(key);
     if (replication) {
       replication.enabled = true;
-      this.updateReplicationStore(collectionKey, true);
+      this.updateReplicationStore(collectionKey, type, true);
       let instance: ReplicationInstance;
       switch (replication.type) {
         case "webrtc":
@@ -123,14 +131,21 @@ class RxdbReplicationFactory {
     }
   }
 
-  public async disableReplication(collectionKey: AvailableCollectionForSync) {
+  public async disableReplication(
+    collectionKey: AvailableCollectionForSync,
+    type: "nostr" | "webrtc" | "all" = "all"
+  ) {
     const collection = this.syncStore.availableCollections.find(
       (c) => c.key === collectionKey
     );
     if (collection) {
-      for (const type of collection.replicationTypes) {
-        await this.disableReplicationForType(collectionKey, type);
+      if (type === "all") {
+        for (const t of collection.replicationTypes) {
+          await this.disableReplicationForType(collectionKey, t);
+        }
+        return;
       }
+      await this.disableReplicationForType(collectionKey, type);
     }
   }
 
@@ -140,9 +155,10 @@ class RxdbReplicationFactory {
   ) {
     const key = `${collectionKey}-${type}`;
     const replication = this.get(key);
+
     if (replication) {
       replication.enabled = false;
-      this.updateReplicationStore(collectionKey, false);
+      this.updateReplicationStore(collectionKey, type, false);
       const instance = this._replications.get(key);
       if (instance) {
         if (instance.cancel) {
@@ -154,13 +170,38 @@ class RxdbReplicationFactory {
   }
   private updateReplicationStore(
     id: AvailableCollectionForSync,
+    type: string,
     enabled: boolean
   ) {
     const syncStore = useSyncStore.getState();
     const updatedCollections = produce(
       syncStore.availableCollections,
       (draft) => {
-        draft.find((c) => c.key === id)!.enabled = enabled;
+        const coll = draft.find((c) => c.key === id);
+        if (coll) {
+          coll.enabled = enabled;
+
+          if (type === "all") {
+            if (enabled) {
+              coll.enabledReplicationTypes = [...coll.replicationTypes];
+            } else {
+              coll.enabledReplicationTypes = [];
+            }
+
+            return draft;
+          }
+
+          const doesExists = coll.enabledReplicationTypes.find(
+            (t) => t === type
+          );
+          if (doesExists && !enabled) {
+            coll.enabledReplicationTypes = coll.enabledReplicationTypes.filter(
+              (t) => t !== type
+            );
+          } else if (!doesExists && enabled) {
+            coll.enabledReplicationTypes.push(type);
+          }
+        }
 
         return draft;
       }
@@ -184,7 +225,7 @@ class RxdbReplicationFactory {
   public disable() {
     this._replications.forEach((value, key) => {
       const collectionKey = key.split("-")[0] as AvailableCollectionForSync;
-      this.updateReplicationStore(collectionKey, false);
+      this.updateReplicationStore(collectionKey, "all", false);
       if (value.connectionHandler) {
         value.connectionHandler.close();
       }

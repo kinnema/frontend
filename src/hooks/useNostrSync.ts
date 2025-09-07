@@ -1,119 +1,42 @@
-import { NostrReplicationManager } from "@/lib/database/replication/nostrReplication";
 import { KinnemaCollections } from "@/lib/database/rxdb";
-import { useCallback, useEffect, useState } from "react";
+import { syncProviderContext } from "@/lib/providers/syncProvider";
+import { SyncService } from "@/lib/services/sync.service";
+import { useCallback, useContext, useEffect, useRef } from "react";
 
 export function useNostrSync() {
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [syncResults, setSyncResults] = useState<any>(null);
-  const [replicationManager, setReplicationManager] =
-    useState<NostrReplicationManager | null>(null);
+  const worker = useContext(syncProviderContext);
+  const replicationManager = useRef<SyncService>(new SyncService());
 
   useEffect(() => {
-    const manager = new NostrReplicationManager();
-    setReplicationManager(manager);
-
     return () => {
-      manager.cleanup();
+      replicationManager.current.cleanup();
     };
   }, []);
 
-  const syncToNostr = useCallback(
-    async (collectionName: keyof KinnemaCollections) => {
-      if (!replicationManager)
-        return { total: 0, synced: 0, errors: ["Manager not initialized"] };
+  const syncToNostr = useCallback(() => {
+    worker.postMessage({ action: "sync", data: null });
+  }, []);
 
-      setIsSyncing(true);
-      try {
-        const result = await replicationManager.syncToNostr(collectionName);
-        setSyncResults(result);
-        return result;
-      } catch (error) {
-        const errorResult = {
-          total: 0,
-          synced: 0,
-          errors: [error instanceof Error ? error.message : "Unknown error"],
-        };
-        setSyncResults(errorResult);
-        return errorResult;
-      } finally {
-        setIsSyncing(false);
-      }
-    },
-    [replicationManager]
-  );
+  const syncFromNostr = useCallback(async () => {
+    worker.postMessage({ action: "sync", data: null });
+  }, []);
 
-  const syncFromNostr = useCallback(
-    async (collectionName: keyof KinnemaCollections) => {
-      if (!replicationManager)
-        return { total: 0, updated: 0, errors: ["Manager not initialized"] };
-
-      setIsSyncing(true);
-      try {
-        const result = await replicationManager.syncFromNostr(collectionName);
-        setSyncResults(result);
-        return result;
-      } catch (error) {
-        const errorResult = {
-          total: 0,
-          updated: 0,
-          errors: [error instanceof Error ? error.message : "Unknown error"],
-        };
-        setSyncResults(errorResult);
-        return errorResult;
-      } finally {
-        setIsSyncing(false);
-      }
-    },
-    [replicationManager]
-  );
-
-  const fullSync = useCallback(
-    async (collectionName: keyof KinnemaCollections) => {
-      if (!replicationManager)
-        return {
-          push: { total: 0, synced: 0, errors: ["Manager not initialized"] },
-          pull: { total: 0, updated: 0, errors: ["Manager not initialized"] },
-        };
-
-      setIsSyncing(true);
-      try {
-        const result = await replicationManager.fullSync(collectionName);
-        setSyncResults(result);
-        return result;
-      } catch (error) {
-        const errorResult = {
-          push: {
-            total: 0,
-            synced: 0,
-            errors: [error instanceof Error ? error.message : "Unknown error"],
-          },
-          pull: {
-            total: 0,
-            updated: 0,
-            errors: [error instanceof Error ? error.message : "Unknown error"],
-          },
-        };
-        setSyncResults(errorResult);
-        return errorResult;
-      } finally {
-        setIsSyncing(false);
-      }
-    },
-    [replicationManager]
-  );
+  const fullSync = useCallback(async () => {
+    worker.postMessage({ action: "sync", data: null });
+  }, []);
 
   const deleteFromNostr = useCallback(
     async (collectionName: keyof KinnemaCollections, itemId: string) => {
       if (!replicationManager)
         return { total: 0, deleted: 0, errors: ["Manager not initialized"] };
 
-      setIsSyncing(true);
+      // setIsSyncing(true);
       try {
-        const result = await replicationManager.deleteFromNostr(
+        const result = await replicationManager.current?.deleteFromNostr(
           collectionName,
           itemId
         );
-        setSyncResults(result);
+        // setSyncResults(result);
         return result;
       } catch (error) {
         const errorResult = {
@@ -121,10 +44,10 @@ export function useNostrSync() {
           deleted: 0,
           errors: [error instanceof Error ? error.message : "Unknown error"],
         };
-        setSyncResults(errorResult);
+        // setSyncResults(errorResult);
         return errorResult;
       } finally {
-        setIsSyncing(false);
+        // setIsSyncing(false);
       }
     },
     [replicationManager]
@@ -135,13 +58,14 @@ export function useNostrSync() {
       if (!replicationManager)
         return { total: 0, deleted: 0, errors: ["Manager not initialized"] };
 
-      setIsSyncing(true);
+      // setIsSyncing(true);
       try {
-        const result = await replicationManager.deleteMultipleFromNostr(
-          collectionName,
-          itemIds
-        );
-        setSyncResults(result);
+        const result =
+          await replicationManager.current?.deleteMultipleFromNostr(
+            collectionName,
+            itemIds
+          );
+        // setSyncResults(result);
         return result;
       } catch (error) {
         const errorResult = {
@@ -149,10 +73,10 @@ export function useNostrSync() {
           deleted: 0,
           errors: [error instanceof Error ? error.message : "Unknown error"],
         };
-        setSyncResults(errorResult);
+        // setSyncResults(errorResult);
         return errorResult;
       } finally {
-        setIsSyncing(false);
+        // setIsSyncing(false);
       }
     },
     [replicationManager]
@@ -166,13 +90,13 @@ export function useNostrSync() {
       if (!replicationManager)
         return { total: 0, deleted: 0, errors: ["Manager not initialized"] };
 
-      setIsSyncing(true);
+      // setIsSyncing(true);
       try {
-        const result = await replicationManager.syncDeletionsToNostr(
+        const result = await replicationManager.current?.syncDeletionsToNostr(
           collectionName,
           deletedItemIds
         );
-        setSyncResults(result);
+        // setSyncResults(result);
         return result;
       } catch (error) {
         const errorResult = {
@@ -180,10 +104,10 @@ export function useNostrSync() {
           deleted: 0,
           errors: [error instanceof Error ? error.message : "Unknown error"],
         };
-        setSyncResults(errorResult);
+        // setSyncResults(errorResult);
         return errorResult;
       } finally {
-        setIsSyncing(false);
+        // setIsSyncing(false);
       }
     },
     [replicationManager]
@@ -193,10 +117,10 @@ export function useNostrSync() {
     if (!replicationManager)
       return { total: 0, deleted: 0, errors: ["Manager not initialized"] };
 
-    setIsSyncing(true);
+    // setIsSyncing(true);
     try {
-      const result = await replicationManager.deleteAllSyncData();
-      setSyncResults(result);
+      const result = await replicationManager.current?.deleteAllSyncData();
+      // setSyncResults(result);
       return result;
     } catch (error) {
       const errorResult = {
@@ -204,10 +128,10 @@ export function useNostrSync() {
         deleted: 0,
         errors: [error instanceof Error ? error.message : "Unknown error"],
       };
-      setSyncResults(errorResult);
+      // setSyncResults(errorResult);
       return errorResult;
     } finally {
-      setIsSyncing(false);
+      // setIsSyncing(false);
     }
   }, [replicationManager]);
 
@@ -216,12 +140,13 @@ export function useNostrSync() {
       if (!replicationManager)
         return { total: 0, deleted: 0, errors: ["Manager not initialized"] };
 
-      setIsSyncing(true);
+      // setIsSyncing(true);
       try {
-        const result = await replicationManager.deleteAllCollectionData(
-          collectionName
-        );
-        setSyncResults(result);
+        const result =
+          await replicationManager.current?.deleteAllCollectionData(
+            collectionName
+          );
+        // setSyncResults(result);
         return result;
       } catch (error) {
         const errorResult = {
@@ -229,10 +154,10 @@ export function useNostrSync() {
           deleted: 0,
           errors: [error instanceof Error ? error.message : "Unknown error"],
         };
-        setSyncResults(errorResult);
+        // setSyncResults(errorResult);
         return errorResult;
       } finally {
-        setIsSyncing(false);
+        // setIsSyncing(false);
       }
     },
     [replicationManager]
@@ -247,8 +172,6 @@ export function useNostrSync() {
     syncDeletionsToNostr,
     deleteAllSyncData, // New: Delete all sync data
     deleteAllCollectionData, // New: Delete all data for specific collection
-    isSyncing,
-    syncResults,
     isReady: !!replicationManager,
   };
 }
