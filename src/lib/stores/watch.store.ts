@@ -45,6 +45,7 @@ export const useWatchStore = create(
     }),
     {
       name: "watchStore",
+      version: import.meta.env.__APP_VERSION__,
       storage: createJSONStorage(() => indexedDbZustandStorage),
     }
   )

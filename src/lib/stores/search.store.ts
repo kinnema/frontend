@@ -35,6 +35,7 @@ export const useSearchStore = create(
     {
       name: "search",
       storage: createJSONStorage(() => indexedDbZustandStorage),
+      version: import.meta.env.__APP_VERSION__,
     }
   )
 );

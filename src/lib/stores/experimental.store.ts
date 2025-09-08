@@ -72,7 +72,7 @@ export const useExperimentalStore = create<ExperimentalStore>()(
     }),
     {
       name: "experimental-features-store",
-      version: 0.2,
+      version: import.meta.env.__APP_VERSION__,
       storage: createJSONStorage(() => indexedDbZustandStorage),
     }
   )

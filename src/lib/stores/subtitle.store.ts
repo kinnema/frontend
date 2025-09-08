@@ -58,6 +58,7 @@ export const useSubtitleStore = create(
     {
       name: "subtitle-storage",
       storage: createJSONStorage(() => indexedDbZustandStorage),
+      version: import.meta.env.__APP_VERSION__,
     }
   )
 );

@@ -56,7 +56,7 @@ export const useSyncStore = create<SyncStore & SyncStoreActions>()(
     }),
     {
       name: "sync-store",
-      version: 0.1,
+      version: import.meta.env.__APP_VERSION__,
       storage: createJSONStorage(() => indexedDbZustandStorage),
       onRehydrateStorage: (state) => {
         console.log("hydration starts");
