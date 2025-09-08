@@ -25,7 +25,12 @@ export function ShowCarousel({
           {t(titleTranslationKey)}
         </h2>
         <div className="relative">
-          <Carousel className="w-full max-w-s">
+          <Carousel
+            className="w-full max-w-s"
+            opts={{
+              slidesToScroll: "auto",
+            }}
+          >
             <CarouselContent>
               {shows.map((show, index) => (
                 <CarouselItem

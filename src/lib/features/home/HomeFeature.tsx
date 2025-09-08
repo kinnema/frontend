@@ -28,7 +28,7 @@ export function HomeFeature() {
       <ShowCarousel
         titleTranslationKey="home.topRatedSeries"
         shows={
-          popularData?.results.slice(0, 10).map((s) => (
+          popularData?.results.slice(0, 15).map((s) => (
             <ShowCard
               show={{
                 id: s.id,
