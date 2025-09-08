@@ -46,8 +46,12 @@ export default function ChapterPage({
   const clearSubtitles = useWatchStore((state) => state.clearSubtitles);
   const isWatched = useRef<boolean>(false);
   const toast = useToast();
-  const { getSingleLastWatched, updateLastWatched, addLastWatched } =
-    useLastWatched();
+  const {
+    getSingleLastWatched,
+    updateLastWatched,
+    addLastWatched,
+    getSingleLastWatchedWithDetails,
+  } = useLastWatched();
 
   useEffect(() => {
     if (selectedWatchLink) {
@@ -96,9 +100,14 @@ export default function ChapterPage({
     const totalSeconds = videoRef.current?.duration || 0;
 
     if (playedSeconds >= totalSeconds - 120 && !isWatched.current) {
-      await updateLastWatched(params.tmdbId, {
-        isWatched: true,
-      });
+      await updateLastWatched(
+        params.tmdbId,
+        {
+          isWatched: true,
+        },
+        season,
+        chapter
+      );
 
       isWatched.current = true;
     }
@@ -107,13 +116,41 @@ export default function ChapterPage({
     if (Math.floor(playedSeconds) % 10 === 0) {
       try {
         const lastWatched = await getSingleLastWatched(params.tmdbId);
+        const lastWatchedWithDetails = await getSingleLastWatchedWithDetails(
+          params.tmdbId,
+          season,
+          chapter
+        );
 
-        if (lastWatched) {
+        if (
+          lastWatched &&
+          lastWatched.season_number !== season &&
+          lastWatchedWithDetails
+        ) {
+          // If the user started a new episode, mark the previous one as watched
           await updateLastWatched(
             params.tmdbId,
             {
+              isWatched: true,
+            },
+            lastWatched.season_number,
+            lastWatched.episode_number,
+            lastWatched
+          );
+        }
+
+        if (lastWatched) {
+          console.log("Updating last watched:", { atSecond: playedSeconds });
+          await updateLastWatched(
+            params.tmdbId,
+            {
+              season_number: season,
+              episode_number: chapter,
+              totalSeconds: totalSeconds,
               atSecond: playedSeconds,
             },
+            season,
+            chapter,
             lastWatched
           );
         } else {
@@ -152,7 +189,11 @@ export default function ChapterPage({
     setIsPlaying(false);
   }
   async function resumeFromWhereLeft(): Promise<void> {
-    const lastWatched = await getSingleLastWatched(params.tmdbId);
+    const lastWatched = await getSingleLastWatchedWithDetails(
+      params.tmdbId,
+      season,
+      chapter
+    );
     if (lastWatched) {
       const secondsToMinutes = Math.floor(lastWatched.atSecond / 60);
       toast.toast({

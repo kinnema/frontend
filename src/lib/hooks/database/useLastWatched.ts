@@ -17,11 +17,15 @@ export function useLastWatched() {
   async function getAllLastWatched$() {
     const db = await getDb();
 
-    const lastWatchedQuery = db.lastWatched?.find().$;
+    const lastWatchedQuery = db.lastWatched
+      ?.find()
+      .where({
+        isWatched: null,
+      })
+      .sort("desc").$;
 
     return lastWatchedQuery;
   }
-
   async function getSingleLastWatched(tmdbId: number) {
     const db = await getDb();
 
@@ -37,12 +41,41 @@ export function useLastWatched() {
     return lastWatched;
   }
 
+  async function getSingleLastWatchedWithDetails(
+    tmdbId: number,
+    seasonNumber: number,
+    episodeNumber: number
+  ) {
+    const db = await getDb();
+
+    const lastWatchedQuery = db.lastWatched?.findOne({
+      index: "tmdbId",
+      selector: {
+        tmdbId: tmdbId,
+        season_number: seasonNumber,
+        episode_number: episodeNumber,
+      },
+    });
+
+    const lastWatched = await lastWatchedQuery?.exec();
+
+    return lastWatched;
+  }
+
   async function updateLastWatched(
     tmdbId: number,
     data: Partial<ILastWatched>,
+    seasonNumber: number,
+    episodeNumber: number,
     doc?: RxDocument<ILastWatched>
   ) {
-    const lastWatched = doc ?? (await getSingleLastWatched(tmdbId));
+    const lastWatched =
+      doc ??
+      (await getSingleLastWatchedWithDetails(
+        tmdbId,
+        seasonNumber,
+        episodeNumber
+      ));
 
     if (lastWatched) {
       await lastWatched.update({
@@ -57,9 +90,18 @@ export function useLastWatched() {
     await db.lastWatched?.insert(data);
   }
 
-  async function removeLastWatched(tmdbId: number, id: string) {
+  async function removeLastWatched(
+    tmdbId: number,
+    id: string,
+    seasonNumber: number,
+    episodeNumber: number
+  ) {
     deleteSyncedItem("lastWatched", id, async () => {
-      const doc = await getSingleLastWatched(tmdbId);
+      const doc = await getSingleLastWatchedWithDetails(
+        tmdbId,
+        seasonNumber,
+        episodeNumber
+      );
 
       await doc?.remove();
     });
@@ -72,5 +114,6 @@ export function useLastWatched() {
     getAllLastWatched,
     getAllLastWatched$,
     removeLastWatched,
+    getSingleLastWatchedWithDetails,
   };
 }

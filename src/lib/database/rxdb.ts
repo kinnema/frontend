@@ -34,7 +34,9 @@ async function _create(): Promise<RxDatabase<KinnemaCollections>> {
     addRxPlugin(RxDBDevModePlugin);
   }
   const { RxDBUpdatePlugin } = await import("rxdb/plugins/update");
+  const { RxDBQueryBuilderPlugin } = await import("rxdb/plugins/query-builder");
   addRxPlugin(RxDBUpdatePlugin);
+  addRxPlugin(RxDBQueryBuilderPlugin);
 
   const db = await createRxDatabase<KinnemaCollections>({
     name: "kinnema",
