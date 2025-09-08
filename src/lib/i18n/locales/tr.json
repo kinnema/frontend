@@ -227,6 +227,11 @@
       "name": "Birlikte İzle",
       "warning": "Bu özellik deneyseldir ve kararsız olabilir. Dikkatli kullanın.",
       "description": "Arkadaşlarınızla gerçek zamanlı olarak video izleyin"
+    },
+    "subtitles": {
+      "name": "Altyazı Arama",
+      "warning": "Bu özellik deneyseldir ve kararsız olabilir. Dikkatli kullanın.",
+      "description": "Videolarınız için otomatik olarak altyazı arayın ve indirin"
     }
   }
 }

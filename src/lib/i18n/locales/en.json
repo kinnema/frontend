@@ -226,6 +226,11 @@
       "name": "Watch Together",
       "warning": "This feature is experimental and may be unstable. Use with caution.",
       "description": "Watch videos together with friends in real-time"
+    },
+    "subtitles": {
+      "name": "Subtitle Search",
+      "warning": "This feature is experimental and may be unstable. Use with caution.",
+      "description": "Automatically search and download subtitles for your videos"
     }
   }
 }
