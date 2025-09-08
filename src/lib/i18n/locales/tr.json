@@ -34,7 +34,8 @@
     "updates": "Güncellemeler",
     "subtitles": "Altyazılar",
     "sync": "Senkronizasyon",
-    "language": "Dil"
+    "language": "Dil",
+    "experimental": "Deneysel Özellikler"
   },
   "series": {
     "networkSeries": "Ağ Dizileri",
@@ -181,6 +182,26 @@
       "syncCompletedDescription": "Tüm ayarlar başarıyla senkronize edildi.",
       "invalidNostrId": "Geçersiz Nostr ID'si",
       "invalidNostrIdDescription": "Lütfen geçerli bir Nostr ID'si girin"
+    }
+  },
+  "experimental": {
+    "title": "Deneysel Özellikler",
+    "description": "Tam olarak yayınlanmadan önce yeni özellikleri deneyin",
+    "warning": {
+      "title": "Deneysel Özellikler Uyarısı",
+      "description": "Bu özellikler deneyseldir ve kararsız, eksik veya değişime tabi olabilir. Kendi riskinizle kullanın ve potansiyel sorunlar bekleyin."
+    },
+    "status": {
+      "enabled": "Etkin",
+      "disabled": "Devre Dışı"
+    },
+    "info": {
+      "title": "Deneysel Özellikler Hakkında",
+      "description": "Deneysel özellikler, erken benimseyen kullanıcılarla yeni işlevselliği test etmemize yardımcı olur. Geri bildiriminiz, bu özelliklerin tam sürümünden önce şekillendirilmesinde değerlidir."
+    },
+    "sync": {
+      "name": "Cihaz Senkronizasyonu",
+      "warning": "Bu özellik deneyseldir ve kararsız olabilir. Dikkatli kullanın."
     }
   }
 }

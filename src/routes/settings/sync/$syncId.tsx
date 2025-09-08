@@ -9,12 +9,26 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useP2P } from "@/lib/hooks/useP2P";
+import { useExperimentalStore } from "@/lib/stores/experimental.store";
 import { useSyncStore } from "@/lib/stores/sync.store";
-import { createFileRoute } from "@tanstack/react-router";
+import { ExperimentalFeature } from "@/lib/types/experiementalFeatures";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/settings/sync/$syncId")({
   component: RouteComponent,
+  loader: async () => {
+    const isExperimentalFeatureEnabled = useExperimentalStore
+      .getState()
+      .isFeatureEnabled(ExperimentalFeature.Sync);
+
+    if (!isExperimentalFeatureEnabled) {
+      return redirect({
+        from: "/settings/sync/$syncId",
+        to: "/settings/experimental",
+      });
+    }
+  },
 });
 
 function RouteComponent() {

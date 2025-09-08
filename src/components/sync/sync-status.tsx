@@ -1,5 +1,7 @@
 import { Badge } from "@/components/ui/badge";
+import { useExperimentalStore } from "@/lib/stores/experimental.store";
 import { useSyncStore } from "@/lib/stores/sync.store";
+import { ExperimentalFeature } from "@/lib/types/experiementalFeatures";
 import { useRouter } from "@tanstack/react-router";
 import clsx from "clsx";
 import {
@@ -17,6 +19,9 @@ interface SyncStatusProps {
 }
 
 export function SyncStatus({ showDetails = true, className }: SyncStatusProps) {
+  const isExperimentalFeatureEnabled = useExperimentalStore((state) =>
+    state.isFeatureEnabled(ExperimentalFeature.Sync)
+  );
   const isP2PEnabled = useSyncStore((state) => state.isP2PEnabled);
   const isNostrEnabled = useSyncStore((state) => state.isNostrEnabled);
   const nostrConnectionStatus = useSyncStore(
@@ -28,6 +33,11 @@ export function SyncStatus({ showDetails = true, className }: SyncStatusProps) {
   const lastNostrSync = useSyncStore((state) => state.lastNostrSync);
   const peers = useSyncStore((state) => state.peers);
   const router = useRouter();
+
+  // If experimental feature is not enabled, don't show sync status
+  if (!isExperimentalFeatureEnabled) {
+    return null;
+  }
   const getSyncStatus = () => {
     if (nostrSyncInProgress)
       return { status: "syncing", label: "Syncing", color: "secondary" };

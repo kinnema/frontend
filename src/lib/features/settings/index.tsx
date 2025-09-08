@@ -10,6 +10,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useExperimentalStore } from "@/lib/stores/experimental.store";
+import { ExperimentalFeature } from "@/lib/types/experiementalFeatures";
 import { isNativePlatform } from "@/lib/utils/native";
 import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
@@ -53,9 +55,9 @@ const SETTINGS: Setting[] = [
         translationKey: "settings.subtitles",
       },
       {
-        name: "Sync",
-        href: "/settings/sync",
-        translationKey: "settings.sync",
+        name: "Experimental Features",
+        href: "/settings/experimental",
+        translationKey: "settings.experimental",
       },
     ],
   },
@@ -63,6 +65,29 @@ const SETTINGS: Setting[] = [
 
 export default function AppSettingsFeature() {
   const { t } = useTranslation();
+  const isExperimentalFeatureEnabled = useExperimentalStore((state) =>
+    state.isFeatureEnabled(ExperimentalFeature.Sync)
+  );
+
+  // Add sync to settings dynamically if experimental feature is enabled
+  const settingsWithSync = SETTINGS.map((setting) => {
+    if (setting.name === "App") {
+      const syncOption = {
+        name: "Sync",
+        href: "/settings/sync",
+        translationKey: "settings.sync",
+        nativeOnly: false,
+      };
+
+      return {
+        ...setting,
+        sub: isExperimentalFeatureEnabled
+          ? [...setting.sub, syncOption]
+          : setting.sub,
+      };
+    }
+    return setting;
+  });
   return (
     <Card className="w-full max-w-md mx-auto my-8 md:my-12">
       <CardHeader className="text-center">
@@ -72,7 +97,7 @@ export default function AppSettingsFeature() {
         <CardDescription>{t("settings.description")}</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-6">
-        {SETTINGS.map((setting) => (
+        {settingsWithSync.map((setting) => (
           <div className="grid gap-4" key={setting.name}>
             <h3 className="text-lg font-semibold">
               {setting.translationKey

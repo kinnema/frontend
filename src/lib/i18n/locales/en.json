@@ -34,7 +34,8 @@
     "plugins": "Plugins",
     "updates": "Updates",
     "subtitles": "Subtitles",
-    "sync": "Sync"
+    "sync": "Sync",
+    "experimental": "Experimental Features"
   },
   "series": {
     "networkSeries": "Network Series",
@@ -181,6 +182,26 @@
       "syncCompletedDescription": "All settings have been synchronized successfully.",
       "invalidNostrIdTitle": "Invalid Nostr ID",
       "invalidNostrIdDescription": "Please enter a valid Nostr ID to enable synchronization."
+    }
+  },
+  "experimental": {
+    "title": "Experimental Features",
+    "description": "Try out new features before they're fully released",
+    "warning": {
+      "title": "Experimental Features Warning",
+      "description": "These features are experimental and may be unstable, incomplete, or subject to change. Use them at your own risk and expect potential issues."
+    },
+    "status": {
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "info": {
+      "title": "About Experimental Features",
+      "description": "Experimental features help us test new functionality with early adopters. Your feedback is valuable in shaping these features before their full release."
+    },
+    "sync": {
+      "name": "Device Sync",
+      "warning": "This feature is experimental and may be unstable. Use with caution."
     }
   }
 }

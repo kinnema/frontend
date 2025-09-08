@@ -23,6 +23,7 @@ import { Route as SettingsLanguageRouteImport } from './routes/settings/language
 import { Route as RoomRoomIdRouteImport } from './routes/room.$roomId'
 import { Route as CollectionNetworkRouteImport } from './routes/collection.$network'
 import { Route as SettingsSyncIndexRouteImport } from './routes/settings/sync/index'
+import { Route as SettingsExperimentalIndexRouteImport } from './routes/settings/experimental/index'
 import { Route as SettingsSyncSetupRouteImport } from './routes/settings/sync/setup'
 import { Route as SettingsSyncNostrRouteImport } from './routes/settings/sync/nostr'
 import { Route as SettingsSyncSyncIdRouteImport } from './routes/settings/sync/$syncId'
@@ -96,6 +97,12 @@ const SettingsSyncIndexRoute = SettingsSyncIndexRouteImport.update({
   path: '/settings/sync/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsExperimentalIndexRoute =
+  SettingsExperimentalIndexRouteImport.update({
+    id: '/settings/experimental/',
+    path: '/settings/experimental/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const SettingsSyncSetupRoute = SettingsSyncSetupRouteImport.update({
   id: '/settings/sync/setup',
   path: '/settings/sync/setup',
@@ -128,6 +135,7 @@ export interface FileRoutesByFullPath {
   '/settings/sync/$syncId': typeof SettingsSyncSyncIdRoute
   '/settings/sync/nostr': typeof SettingsSyncNostrRoute
   '/settings/sync/setup': typeof SettingsSyncSetupRoute
+  '/settings/experimental': typeof SettingsExperimentalIndexRoute
   '/settings/sync': typeof SettingsSyncIndexRoute
 }
 export interface FileRoutesByTo {
@@ -146,6 +154,7 @@ export interface FileRoutesByTo {
   '/settings/sync/$syncId': typeof SettingsSyncSyncIdRoute
   '/settings/sync/nostr': typeof SettingsSyncNostrRoute
   '/settings/sync/setup': typeof SettingsSyncSetupRoute
+  '/settings/experimental': typeof SettingsExperimentalIndexRoute
   '/settings/sync': typeof SettingsSyncIndexRoute
 }
 export interface FileRoutesById {
@@ -166,6 +175,7 @@ export interface FileRoutesById {
   '/settings/sync/$syncId': typeof SettingsSyncSyncIdRoute
   '/settings/sync/nostr': typeof SettingsSyncNostrRoute
   '/settings/sync/setup': typeof SettingsSyncSetupRoute
+  '/settings/experimental/': typeof SettingsExperimentalIndexRoute
   '/settings/sync/': typeof SettingsSyncIndexRoute
 }
 export interface FileRouteTypes {
@@ -186,6 +196,7 @@ export interface FileRouteTypes {
     | '/settings/sync/$syncId'
     | '/settings/sync/nostr'
     | '/settings/sync/setup'
+    | '/settings/experimental'
     | '/settings/sync'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '/settings/sync/$syncId'
     | '/settings/sync/nostr'
     | '/settings/sync/setup'
+    | '/settings/experimental'
     | '/settings/sync'
   id:
     | '__root__'
@@ -223,6 +235,7 @@ export interface FileRouteTypes {
     | '/settings/sync/$syncId'
     | '/settings/sync/nostr'
     | '/settings/sync/setup'
+    | '/settings/experimental/'
     | '/settings/sync/'
   fileRoutesById: FileRoutesById
 }
@@ -242,6 +255,7 @@ export interface RootRouteChildren {
   SettingsSyncSyncIdRoute: typeof SettingsSyncSyncIdRoute
   SettingsSyncNostrRoute: typeof SettingsSyncNostrRoute
   SettingsSyncSetupRoute: typeof SettingsSyncSetupRoute
+  SettingsExperimentalIndexRoute: typeof SettingsExperimentalIndexRoute
   SettingsSyncIndexRoute: typeof SettingsSyncIndexRoute
 }
 
@@ -345,6 +359,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsSyncIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/experimental/': {
+      id: '/settings/experimental/'
+      path: '/settings/experimental'
+      fullPath: '/settings/experimental'
+      preLoaderRoute: typeof SettingsExperimentalIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings/sync/setup': {
       id: '/settings/sync/setup'
       path: '/settings/sync/setup'
@@ -396,6 +417,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsSyncSyncIdRoute: SettingsSyncSyncIdRoute,
   SettingsSyncNostrRoute: SettingsSyncNostrRoute,
   SettingsSyncSetupRoute: SettingsSyncSetupRoute,
+  SettingsExperimentalIndexRoute: SettingsExperimentalIndexRoute,
   SettingsSyncIndexRoute: SettingsSyncIndexRoute,
 }
 export const routeTree = rootRouteImport
