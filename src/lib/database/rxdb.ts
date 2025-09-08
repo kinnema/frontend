@@ -54,6 +54,7 @@ async function _create(): Promise<RxDatabase<KinnemaCollections>> {
 
   isEnabled.subscribe(async (isEnabled) => {
     if (!hasSyncFeatureEnabled) return;
+
     if (isEnabled) {
       await rxdbReplicationFactory.initialize();
       console.log("Sync is enabled");

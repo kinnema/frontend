@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useP2P } from "@/lib/hooks/useP2P";
 import { useSyncStore } from "@/lib/stores/sync.store";
+import { WorkerNostrReplicationManager } from "@/lib/workers/workerNostrManager";
 import { QrCode, RefreshCw, Shield, Smartphone, Wifi } from "lucide-react";
 import { toDataURL } from "qrcode";
 import { useEffect, useState } from "react";
@@ -27,6 +28,7 @@ export default function P2PSyncSetupFeature() {
   useEffect(() => {
     if (!qrCodeData) {
       generateQRCode();
+      WorkerNostrReplicationManager.generateSecretAndSet();
     }
 
     const interval = setInterval(() => {
@@ -53,7 +55,7 @@ export default function P2PSyncSetupFeature() {
       if (!id) {
         throw new Error("Failed to generate room ID");
       }
-      
+
       const qrCode = await toDataURL(id);
 
       setQrCodeData(qrCode);

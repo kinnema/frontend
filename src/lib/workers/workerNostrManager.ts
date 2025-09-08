@@ -1,13 +1,11 @@
 import {
   SimplePool,
-  finalizeEvent,
   generateSecretKey,
   getPublicKey,
   nip19,
-  verifyEvent,
-  type Event,
 } from "nostr-tools";
-import { DatabaseCollectionName } from "../types";
+import { DatabaseCollectionName } from "../database/types";
+import { useSyncStore } from "../stores/sync.store";
 
 interface SyncResult {
   total: number;
@@ -50,7 +48,7 @@ export class WorkerNostrReplicationManager {
 
   private validateRelayUrls(urls: string[]): string[] {
     return urls.filter((url) => {
-      if (!url || typeof url !== 'string') {
+      if (!url || typeof url !== "string") {
         return false;
       }
       try {
@@ -87,11 +85,20 @@ export class WorkerNostrReplicationManager {
     }
   }
 
+  static generateSecretAndSet(): string {
+    const sk = generateSecretKey();
+    const syncStore = useSyncStore.getState();
+    const encodedSk = nip19.nsecEncode(sk);
+    syncStore.setNostrSecretKey(encodedSk);
+
+    return encodedSk;
+  }
+
   private initializeKeys(providedSecretKey?: string): void {
     try {
       let sk: Uint8Array;
 
-      if (providedSecretKey && typeof providedSecretKey === 'string') {
+      if (providedSecretKey && typeof providedSecretKey === "string") {
         try {
           const decoded = nip19.decode(providedSecretKey);
           if (decoded.type === "nsec" && decoded.data instanceof Uint8Array) {
@@ -100,11 +107,16 @@ export class WorkerNostrReplicationManager {
             throw new Error("Invalid Nostr secret key format");
           }
         } catch (decodeError) {
-          console.warn("Failed to decode provided secret key, generating new one:", decodeError);
+          console.warn(
+            "Failed to decode provided secret key, generating new one:",
+            decodeError
+          );
           sk = generateSecretKey();
         }
       } else {
+        const syncStore = useSyncStore.getState();
         sk = generateSecretKey();
+        syncStore.setNostrSecretKey(nip19.nsecEncode(sk));
       }
 
       this.secretKey = sk;
@@ -134,22 +146,41 @@ export class WorkerNostrReplicationManager {
   // Simplified sync method that just returns a result without database access
   async fullSync(collectionName: DatabaseCollectionName) {
     this.ensureInitialized();
-    
+
     const RELAY_URLS = this.fetchRelayUrls();
     if (RELAY_URLS.length === 0) {
       return {
-        push: { total: 0, synced: 0, errors: ["No valid relay URLs configured"] },
-        pull: { total: 0, updated: 0, errors: ["No valid relay URLs configured"] },
+        push: {
+          total: 0,
+          synced: 0,
+          errors: ["No valid relay URLs configured"],
+        },
+        pull: {
+          total: 0,
+          updated: 0,
+          errors: ["No valid relay URLs configured"],
+        },
       };
     }
 
     // For worker context, we can't access the database directly
     // This would need to be implemented differently or communicated back to main thread
-    console.log(`Worker: Would sync collection ${collectionName} with relays:`, RELAY_URLS);
-    
+    console.log(
+      `Worker: Would sync collection ${collectionName} with relays:`,
+      RELAY_URLS
+    );
+
     return {
-      push: { total: 0, synced: 0, errors: ["Database access not available in worker context"] },
-      pull: { total: 0, updated: 0, errors: ["Database access not available in worker context"] },
+      push: {
+        total: 0,
+        synced: 0,
+        errors: ["Database access not available in worker context"],
+      },
+      pull: {
+        total: 0,
+        updated: 0,
+        errors: ["Database access not available in worker context"],
+      },
     };
   }
 

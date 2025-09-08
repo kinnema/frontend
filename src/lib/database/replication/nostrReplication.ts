@@ -1,3 +1,4 @@
+import { useSyncStore } from "@/lib/stores/sync.store";
 import {
   SimplePool,
   finalizeEvent,
@@ -44,12 +45,13 @@ export class NostrReplicationManager {
     if (config?.relayUrls) {
       this.relayUrls = this.validateRelayUrls(config.relayUrls);
     }
+
     this.initializeKeys(config?.secretKey);
   }
 
   private validateRelayUrls(urls: string[]): string[] {
     return urls.filter((url) => {
-      if (!url || typeof url !== 'string') {
+      if (!url || typeof url !== "string") {
         return false;
       }
       try {
@@ -86,11 +88,10 @@ export class NostrReplicationManager {
     }
   }
 
-  private initializeKeys(providedSecretKey?: string): void {
+  initializeKeys(providedSecretKey?: string): void {
     try {
       let sk: Uint8Array;
-
-      if (providedSecretKey && typeof providedSecretKey === 'string') {
+      if (providedSecretKey && typeof providedSecretKey === "string") {
         try {
           const decoded = nip19.decode(providedSecretKey);
           if (decoded.type === "nsec" && decoded.data instanceof Uint8Array) {
@@ -99,11 +100,16 @@ export class NostrReplicationManager {
             throw new Error("Invalid Nostr secret key format");
           }
         } catch (decodeError) {
-          console.warn("Failed to decode provided secret key, generating new one:", decodeError);
+          console.warn(
+            "Failed to decode provided secret key, generating new one:",
+            decodeError
+          );
           sk = generateSecretKey();
         }
       } else {
+        const syncStore = useSyncStore.getState();
         sk = generateSecretKey();
+        syncStore.setNostrSecretKey(nip19.nsecEncode(sk));
       }
 
       this.secretKey = sk;
