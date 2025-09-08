@@ -279,7 +279,7 @@ export default function ChapterPage({
                 );
               }
 
-              return <span>{genre.name}</span>;
+              return <span key={genre.name}>{genre.name}</span>;
             })}
           </div>
         </div>
