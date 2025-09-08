@@ -1,7 +1,8 @@
 import { produce } from "immer";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 import { Result } from "../types/tmdb";
+import { indexedDbZustandStorage } from "./stores/indexedDb";
 
 interface IStore {
   searches: Result[];
@@ -33,6 +34,7 @@ export const useSearchStore = create(
     }),
     {
       name: "search",
+      storage: createJSONStorage(() => indexedDbZustandStorage),
     }
   )
 );

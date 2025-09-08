@@ -73,6 +73,7 @@
     "lucide-react": "^0.469.0",
     "marked": "^16.1.1",
     "motion": "^11.18.1",
+    "nostr-tools": "^2.16.2",
     "player.style": "^0.2.0",
     "qrcode": "^1.5.4",
     "react": "19.0.0",
@@ -97,6 +98,7 @@
   },
   "devDependencies": {
     "@capacitor/cli": "^7.4.2",
+    "@rxjs-insights/devtools": "^0.5.1",
     "@tanstack/router-plugin": "^1.130.10",
     "@types/lodash": "^4.17.4",
     "@types/node": "^20",

@@ -1,6 +1,7 @@
 "use client";
 
 import { MainNav } from "@/components/main-nav";
+import { SyncStatus } from "@/components/sync/sync-status";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Link, useRouterState } from "@tanstack/react-router";
@@ -72,6 +73,8 @@ export function Header() {
             <MainNav />
           </div>
           <div className="flex items-center gap-4">
+            <SyncStatus showDetails={false} />
+
             {/* {isLoggedIn ? (
               <UserNav />
             ) : (
@@ -152,9 +155,9 @@ export function Header() {
             })}
           </ul>
 
-          {/* <div className="m-auto">
-            {isLoggedIn && <Button onClick={onPressLogout}>Çıkış Yap</Button>}
-          </div> */}
+          <div className="m-auto">
+            {/* {isLoggedIn && <Button onClick={onPressLogout}>Çıkış Yap</Button>} */}
+          </div>
         </div>
       </div>
     </>

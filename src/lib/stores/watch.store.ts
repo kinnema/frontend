@@ -1,7 +1,8 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 import { IPluginEndpointSubtitle } from "../types/plugin.type";
 import { Episode, ITmdbSerieDetails } from "../types/tmdb";
+import { indexedDbZustandStorage } from "./stores/indexedDb";
 
 export interface IWatchTogetherRoom {
   tmdbData: ITmdbSerieDetails;
@@ -42,6 +43,9 @@ export const useWatchStore = create(
         });
       },
     }),
-    { name: "watchStore" }
+    {
+      name: "watchStore",
+      storage: createJSONStorage(() => indexedDbZustandStorage),
+    }
   )
 );

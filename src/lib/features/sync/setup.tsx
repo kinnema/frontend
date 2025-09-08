@@ -46,21 +46,32 @@ export default function P2PSyncSetupFeature() {
   }
 
   async function generateQRCode() {
-    setIsGenerating(true);
-    const id = generateRoomId();
+    try {
+      setIsGenerating(true);
+      const id = generateRoomId();
 
-    if (!id) {
+      if (!id) {
+        throw new Error("Failed to generate room ID");
+      }
+      
+      const qrCode = await toDataURL(id);
+
+      setQrCodeData(qrCode);
+    } catch (error) {
+      console.error("Failed to generate QR code:", error);
+      // Could add toast notification here if needed
+    } finally {
       setIsGenerating(false);
-      return;
     }
-    const qrCode = await toDataURL(id);
-
-    setQrCodeData(qrCode);
-    setIsGenerating(false);
   }
 
   const handleRegenerateQR = async () => {
-    await generateQRCode();
+    try {
+      await generateQRCode();
+    } catch (error) {
+      console.error("Failed to regenerate QR code:", error);
+      // Could add toast notification here if needed
+    }
   };
 
   return (

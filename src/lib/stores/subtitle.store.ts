@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
+import { indexedDbZustandStorage } from "./stores/indexedDb";
 
 export interface ISubtitleProviderConfig {
   apiKey?: string;
@@ -56,6 +57,7 @@ export const useSubtitleStore = create(
     }),
     {
       name: "subtitle-storage",
+      storage: createJSONStorage(() => indexedDbZustandStorage),
     }
   )
 );

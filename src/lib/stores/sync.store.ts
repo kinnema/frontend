@@ -1,11 +1,13 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 import {
   availableCollectionsForSync,
   availableCollectionsForSync$,
   ICollectionSettingSync,
 } from "../database/replication/availableReplications";
 import { SyncObservables } from "../observables/sync.observable";
+import { IRelay, SYNC_CONNECTION_STATUS } from "../types/sync.type";
+import { indexedDbZustandStorage } from "./stores/indexedDb";
 
 export const useSyncStore = create<SyncStore & SyncStoreActions>()(
   persist(
@@ -13,6 +15,10 @@ export const useSyncStore = create<SyncStore & SyncStoreActions>()(
       peers: [],
       isP2PEnabled: false,
       availableCollections: availableCollectionsForSync,
+      // Nostr sync default state
+      isNostrEnabled: false,
+      nostrConnectionStatus: SYNC_CONNECTION_STATUS.DISCONNECTED,
+      nostrSyncInProgress: false,
       addPeer: (peers: string) => set({ peers: [...get().peers, peers] }),
       removePeer: (peers: string) =>
         set({ peers: get().peers.filter((peer) => peer !== peers) }),
@@ -25,11 +31,33 @@ export const useSyncStore = create<SyncStore & SyncStoreActions>()(
         set({ availableCollections: collections });
       },
       clearPeers: () => set({ peers: [] }),
+      // Nostr sync actions
+      setIsNostrEnabled: (isEnabled: boolean) => {
+        set({ isNostrEnabled: isEnabled });
+      },
+      setNostrPublicKey: (publicKey: string) =>
+        set({ nostrPublicKey: publicKey }),
+      setNostrConnectionStatus: (status) => {
+        set({ nostrConnectionStatus: status });
+      },
+      setLastNostrSync: (timestamp: number) =>
+        set({ lastNostrSync: timestamp }),
+      setNostrSyncInProgress: (inProgress: boolean) => {
+        set({ nostrSyncInProgress: inProgress });
+      },
+      setNostrRelayUrls: (urls: IRelay[]) => set({ nostrRelayUrls: urls }),
+      nostrRelayUrls: [
+        { id: "1", url: "wss://relay.damus.io", status: "connected" },
+        { id: "2", url: "wss://nos.lol", status: "connected" },
+        { id: "3", url: "wss://relay.snort.social", status: "disconnected" },
+      ],
+      setNostrSecretKey: (secretKey: string) =>
+        set({ nostrSecretKey: secretKey }),
     }),
     {
       name: "sync-store",
       version: 0.1,
-
+      storage: createJSONStorage(() => indexedDbZustandStorage),
       onRehydrateStorage: (state) => {
         console.log("hydration starts");
 
@@ -40,7 +68,9 @@ export const useSyncStore = create<SyncStore & SyncStoreActions>()(
           } else {
             if (!state) return;
             availableCollectionsForSync$.next(state.availableCollections);
-            SyncObservables.isEnabled$.next(state.isP2PEnabled);
+            SyncObservables.isEnabled$.next(
+              state.isP2PEnabled || state.isNostrEnabled
+            );
           }
         };
       },
@@ -53,6 +83,14 @@ interface SyncStore {
   syncId?: string;
   isP2PEnabled: boolean;
   availableCollections: ICollectionSettingSync[];
+  // Nostr sync status
+  nostrSecretKey?: string;
+  isNostrEnabled: boolean;
+  nostrPublicKey?: string;
+  nostrConnectionStatus: SYNC_CONNECTION_STATUS;
+  lastNostrSync?: number;
+  nostrSyncInProgress: boolean;
+  nostrRelayUrls?: IRelay[];
 }
 
 interface SyncStoreActions {
@@ -62,4 +100,12 @@ interface SyncStoreActions {
   setIsP2PEnabled: (isP2PEnabled: boolean) => void;
   clearPeers: () => void;
   setAvailableCollections: (collections: ICollectionSettingSync[]) => void;
+  // Nostr sync actions
+  setIsNostrEnabled: (isEnabled: boolean) => void;
+  setNostrPublicKey: (publicKey: string) => void;
+  setNostrConnectionStatus: (status: SYNC_CONNECTION_STATUS) => void;
+  setLastNostrSync: (timestamp: number) => void;
+  setNostrSyncInProgress: (inProgress: boolean) => void;
+  setNostrRelayUrls: (urls: IRelay[]) => void;
+  setNostrSecretKey: (secretKey: string) => void;
 }

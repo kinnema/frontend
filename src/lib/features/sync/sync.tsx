@@ -1,3 +1,4 @@
+import { NostrSyncDangerZone } from "@/components/settings/NostrSyncDangerZone";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,97 +9,128 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
+import { useNostr } from "@/hooks/useNostr";
+import { NostrIdInput } from "@/lib/components/NostrId";
 import { AvailableCollectionForSync } from "@/lib/database/replication/availableReplications";
 import { rxdbReplicationFactory } from "@/lib/database/replication/replicationFactory";
 import { getDb } from "@/lib/database/rxdb";
 import { useSyncStore } from "@/lib/stores/sync.store";
+import { SYNC_CONNECTION_STATUS } from "@/lib/types/sync.type";
 import clsx from "clsx";
-import {
-  CheckCircle,
-  Clock,
-  Download,
-  Loader2,
-  Users,
-  Wifi,
-  WifiOff,
-} from "lucide-react";
+import { CheckCircle, Clock, Download, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { NostrSyncComponent } from "./components/nostrSync.component";
+import { P2PSyncComponent } from "./components/p2pSync.component";
 
 export default function SyncSettingsFeature() {
+  const lastSyncTime = useSyncStore((state) => state.lastNostrSync);
   const [isExporting, setIsExporting] = useState(false);
   const isP2PEnabled = useSyncStore((state) => state.isP2PEnabled);
-  const setIsP2PEnabled = useSyncStore((state) => state.setIsP2PEnabled);
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [syncProgress, setSyncProgress] = useState(0);
-  const [lastSyncTime, setLastSyncTime] = useState("2 minutes ago");
+  const isSyncing = useSyncStore((state) => state.nostrSyncInProgress);
   const { toast } = useToast();
+  const { t } = useTranslation();
   const peers = useSyncStore((state) => state.peers);
   const syncId = useSyncStore((state) => state.syncId);
   const availableCollections = useSyncStore(
     (state) => state.availableCollections
   );
+  const isNostrEnabled = useSyncStore((state) => state.isNostrEnabled);
+
+  const setNostrConnectionStatus = useSyncStore(
+    (state) => state.setNostrConnectionStatus
+  );
+  const setNostrPublicKey = useSyncStore((state) => state.setNostrPublicKey);
+
+  // Nostr hooks
+  const { isConnected: nostrConnected, publicKeyNpub } = useNostr();
 
   useEffect(() => {
     getDb();
   }, []);
 
+  // Sync Nostr connection status with store
+  useEffect(() => {
+    if (nostrConnected) {
+      setNostrConnectionStatus(SYNC_CONNECTION_STATUS.CONNECTED);
+      if (publicKeyNpub) {
+        setNostrPublicKey(publicKeyNpub);
+      }
+    } else {
+      setNostrConnectionStatus(SYNC_CONNECTION_STATUS.DISCONNECTED);
+    }
+  }, [
+    nostrConnected,
+    publicKeyNpub,
+    setNostrConnectionStatus,
+    setNostrPublicKey,
+  ]);
+
   const updateCollection = async (
     key: AvailableCollectionForSync,
     enabled: boolean
   ) => {
-    if (enabled) {
-      console.log(`Enabling replication for ${key}`);
-      await rxdbReplicationFactory.enableReplication(key);
-    } else {
-      await rxdbReplicationFactory.disableReplication(key);
+    try {
+      const type =
+        isP2PEnabled && isNostrEnabled
+          ? "all"
+          : isP2PEnabled
+          ? "webrtc"
+          : isNostrEnabled
+          ? "nostr"
+          : "all";
+      
+      if (enabled) {
+        console.log(`Enabling replication for ${key}`);
+        await rxdbReplicationFactory.enableReplication(key, type);
+        toast({
+          title: t("sync.success"),
+          description: t("sync.replicationEnabled", { collection: key }),
+        });
+      } else {
+        console.log(`Disabling replication for ${key}`);
+        await rxdbReplicationFactory.disableReplication(key, type);
+        toast({
+          title: t("sync.success"),
+          description: t("sync.replicationDisabled", { collection: key }),
+        });
+      }
+    } catch (error) {
+      console.error(`Error updating collection ${key}:`, error);
+      toast({
+        title: t("sync.error"),
+        description: t("sync.replicationError", { 
+          collection: key, 
+          error: error instanceof Error ? error.message : "Unknown error"
+        }),
+        variant: "destructive",
+      });
     }
   };
 
   const handleExport = async () => {
-    setIsExporting(true);
-    // Simulate export process
-    setTimeout(() => {
-      setIsExporting(false);
+    try {
+      setIsExporting(true);
+      // TODO: Implement actual export logic
+      // Simulate export process for now
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
       toast({
-        title: "Settings exported successfully",
-        description: "Your settings have been saved to downloads folder.",
+        title: t("sync.toast.exportSuccess"),
+        description: t("sync.toast.exportSuccessDescription"),
       });
-    }, 2000);
-  };
-
-  const handleP2PConnect = () => {
-    setIsP2PEnabled(!isP2PEnabled);
-    toast({
-      title: isP2PEnabled ? "Disconnected from P2P" : "Connected to P2P",
-      description: isP2PEnabled
-        ? "P2P sync disabled"
-        : "Ready for peer-to-peer syncing",
-    });
-  };
-
-  const handleSync = async () => {
-    setIsSyncing(true);
-    setSyncProgress(0);
-
-    // Simulate sync progress
-    const interval = setInterval(() => {
-      setSyncProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsSyncing(false);
-          setLastSyncTime("Just now");
-          toast({
-            title: "Sync completed",
-            description: "All settings have been synchronized successfully.",
-          });
-          return 100;
-        }
-        return prev + 10;
+    } catch (error) {
+      console.error("Export error:", error);
+      toast({
+        title: t("sync.toast.exportError"),
+        description: t("sync.toast.exportErrorDescription"),
+        variant: "destructive",
       });
-    }, 200);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   return (
@@ -108,11 +140,9 @@ export default function SyncSettingsFeature() {
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <h1 className="text-3xl font-black text-foreground">
-              Settings Sync
+              {t("sync.title")}
             </h1>
-            <p className="text-muted-foreground">
-              Manage your settings synchronization across devices
-            </p>
+            <p className="text-muted-foreground">{t("sync.description")}</p>
           </div>
         </div>
 
@@ -125,33 +155,30 @@ export default function SyncSettingsFeature() {
               ) : (
                 <CheckCircle className="h-5 w-5 text-green-500" />
               )}
-              Sync Status
+              {t("sync.syncStatus")}
             </CardTitle>
-            <CardDescription>
-              Current synchronization status across your devices
-            </CardDescription>
+            <CardDescription>{t("sync.syncStatusDescription")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <p className="text-sm font-medium">
                   {isSyncing
-                    ? "Syncing in progress..."
-                    : "All devices synchronized"}
+                    ? t("sync.syncingInProgress")
+                    : t("sync.allDevicesSynchronized")}
                 </p>
                 <p className="text-xs text-muted-foreground flex items-center gap-1">
                   <Clock className="h-3 w-3" />
-                  Last synced: {lastSyncTime}
+                  {t("sync.lastSynced")}:
+                  {new Date(lastSyncTime ?? 0).toLocaleString()}
                 </p>
               </div>
               <Badge variant={isSyncing ? "secondary" : "default"}>
-                {isSyncing ? "Syncing" : "Up to date"}
+                {isSyncing ? t("sync.syncing") : t("sync.upToDate")}
               </Badge>
             </div>
             <div className="space-y-1">
-              <p className="text-sm font-medium">
-                Sync ID (Share this ID to connect other devices)
-              </p>
+              <p className="text-sm font-medium">{t("sync.syncIdLabel")}</p>
               <p className="text-xs text-muted-foreground flex items-center gap-1">
                 <Input className="max-w-xs" value={syncId} readOnly />
                 <Button
@@ -160,38 +187,28 @@ export default function SyncSettingsFeature() {
                     navigator.clipboard.writeText(syncId ?? "");
                   }}
                 >
-                  Copy
+                  {t("sync.copy")}
                 </Button>
               </p>
             </div>
-            {isSyncing && (
-              <div className="space-y-2">
-                <Progress value={syncProgress} className="h-2" />
-                <p className="text-xs text-muted-foreground text-center">
-                  {syncProgress}% complete
-                </p>
-              </div>
-            )}
+            <NostrIdInput />
           </CardContent>
         </Card>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {/* Export Functionality */}
           <Card className="opacity-20 cursor-not-allowed pointer-events-none">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Download className="h-5 w-5 text-primary" />
-                Export Settings
+                {t("sync.exportSettings")}
               </CardTitle>
-              <CardDescription>
-                Download your settings as a backup file
-              </CardDescription>
+              <CardDescription>{t("sync.exportDescription")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  Export all your settings to a JSON file for backup or transfer
-                  to another device.
+                  {t("sync.exportDetails")}
                 </p>
               </div>
               <Button
@@ -202,12 +219,12 @@ export default function SyncSettingsFeature() {
                 {isExporting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Exporting...
+                    {t("sync.exporting")}
                   </>
                 ) : (
                   <>
                     <Download className="mr-2 h-4 w-4" />
-                    Export Settings
+                    {t("sync.exportSettings")}
                   </>
                 )}
               </Button>
@@ -215,81 +232,73 @@ export default function SyncSettingsFeature() {
           </Card>
 
           {/* P2P Sync */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-secondary" />
-                Peer-to-Peer Sync
-              </CardTitle>
-              <CardDescription>
-                Connect directly with other devices
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">P2P Connection</p>
-                  <p className="text-xs text-muted-foreground flex items-center gap-1">
-                    {isP2PEnabled ? (
-                      <>
-                        <Wifi className="h-3 w-3 text-green-500" />
-                        Connected
-                      </>
-                    ) : (
-                      <>
-                        <WifiOff className="h-3 w-3 text-muted-foreground" />
-                        Disconnected
-                      </>
-                    )}
-                  </p>
-                </div>
-                <Switch
-                  checked={isP2PEnabled}
-                  onCheckedChange={handleP2PConnect}
-                />
-              </div>
-            </CardContent>
-          </Card>
+          <P2PSyncComponent />
+
+          {/* Nostr Sync */}
+          <NostrSyncComponent />
+        </div>
+
+        <div>
+          <NostrSyncDangerZone />
         </div>
 
         {/* Settings Management */}
         <Card
-          className={clsx({ "opacity-20 cursor-not-allowed": !isP2PEnabled })}
+          className={clsx({
+            "opacity-20 cursor-not-allowed": !isP2PEnabled && !isNostrEnabled,
+          })}
         >
           <CardHeader>
-            <CardTitle>Sync Preferences</CardTitle>
+            <CardTitle>{t("sync.syncPreferences")}</CardTitle>
             <CardDescription>
-              Choose which settings to synchronize across devices
+              {t("sync.syncPreferencesDescription")}
+              {!isP2PEnabled && !isNostrEnabled && t("sync.enableSyncFirst")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
               {availableCollections.map((collection) => (
-                <div className="flex items-center justify-between">
+                <div
+                  key={collection.key}
+                  className="flex items-center justify-between"
+                >
                   <div className="space-y-1">
                     <p className="text-sm font-medium">{collection.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {collection.enabled ? "Enabled" : "Disabled"}
+                      {collection.enabled
+                        ? t("sync.enabled")
+                        : t("sync.disabled")}
                     </p>
                   </div>
                   <Switch
                     checked={collection.enabled}
-                    onCheckedChange={(enabled) =>
-                      updateCollection(collection.key, enabled)
-                    }
+                    onCheckedChange={(enabled) => {
+                      updateCollection(collection.key, enabled);
+                    }}
+                    disabled={!isP2PEnabled && !isNostrEnabled}
                   />
                 </div>
               ))}
             </div>
+            {(isP2PEnabled || isNostrEnabled) && (
+              <div className="pt-2 border-t">
+                <p className="text-xs text-muted-foreground">
+                  {t("sync.activeSyncMethods")}
+                  {isP2PEnabled && ` ${t("sync.p2p")}`}
+                  {isP2PEnabled && isNostrEnabled && ` ${t("sync.plus")}`}
+                  {isNostrEnabled && ` ${t("sync.nostr")}`}
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
         {/* Status Indicators */}
         <Card>
           <CardHeader>
-            <CardTitle>Device Status</CardTitle>
+            <CardTitle>{t("sync.deviceStatus")}</CardTitle>
             <CardDescription>
-              Connected devices and their sync status
+              {t("sync.deviceStatusDescription")}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -301,11 +310,11 @@ export default function SyncSettingsFeature() {
                     <div>
                       <p className="text-sm font-medium">{peer}</p>
                       <p className="text-xs text-muted-foreground">
-                        Last sync: Just now
+                        {t("sync.lastSyncJustNow")}
                       </p>
                     </div>
                   </div>
-                  <Badge variant="default">Active</Badge>
+                  <Badge variant="default">{t("sync.active")}</Badge>
                 </div>
               ))}
             </div>

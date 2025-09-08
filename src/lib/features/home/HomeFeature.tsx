@@ -9,10 +9,15 @@ import { TmdbNetworks } from "@/lib/types/networks";
 import { useQuery } from "@tanstack/react-query";
 
 export function HomeFeature() {
-  const networks = [TmdbNetworks.BLUTV, TmdbNetworks.GAIN, TmdbNetworks.EXXEN];
+  const networks = [TmdbNetworks.NETFLIX, TmdbNetworks.HBO];
   const { data: networkData, isPending: isNetworkPending } = useQuery({
     queryKey: ["home", "networks"],
     queryFn: () => TmdbService.fetchMultipleNetworksSeries(networks),
+  });
+
+  const { data: popularData, isPending: isPopularPending } = useQuery({
+    queryKey: ["home", "popular"],
+    queryFn: () => TmdbService.fetchHomePopular(),
   });
 
   return (
@@ -21,11 +26,32 @@ export function HomeFeature() {
       <LastWatchedSeries />
 
       <ShowCarousel
-        title="BluTV"
+        title="Top 10"
         shows={
-          networkData?.[TmdbNetworks.BLUTV]?.results.map((s) => (
+          popularData?.results
+            .slice(0, 10)
+            .map((s) => (
+              <ShowCard
+                show={{
+                  id: s.id,
+                  image: s.poster_path,
+                  title: s.original_name,
+                }}
+                key={s.id}
+              />
+            )) ?? []
+        }
+        maxCards={10}
+        largeCards={true}
+        isLoading={isPopularPending}
+      />
+
+      <ShowCarousel
+        title="Netflix"
+        shows={
+          networkData?.[TmdbNetworks.NETFLIX]?.results.map((s) => (
             <ShowCard
-              show={{ id: s.id, image: s.poster_path, title: s.name }}
+              show={{ id: s.id, image: s.poster_path, title: s.original_name }}
               key={s.id}
             />
           )) ?? []
@@ -35,25 +61,11 @@ export function HomeFeature() {
         isLoading={isNetworkPending}
       />
       <ShowCarousel
-        title="GainTV"
+        title="HBO"
         shows={
-          networkData?.[TmdbNetworks.GAIN]?.results.map((s) => (
+          networkData?.[TmdbNetworks.HBO]?.results.map((s) => (
             <ShowCard
-              show={{ id: s.id, image: s.poster_path, title: s.name }}
-              key={s.id}
-            />
-          )) ?? []
-        }
-        maxCards={5}
-        largeCards={true}
-        isLoading={isNetworkPending}
-      />
-      <ShowCarousel
-        title="Exxen"
-        shows={
-          networkData?.[TmdbNetworks.EXXEN]?.results.map((s) => (
-            <ShowCard
-              show={{ id: s.id, image: s.poster_path, title: s.name }}
+              show={{ id: s.id, image: s.poster_path, title: s.original_name }}
               key={s.id}
             />
           )) ?? []

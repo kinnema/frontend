@@ -20,6 +20,7 @@ interface PluginRegistryState {
   getPluginsByType: (type: "series" | "movie") => IPlugin[];
   updatePlugins: () => Promise<number>;
   updatePlugin: (pluginId: string) => Promise<void>;
+  getAllEnabledPlugins: () => IPlugin[];
   isUpdating: IPluginUpdating | null;
 }
 
@@ -131,6 +132,9 @@ export const usePluginRegistry = create<PluginRegistryState>()(
       },
       getPlugin: (id: string) => {
         return get().plugins.find((p) => p.id === id);
+      },
+      getAllEnabledPlugins: () => {
+        return get().plugins.filter((p) => p.enabled);
       },
       getPluginsByType: (type: "series" | "movie") => {
         let plugins = get().plugins.filter((p) => p.enabled);

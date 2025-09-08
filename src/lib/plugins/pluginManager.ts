@@ -2,14 +2,16 @@ import { CapacitorHttp } from "@capacitor/core";
 import { Subject } from "rxjs";
 import { IPluginEndpointResponse } from "../types/plugin.type";
 import { IPluginEventData } from "../types/pluginEvents.type";
+import { isNativePlatform } from "../utils/native";
 import { usePluginRegistry } from "./usePluginRegistry";
 
 export class PluginManager {
   events = new Subject<IPluginEventData>();
+
   pluginRegistry = usePluginRegistry;
   async fetchSource(params: { id: string; season?: number; chapter?: number }) {
     try {
-      const plugins = this.pluginRegistry.getState().plugins;
+      const plugins = this.pluginRegistry.getState().getAllEnabledPlugins();
 
       if (plugins.length === 0) {
         throw new Error("No plugins registered.");
@@ -33,6 +35,7 @@ export class PluginManager {
     params: { id: string; season?: number; chapter?: number }
   ) {
     const plugin = this.pluginRegistry.getState().getPlugin(pluginId);
+
     if (!plugin) {
       throw new Error(`Plugin ${pluginId} is not registered.`);
     }
@@ -41,6 +44,13 @@ export class PluginManager {
       console.log(`Skipping plugin ${pluginId} is not enabled.`);
       return;
     }
+
+    if (plugin.manifest.cors && !isNativePlatform()) {
+      console.log(`Skipping plugin ${pluginId} due to CORS restrictions.`);
+      return;
+    }
+
+    console.log("OK");
 
     const endpoint =
       plugin.manifest.endpoints.series || plugin.manifest.endpoints.movie;
