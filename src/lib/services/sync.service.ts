@@ -6,7 +6,7 @@ import { SYNC_CONNECTION_STATUS } from "../types/sync.type";
 
 export class SyncService {
   private static instance: SyncService;
-  private nostrManager: NostrReplicationManager = new NostrReplicationManager();
+  private nostrManager: NostrReplicationManager | null = null;
   private syncStore = useSyncStore.getState();
 
   static getInstance(): SyncService {
@@ -17,12 +17,16 @@ export class SyncService {
   }
 
   static async setSecretKey(secretKey: string): Promise<void> {
-    this.instance.syncStore.setNostrSecretKey(secretKey);
+    const instance = SyncService.getInstance();
+    instance.syncStore.setNostrSecretKey(secretKey);
+    // Also update the nostr manager if it exists
+    if (instance.nostrManager) {
+      instance.nostrManager.setSecretKey(secretKey);
+    }
   }
 
   static async getSecretKey(): Promise<string | null> {
     const secretKey = await get("nostr-secret-key");
-
     return secretKey;
   }
 
@@ -31,11 +35,20 @@ export class SyncService {
       this.syncStore.setNostrConnectionStatus(
         SYNC_CONNECTION_STATUS.CONNECTING
       );
-      this.nostrManager = new NostrReplicationManager();
+      
+      const currentState = useSyncStore.getState();
+      const relayUrls = currentState.nostrRelayUrls?.map(r => r.url) || [];
+      
+      this.nostrManager = new NostrReplicationManager({
+        secretKey: currentState.nostrSecretKey,
+        relayUrls: relayUrls,
+      });
+      
       this.syncStore.setNostrConnectionStatus(SYNC_CONNECTION_STATUS.CONNECTED);
     } catch (error) {
       console.error("Failed to initialize Nostr sync:", error);
       this.syncStore.setNostrConnectionStatus(SYNC_CONNECTION_STATUS.ERROR);
+      throw error;
     }
   }
 
@@ -111,6 +124,9 @@ export class SyncService {
   }
 
   cleanup(): void {
-    this.nostrManager.cleanup();
+    if (this.nostrManager) {
+      this.nostrManager.cleanup();
+      this.nostrManager = null;
+    }
   }
 }

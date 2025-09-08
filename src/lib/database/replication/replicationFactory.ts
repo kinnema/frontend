@@ -49,8 +49,9 @@ class RxdbReplicationFactory {
       config: p2pConfig,
     });
 
-    availableCollections.forEach(async (collection) => {
-      collection.replicationTypes.forEach(async (type) => {
+    // Process collections sequentially to avoid race conditions
+    for (const collection of availableCollections) {
+      for (const type of collection.replicationTypes) {
         let options: any;
         switch (type) {
           case "webrtc":
@@ -79,13 +80,13 @@ class RxdbReplicationFactory {
         };
 
         const key = `${collection.key}-${type}`;
-        this.add(key, replication);
-      });
+        await this.add(key, replication);
+      }
 
       if (collection.enabled) {
         await this.enableReplication(collection.key);
       }
-    });
+    }
   }
 
   public async enableReplication(
@@ -122,7 +123,12 @@ class RxdbReplicationFactory {
           instance = await replicateWebRTC(replication.options);
           break;
         case "nostr":
-          instance = new NostrReplicationManager() as ReplicationInstance;
+          const currentState = useSyncStore.getState();
+          const relayUrls = currentState.nostrRelayUrls?.map(r => r.url) || [];
+          instance = new NostrReplicationManager({
+            secretKey: currentState.nostrSecretKey,
+            relayUrls: relayUrls,
+          }) as ReplicationInstance;
           break;
         default:
           throw new Error(`Unsupported replication type: ${replication.type}`);

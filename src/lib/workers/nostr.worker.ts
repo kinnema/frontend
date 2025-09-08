@@ -1,56 +1,98 @@
-import { SyncService } from "../services/sync.service";
-import { useSyncStore } from "../stores/sync.store";
+import { WorkerNostrReplicationManager } from "./workerNostrManager";
 import { SYNC_CONNECTION_STATUS, SYNC_STATUS } from "../types/sync.type";
 
-self.onmessage = async (event) => {
+// Worker should not directly access stores - use message passing instead
+interface WorkerInitData {
+  availableCollections: any[];
+  nostrSecretKey?: string;
+  nostrRelayUrls?: any[];
+}
+
+interface WorkerMessage {
+  action: string;
+  data?: any;
+}
+
+let nostrManager: WorkerNostrReplicationManager | null = null;
+
+self.onmessage = async (event: MessageEvent<WorkerMessage>) => {
   const { action, data } = event.data;
-  console.log("HOST: Worker received action:", action, data);
+  console.log("Worker received action:", action, data);
 
-  const nostrManager = new SyncService();
-
-  if (action === "sync") {
-    const collections = useSyncStore.getState().availableCollections;
-    self.postMessage({ action: "status", data: SYNC_STATUS.SYNCING });
-    const promises = [];
-
-    for (const collection of collections) {
-      if (
-        collection.enabled &&
-        collection.enabledReplicationTypes.includes("nostr")
-      ) {
-        console.log(
-          `Worker: Starting Nostr sync for collection ${collection.key}`
-        );
-
-        promises.push(nostrManager.fullNostrSync(collection.key));
-      }
-    }
-
-    await Promise.all(promises);
-
-    self.postMessage({
-      action: "complete",
-      data: await Promise.all(promises.map(async (p) => p.then((s) => s))),
-    });
-    self.postMessage({ action: "status", data: SYNC_STATUS.COMPLETE });
-  }
-
-  if (action === "init") {
-    self.postMessage({
-      action: "connection_status",
-      data: SYNC_CONNECTION_STATUS.CONNECTING,
-    });
-    await nostrManager.initializeNostrSync().catch((error) => {
-      console.error("Worker: Failed to initialize Nostr sync:", error);
+  try {
+    if (action === "init") {
+      const initData = data as WorkerInitData;
+      
       self.postMessage({
         action: "connection_status",
-        data: SYNC_CONNECTION_STATUS.ERROR,
+        data: SYNC_CONNECTION_STATUS.CONNECTING,
       });
+
+      const relayUrls = initData.nostrRelayUrls?.map(r => r.url) || [];
+      
+      nostrManager = new WorkerNostrReplicationManager({
+        secretKey: initData.nostrSecretKey,
+        relayUrls: relayUrls,
+      });
+      
+      self.postMessage({
+        action: "connection_status",
+        data: SYNC_CONNECTION_STATUS.CONNECTED,
+      });
+      self.postMessage({ action: "initialized", data: "Nostr initialized!" });
+    }
+
+    if (action === "sync") {
+      if (!nostrManager) {
+        throw new Error("Nostr manager not initialized");
+      }
+
+      const { availableCollections } = data;
+      self.postMessage({ action: "status", data: SYNC_STATUS.SYNCING });
+      
+      const results = [];
+      
+      for (const collection of availableCollections) {
+        if (
+          collection.enabled &&
+          collection.enabledReplicationTypes?.includes("nostr")
+        ) {
+          console.log(
+            `Worker: Starting Nostr sync for collection ${collection.key}`
+          );
+
+          try {
+            const result = await nostrManager.fullSync(collection.key);
+            results.push(result);
+          } catch (error) {
+            console.error(`Worker: Failed to sync ${collection.key}:`, error);
+            results.push({ error: error?.toString() });
+          }
+        }
+      }
+
+      self.postMessage({
+        action: "complete",
+        data: results,
+      });
+      self.postMessage({ action: "status", data: SYNC_STATUS.COMPLETE });
+    }
+
+    if (action === "cleanup") {
+      if (nostrManager) {
+        await nostrManager.cleanup();
+        nostrManager = null;
+      }
+    }
+  } catch (error) {
+    console.error("Worker error:", error);
+    self.postMessage({
+      action: "error",
+      data: error?.toString(),
     });
     self.postMessage({
       action: "connection_status",
-      data: SYNC_CONNECTION_STATUS.CONNECTED,
+      data: SYNC_CONNECTION_STATUS.ERROR,
     });
-    self.postMessage({ action: "initialized", data: "Nostr initialized!" });
   }
 };
