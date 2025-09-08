@@ -19,7 +19,7 @@ export const Route = createFileRoute("/settings/sync/$syncId")({
 
 function RouteComponent() {
   const { syncId: syncIdFromUrl } = Route.useParams();
-  const { createRoom, joinRoom } = useP2P();
+  const { createRoom, joinRoom, leaveRoom } = useP2P();
   const setSyncId = useSyncStore((state) => state.setSyncId);
   const syncId = useSyncStore((state) => state.syncId);
   const [manualSyncId, setManualSyncId] = useState("");
@@ -36,16 +36,19 @@ function RouteComponent() {
   useEffect(() => {
     if (!syncId) return;
 
+    console.log("Joining room with syncId:", syncId);
     const { getAction } = createRoom(syncId);
 
     getAction((data: unknown) => {
       console.log("Data received from peer:", data);
     });
 
-    // We can also send a message back
-    // const { sendAction } = createRoom(syncId);
-    // sendAction({ status: "connected" });
-  }, [syncId, createRoom]);
+    // Cleanup function to handle component unmount or syncId change
+    return () => {
+      console.log("Cleaning up room connection for syncId:", syncId);
+      leaveRoom();
+    };
+  }, [syncId, createRoom, leaveRoom]);
 
   const handleJoinManually = () => {
     if (manualSyncId) {

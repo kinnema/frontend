@@ -72,33 +72,65 @@ export default function SyncSettingsFeature() {
     key: AvailableCollectionForSync,
     enabled: boolean
   ) => {
-    const type =
-      isP2PEnabled && isNostrEnabled
-        ? "all"
-        : isP2PEnabled
-        ? "webrtc"
-        : isNostrEnabled
-        ? "nostr"
-        : "all";
-    if (enabled) {
-      console.log(`Enabling replication for ${key}`);
-      await rxdbReplicationFactory.enableReplication(key, type);
-    } else {
-      console.log(`Disabling replication for ${key}`);
-      await rxdbReplicationFactory.disableReplication(key, type);
+    try {
+      const type =
+        isP2PEnabled && isNostrEnabled
+          ? "all"
+          : isP2PEnabled
+          ? "webrtc"
+          : isNostrEnabled
+          ? "nostr"
+          : "all";
+      
+      if (enabled) {
+        console.log(`Enabling replication for ${key}`);
+        await rxdbReplicationFactory.enableReplication(key, type);
+        toast({
+          title: t("sync.success"),
+          description: t("sync.replicationEnabled", { collection: key }),
+        });
+      } else {
+        console.log(`Disabling replication for ${key}`);
+        await rxdbReplicationFactory.disableReplication(key, type);
+        toast({
+          title: t("sync.success"),
+          description: t("sync.replicationDisabled", { collection: key }),
+        });
+      }
+    } catch (error) {
+      console.error(`Error updating collection ${key}:`, error);
+      toast({
+        title: t("sync.error"),
+        description: t("sync.replicationError", { 
+          collection: key, 
+          error: error instanceof Error ? error.message : "Unknown error"
+        }),
+        variant: "destructive",
+      });
     }
   };
 
   const handleExport = async () => {
-    setIsExporting(true);
-    // Simulate export process
-    setTimeout(() => {
-      setIsExporting(false);
+    try {
+      setIsExporting(true);
+      // TODO: Implement actual export logic
+      // Simulate export process for now
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
       toast({
         title: t("sync.toast.exportSuccess"),
         description: t("sync.toast.exportSuccessDescription"),
       });
-    }, 2000);
+    } catch (error) {
+      console.error("Export error:", error);
+      toast({
+        title: t("sync.toast.exportError"),
+        description: t("sync.toast.exportErrorDescription"),
+        variant: "destructive",
+      });
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   return (

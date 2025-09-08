@@ -1,18 +1,34 @@
 import NostrWorker from "@/lib/workers/nostr.worker?worker";
-import { createContext, useContext, useEffect } from "react";
+import { createContext, useContext, useEffect, useRef } from "react";
 import { useSyncStore } from "../stores/sync.store";
 import { SYNC_CONNECTION_STATUS, SYNC_STATUS } from "../types/sync.type";
 
-export const syncProviderContext = createContext(new NostrWorker());
+export const syncProviderContext = createContext<Worker | null>(null);
 
 export function SyncProvider({ children }: { children: React.ReactNode }) {
-  const worker = useContext(syncProviderContext);
+  const workerRef = useRef<Worker | null>(null);
   const isNostrEnabled = useSyncStore((state) => state.isNostrEnabled);
+  const nostrSecretKey = useSyncStore((state) => state.nostrSecretKey);
+  const nostrRelayUrls = useSyncStore((state) => state.nostrRelayUrls);
+  const availableCollections = useSyncStore((state) => state.availableCollections);
   const setNostrSyncInProgress = useSyncStore(
     (state) => state.setNostrSyncInProgress
   );
+  
   useEffect(() => {
-    worker.postMessage({ action: "init" });
+    // Create worker instance
+    workerRef.current = new NostrWorker();
+    const worker = workerRef.current;
+
+    // Initialize worker with store data
+    worker.postMessage({ 
+      action: "init", 
+      data: {
+        availableCollections,
+        nostrSecretKey,
+        nostrRelayUrls,
+      }
+    });
 
     worker.onmessage = (event) => {
       const { action, data } = event.data;
@@ -21,7 +37,10 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
         case "connection_status":
           if (data === SYNC_CONNECTION_STATUS.CONNECTED && isNostrEnabled) {
             // Start initial sync after connection is established
-            worker.postMessage({ action: "sync" });
+            worker.postMessage({ 
+              action: "sync", 
+              data: { availableCollections }
+            });
           }
           useSyncStore.getState().setNostrConnectionStatus(data);
           break;
@@ -30,24 +49,49 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
             case SYNC_STATUS.SYNCING:
               setNostrSyncInProgress(true);
               break;
-
             default:
               setNostrSyncInProgress(false);
           }
           break;
         case "complete":
           console.log("Nostr Sync Completed:", data);
-
           break;
         case "initialized":
-          // Handle initialization
           console.log("Nostr Initialized:", data);
+          break;
+        case "error":
+          console.error("Worker error:", data);
+          useSyncStore.getState().setNostrConnectionStatus(SYNC_CONNECTION_STATUS.ERROR);
           break;
         default:
           console.warn("Unknown action from worker:", action);
       }
     };
+
+    worker.onerror = (error) => {
+      console.error("Worker error:", error);
+      useSyncStore.getState().setNostrConnectionStatus(SYNC_CONNECTION_STATUS.ERROR);
+    };
+
+    // Cleanup on unmount
+    return () => {
+      if (workerRef.current) {
+        workerRef.current.postMessage({ action: "cleanup" });
+        workerRef.current.terminate();
+        workerRef.current = null;
+      }
+    };
   }, []);
+
+  // Re-initialize worker when Nostr is enabled/disabled
+  useEffect(() => {
+    if (workerRef.current && isNostrEnabled) {
+      workerRef.current.postMessage({ 
+        action: "sync", 
+        data: { availableCollections }
+      });
+    }
+  }, [isNostrEnabled, availableCollections]);
 
   return <>{children}</>;
 }

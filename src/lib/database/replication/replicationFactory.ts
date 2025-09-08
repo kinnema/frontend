@@ -2,6 +2,7 @@ import { useSyncStore } from "@/lib/stores/sync.store";
 import { getP2pConfig } from "@/lib/utils/p2p/config";
 import { produce } from "immer";
 import { replicateWebRTC } from "rxdb/plugins/replication-webrtc";
+import { Subscription } from "rxjs";
 import { getTrysteroConnectionHandler } from "../connectionHandlers/trysteroConnectionHandler";
 import { getDb } from "../rxdb";
 import {
@@ -15,16 +16,34 @@ interface ReplicationInstance {
   connectionHandler?: { close(): void };
 }
 
+interface WebRTCReplicationOptions {
+  collection: any; // RxCollection type
+  topic: string;
+  connectionHandlerCreator: any;
+  pull: Record<string, unknown>;
+  push: Record<string, unknown>;
+}
+
+interface NostrReplicationOptions {
+  collection: any; // RxCollection type
+  collectionName: string;
+}
+
+type ReplicationOptionTypes =
+  | WebRTCReplicationOptions
+  | NostrReplicationOptions;
+
 interface ReplicationOptions {
   enabled: boolean;
   type: string;
-  options: any;
+  options: ReplicationOptionTypes;
 }
 
 class RxdbReplicationFactory {
   private syncStore = useSyncStore.getState();
   private _replications = new Map<string, ReplicationInstance>();
   private replicationOptions = new Map<string, ReplicationOptions>();
+  private observableSubscription: Subscription | null = null;
 
   public async initialize() {
     await this.initializeReplications();
@@ -32,10 +51,16 @@ class RxdbReplicationFactory {
   }
 
   private initializeObservable() {
-    availableCollectionsForSync$.subscribe(async (collections) => {
-      this.syncStore.setAvailableCollections(collections);
-      await this.initializeReplications();
-    });
+    if (this.observableSubscription) {
+      this.observableSubscription.unsubscribe();
+    }
+
+    this.observableSubscription = availableCollectionsForSync$.subscribe(
+      async (collections) => {
+        this.syncStore.setAvailableCollections(collections);
+        await this.initializeReplications();
+      }
+    );
   }
 
   private async initializeReplications() {
@@ -49,9 +74,10 @@ class RxdbReplicationFactory {
       config: p2pConfig,
     });
 
-    availableCollections.forEach(async (collection) => {
-      collection.replicationTypes.forEach(async (type) => {
-        let options: any;
+    // Process collections sequentially to avoid race conditions
+    for (const collection of availableCollections) {
+      for (const type of collection.replicationTypes) {
+        let options: ReplicationOptionTypes;
         switch (type) {
           case "webrtc":
             options = {
@@ -60,13 +86,13 @@ class RxdbReplicationFactory {
               connectionHandlerCreator: connectionHandler,
               pull: {},
               push: {},
-            };
+            } as WebRTCReplicationOptions;
             break;
           case "nostr":
             options = {
               collection: db[collection.key as keyof typeof db],
               collectionName: collection.key,
-            };
+            } as NostrReplicationOptions;
             break;
           default:
             throw new Error(`Unsupported replication type: ${type}`);
@@ -79,13 +105,13 @@ class RxdbReplicationFactory {
         };
 
         const key = `${collection.key}-${type}`;
-        this.add(key, replication);
-      });
+        await this.add(key, replication);
+      }
 
       if (collection.enabled) {
         await this.enableReplication(collection.key);
       }
-    });
+    }
   }
 
   public async enableReplication(
@@ -119,10 +145,18 @@ class RxdbReplicationFactory {
       let instance: ReplicationInstance;
       switch (replication.type) {
         case "webrtc":
-          instance = await replicateWebRTC(replication.options);
+          instance = await replicateWebRTC(
+            replication.options as WebRTCReplicationOptions
+          );
           break;
         case "nostr":
-          instance = new NostrReplicationManager() as ReplicationInstance;
+          const currentState = useSyncStore.getState();
+          const relayUrls =
+            currentState.nostrRelayUrls?.map((r) => r.url) || [];
+          instance = new NostrReplicationManager({
+            secretKey: currentState.nostrSecretKey,
+            relayUrls: relayUrls,
+          }) as ReplicationInstance;
           break;
         default:
           throw new Error(`Unsupported replication type: ${replication.type}`);
@@ -223,6 +257,12 @@ class RxdbReplicationFactory {
   }
 
   public disable() {
+    // Clean up observable subscription
+    if (this.observableSubscription) {
+      this.observableSubscription.unsubscribe();
+      this.observableSubscription = null;
+    }
+
     this._replications.forEach((value, key) => {
       const collectionKey = key.split("-")[0] as AvailableCollectionForSync;
       this.updateReplicationStore(collectionKey, "all", false);
