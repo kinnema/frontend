@@ -4,6 +4,19 @@
     "settings": "Settings",
     "plugins": "Plugins"
   },
+  "home": {
+    "welcome": "Welcome to Kinnema",
+    "description": "Discover and watch your favorite series and documentaries from various sources in one place.",
+    "searchPlaceholder": "Search for movies, series and documentaries...",
+    "trendingSeries": "Trending Series",
+    "popularSeries": "Popular Series",
+    "topRatedSeries": "Top Rated Series",
+    "networkSeries": "Network Series",
+    "continueWatching": "Continue Watching",
+    "noContinueWatching": "You haven't started watching any series yet. Start exploring and enjoy your favorite shows!",
+    "favorites": "Favorites",
+    "noFavorites": "You haven't added any series to your favorites yet. Browse and add your favorite shows to keep them handy!"
+  },
   "footer": {
     "copyright": "© 2024 Kinnema. All rights reserved.",
     "privacy": "Privacy",
@@ -24,7 +37,10 @@
     "sort": "Sort",
     "next": "Next",
     "previous": "Previous",
-    "back": "Back"
+    "back": "Back",
+    "play": "Play",
+    "season": "Season",
+    "episode": "Episode"
   },
   "settings": {
     "title": "Settings",
@@ -52,7 +68,9 @@
     "title": "Sources",
     "description": "You can watch the series using the sources below, just click on any of them.",
     "searchingVideo": "Searching for video...",
-    "waiting": "Waiting..."
+    "waiting": "Waiting...",
+    "failedToLoad": "Failed to load video",
+    "videoFound": "Video found"
   },
   "plugins": {
     "managerTitle": "Plugin Manager",

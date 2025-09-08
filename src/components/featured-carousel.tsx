@@ -8,9 +8,11 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import Autoplay from "embla-carousel-autoplay";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { Carousel, CarouselContent, CarouselItem } from "./ui/carousel";
 
 export function FeaturedCarousel() {
+  const { t } = useTranslation();
   const { data, isPending, isError } = useQuery({
     queryKey: ["home-data"],
     queryFn: () => TmdbService.fetchHomeData(),
@@ -64,7 +66,7 @@ export function FeaturedCarousel() {
                     <p className="max-w-2xl text-gray-300">{item.overview}</p>
                     <div className="min-w-10">
                       <Button size="lg" className="mt-4">
-                        Oynat
+                        {t("common.play")}
                       </Button>
                     </div>
                   </div>

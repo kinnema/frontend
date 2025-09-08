@@ -26,20 +26,18 @@ export function HomeFeature() {
       <LastWatchedSeries />
 
       <ShowCarousel
-        title="Top 10"
+        titleTranslationKey="home.topRatedSeries"
         shows={
-          popularData?.results
-            .slice(0, 10)
-            .map((s) => (
-              <ShowCard
-                show={{
-                  id: s.id,
-                  image: s.poster_path,
-                  title: s.original_name,
-                }}
-                key={s.id}
-              />
-            )) ?? []
+          popularData?.results.slice(0, 10).map((s) => (
+            <ShowCard
+              show={{
+                id: s.id,
+                image: s.poster_path,
+                title: s.original_name,
+              }}
+              key={s.id}
+            />
+          )) ?? []
         }
         maxCards={10}
         largeCards={true}
@@ -47,7 +45,7 @@ export function HomeFeature() {
       />
 
       <ShowCarousel
-        title="Netflix"
+        titleTranslationKey="home.networkSeries"
         shows={
           networkData?.[TmdbNetworks.NETFLIX]?.results.map((s) => (
             <ShowCard
@@ -61,7 +59,7 @@ export function HomeFeature() {
         isLoading={isNetworkPending}
       />
       <ShowCarousel
-        title="HBO"
+        titleTranslationKey="home.networkSeries"
         shows={
           networkData?.[TmdbNetworks.HBO]?.results.map((s) => (
             <ShowCard

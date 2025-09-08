@@ -4,6 +4,20 @@
     "settings": "Ayarlar",
     "plugins": "Eklentiler"
   },
+  "home": {
+    "welcome": "Kinnema'ya Hoşgeldiniz",
+    "description": "Favori dizilerinizi ve belgesellerinizi çeşitli kaynaklardan tek bir yerde keşfedin ve izleyin.",
+    "searchPlaceholder": "Film, dizi ve belgesel ara...",
+    "trendingSeries": "Trend Olan Diziler",
+    "popularSeries": "Popüler Diziler",
+    "topRatedSeries": "En Çok Oy Alan Diziler",
+    "originalSeries": "Kinnema Orijinalleri",
+    "networkSeries": "Ağ Dizileri",
+    "continueWatching": "İzlemeye Devam Et",
+    "noContinueWatching": "Henüz herhangi bir dizi izlemeye başlamadınız. Keşfetmeye başlayın ve favori şovlarınızın keyfini çıkarın!",
+    "favorites": "Favoriler",
+    "noFavorites": "Henüz favorilerinize herhangi bir dizi eklemediniz. Göz atın ve favori şovlarınızı elinizin altında tutmak için ekleyin!"
+  },
   "footer": {
     "copyright": "© 2024 Kinnema. Tüm hakları saklıdır.",
     "privacy": "Gizlilik",
@@ -24,7 +38,10 @@
     "sort": "Sırala",
     "next": "Sonraki",
     "previous": "Önceki",
-    "back": "Geri"
+    "back": "Geri",
+    "play": "Oynat",
+    "season": "Sezon",
+    "episode": "Bölüm"
   },
   "settings": {
     "title": "Ayarlar",
@@ -52,7 +69,9 @@
     "title": "Kaynaklar",
     "description": "Aşağıdaki kaynakları kullanarak dizi izleyebilirsiniz, herhangi birine tiklamanız yeterlidir.",
     "searchingVideo": "Video aranıyor...",
-    "waiting": "Bekleniyor..."
+    "waiting": "Bekleniyor...",
+    "failedToLoad": "Video yüklenemedi",
+    "videoFound": "Video bulundu"
   },
   "plugins": {
     "managerTitle": "Eklenti Yöneticisi",

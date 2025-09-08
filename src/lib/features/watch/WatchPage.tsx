@@ -221,14 +221,19 @@ export default function ChapterPage({
           <h1 className="text-2xl md:text-4xl font-bold mb-2">
             {tmdbData.data.name}
           </h1>
-          <h3 className="text-xl mb-2">{tmdbEpisodeData.data.name}</h3>
+          {
+            <div className="text-sm text-gray-300 my-4">
+              {tmdbData.data.overview}
+            </div>
+          }
+          <h3 className="text-xl mb-2 ">{tmdbEpisodeData.data.name}</h3>
           <div className="flex items-center gap-2 text-xs md:text-sm text-gray-300">
             {tmdbData.data.genres.map((genre, index) => {
               if (index !== tmdbData.data.genres.length - 1) {
                 return (
                   <div key={genre.name}>
                     <span>{genre.name}</span>
-                    <span>•</span>
+                    <span> •</span>
                   </div>
                 );
               }

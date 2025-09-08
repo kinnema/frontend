@@ -4,10 +4,12 @@ import { useToast } from "@/hooks/use-toast";
 import { useLastWatched } from "@/lib/hooks/database/useLastWatched";
 import { ILastWatched } from "@/lib/types/lastWatched.type";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import slugify from "slugify";
 // import { useLastWatchedStore } from "@/lib/stores/lastWatched.store";
 
 export function LastWatchedSeries() {
+  const { t } = useTranslation();
   const toast = useToast();
   const { getAllLastWatched$, removeLastWatched } = useLastWatched();
   const [lastWatched, setLastWatched] = useState<ILastWatched[]>([]);
@@ -44,7 +46,7 @@ export function LastWatchedSeries() {
 
   return (
     <ShowCarousel
-      title="İzlemeye devam et"
+      titleTranslationKey="home.continueWatching"
       shows={lastWatched.map((s) => {
         return (
           <ShowCard
@@ -52,7 +54,9 @@ export function LastWatchedSeries() {
               id: s.tmdbId,
               image: s.posterPath,
               title: s.name,
-              subTitle: `${s.season_number} Sezon ${s.episode_number} Bölüm`,
+              subTitle: `${s.season_number}.${t("common.season")} ${
+                s.episode_number
+              }.${t("common.episode")}`,
             }}
             key={s.tmdbId}
             withTimeline={true}
@@ -66,9 +70,6 @@ export function LastWatchedSeries() {
                 watchChapter: s.episode_number,
               },
             }}
-            // href={`/dizi/${slugify(s.name)}/${s.tmdbId}/sezon-${
-            //   s.season_number
-            // }/bolum-${s.episode_number}?network=${s.network}`}
           />
         );
       })}

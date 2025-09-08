@@ -117,9 +117,9 @@ export const Providers = ({
               </div>
               <span className="text-sm text-muted-foreground">
                 {hasError
-                  ? "Video bulunamadı"
+                  ? t("providers.failedToLoad")
                   : isSuccess
-                  ? "Video bulundu"
+                  ? t("providers.videoFound")
                   : isLoading
                   ? t("providers.searchingVideo")
                   : t("providers.waiting")}
