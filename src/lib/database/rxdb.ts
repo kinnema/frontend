@@ -24,21 +24,9 @@ const collections: { [key in keyof KinnemaCollections]: RxCollectionCreator } =
   {
     lastWatched: {
       schema: lastWatchedSchema,
-      migrationStrategies: {
-        1: function (oldDoc) {
-          oldDoc.time = new Date(oldDoc.time).getTime();
-          return oldDoc;
-        },
-      },
     },
     favorite: {
       schema: favoriteSchema,
-      migrationStrategies: {
-        1: function (oldDoc) {
-          oldDoc.time = new Date(oldDoc.time).getTime();
-          return oldDoc;
-        },
-      },
     },
   };
 
