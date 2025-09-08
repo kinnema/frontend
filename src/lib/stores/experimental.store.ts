@@ -26,11 +26,23 @@ const DEFAULT_FEATURES: IExperimentalFeature[] = [
     name: "Device Sync",
     description:
       "Synchronize your data across multiple devices using P2P or Nostr protocols",
+    descriptionTranslationKey: "experimental.sync.description",
     enabled: false,
     translationKey: "experimental.sync.name",
     warning:
       "This feature is experimental and may be unstable. Use with caution.",
     warningTranslationKey: "experimental.sync.warning",
+  },
+  {
+    id: ExperimentalFeature.WatchTogether,
+    name: "Watch Together",
+    description: "Watch videos together with friends in real-time",
+    descriptionTranslationKey: "experimental.watchTogether.description",
+    enabled: false,
+    translationKey: "experimental.watchTogether.name",
+    warning:
+      "This feature is experimental and may be unstable. Use with caution.",
+    warningTranslationKey: "experimental.watchTogether.warning",
   },
 ];
 
@@ -60,7 +72,7 @@ export const useExperimentalStore = create<ExperimentalStore>()(
     }),
     {
       name: "experimental-features-store",
-      version: 0.1,
+      version: 0.2,
       storage: createJSONStorage(() => indexedDbZustandStorage),
     }
   )

@@ -201,7 +201,13 @@
     },
     "sync": {
       "name": "Cihaz Senkronizasyonu",
-      "warning": "Bu özellik deneyseldir ve kararsız olabilir. Dikkatli kullanın."
+      "warning": "Bu özellik deneyseldir ve kararsız olabilir. Dikkatli kullanın.",
+      "description": "Cihazlarınız arasında ayarlarınızı P2P veya Nostr protokolleri kullanarak senkronize edin"
+    },
+    "watchTogether": {
+      "name": "Birlikte İzle",
+      "warning": "Bu özellik deneyseldir ve kararsız olabilir. Dikkatli kullanın.",
+      "description": "Arkadaşlarınızla gerçek zamanlı olarak video izleyin"
     }
   }
 }

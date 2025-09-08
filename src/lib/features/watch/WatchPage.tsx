@@ -9,8 +9,10 @@ import { WatchVideoPlayer } from "@/lib/components/Watch/WatchVideoPlayer";
 import { tmdbPosterResponsive } from "@/lib/helpers";
 import { useLastWatched } from "@/lib/hooks/database/useLastWatched";
 import TmdbService from "@/lib/services/tmdb.service";
+import { useExperimentalStore } from "@/lib/stores/experimental.store";
 // import { useLastWatchedStore } from "@/lib/stores/lastWatched.store";
 import { useWatchStore } from "@/lib/stores/watch.store";
+import { ExperimentalFeature } from "@/lib/types/experiementalFeatures";
 import { Episode, ITmdbSerieDetails } from "@/lib/types/tmdb";
 import { isNativePlatform } from "@/lib/utils/native";
 import { loadedVideoUrl$ } from "@/lib/utils/videoEvents";
@@ -37,6 +39,9 @@ export default function ChapterPage({
   const chapter = params.chapter;
   const [isPlaying, setIsPlaying] = useState(false);
   const selectedWatchLink = useWatchStore((state) => state.selectedWatchLink);
+  const isWatchTogetherFeatureEnabled = useExperimentalStore((state) =>
+    state.isFeatureEnabled(ExperimentalFeature.WatchTogether)
+  );
   const clearWatchLink = useWatchStore((state) => state.clearWatchLink);
   const clearSubtitles = useWatchStore((state) => state.clearSubtitles);
   const isWatched = useRef<boolean>(false);
@@ -205,7 +210,7 @@ export default function ChapterPage({
               />
             )}
 
-            {selectedWatchLink && (
+            {selectedWatchLink && isWatchTogetherFeatureEnabled && (
               <WatchTogether
                 videoRef={videoRef}
                 episodeData={tmdbEpisodeData.data}

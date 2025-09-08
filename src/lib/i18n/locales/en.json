@@ -201,7 +201,13 @@
     },
     "sync": {
       "name": "Device Sync",
-      "warning": "This feature is experimental and may be unstable. Use with caution."
+      "warning": "This feature is experimental and may be unstable. Use with caution.",
+      "description": "Synchronize your data across multiple devices using P2P or Nostr protocols"
+    },
+    "watchTogether": {
+      "name": "Watch Together",
+      "warning": "This feature is experimental and may be unstable. Use with caution.",
+      "description": "Watch videos together with friends in real-time"
     }
   }
 }

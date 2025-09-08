@@ -6,8 +6,10 @@ export interface IExperimentalFeature {
   translationKey?: string;
   warning?: string;
   warningTranslationKey?: string;
+  descriptionTranslationKey?: string;
 }
 
 export enum ExperimentalFeature {
   Sync = "sync",
+  WatchTogether = "watchTogether",
 }

@@ -85,7 +85,10 @@ export default function ExperimentalFeaturesComponent() {
                   />
                 </div>
                 <CardDescription className="text-base">
-                  {feature.description}
+                  {t(
+                    feature.descriptionTranslationKey || "",
+                    feature.description
+                  )}
                 </CardDescription>
               </CardHeader>
 

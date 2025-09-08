@@ -7,6 +7,7 @@ import { StatusBar, Style } from "@capacitor/status-bar";
 import { CapacitorUpdater } from "@capgo/capacitor-updater";
 import { PropsWithChildren, useEffect } from "react";
 import { SyncProvider } from "./lib/providers/syncProvider";
+import { SYNC_CONNECTION_STATUS } from "./lib/types/sync.type";
 
 if (Capacitor.isNativePlatform()) {
   CapacitorUpdater.notifyAppReady();
@@ -30,13 +31,13 @@ export function Providers({ children }: PropsWithChildren) {
     initTheme();
 
     if (isNostrEnabled) {
-      setNostrConnectionStatus("connecting");
+      setNostrConnectionStatus(SYNC_CONNECTION_STATUS.CONNECTING);
     } else {
-      setNostrConnectionStatus("disconnected");
+      setNostrConnectionStatus(SYNC_CONNECTION_STATUS.DISCONNECTED);
     }
 
     // Initialize Nostr connection status
-    setNostrConnectionStatus("disconnected");
+    setNostrConnectionStatus(SYNC_CONNECTION_STATUS.DISCONNECTED);
   }, [initTheme, isNostrEnabled, setNostrConnectionStatus]);
 
   return (
