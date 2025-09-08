@@ -1,8 +1,11 @@
-import { createRxDatabase, RxDatabase } from "rxdb";
+import { createRxDatabase, RxCollectionCreator, RxDatabase } from "rxdb";
 import { getRxStorageDexie } from "rxdb/plugins/storage-dexie";
 import { wrappedValidateAjvStorage } from "rxdb/plugins/validate-ajv";
 
 import { addRxPlugin } from "rxdb/plugins/core";
+import { RxDBMigrationSchemaPlugin } from "rxdb/plugins/migration-schema";
+import { RxDBQueryBuilderPlugin } from "rxdb/plugins/query-builder";
+import { RxDBUpdatePlugin } from "rxdb/plugins/update";
 import { SyncObservables } from "../observables/sync.observable";
 import { useExperimentalStore } from "../stores/experimental.store";
 import { ExperimentalFeature } from "../types/experiementalFeatures";
@@ -17,24 +20,35 @@ export type KinnemaCollections = {
 
 let db: Promise<RxDatabase<KinnemaCollections>> | null = null;
 
-const collections = {
-  lastWatched: {
-    schema: lastWatchedSchema,
-    migrationStrategies: {},
-  },
-  favorite: {
-    schema: favoriteSchema,
-    migrationStrategies: {},
-  },
-};
+const collections: { [key in keyof KinnemaCollections]: RxCollectionCreator } =
+  {
+    lastWatched: {
+      schema: lastWatchedSchema,
+      migrationStrategies: {
+        1: function (oldDoc) {
+          oldDoc.time = new Date(oldDoc.time).getTime();
+          return oldDoc;
+        },
+      },
+    },
+    favorite: {
+      schema: favoriteSchema,
+      migrationStrategies: {
+        1: function (oldDoc) {
+          oldDoc.time = new Date(oldDoc.time).getTime();
+          return oldDoc;
+        },
+      },
+    },
+  };
 
 async function _create(): Promise<RxDatabase<KinnemaCollections>> {
   if (import.meta.env.DEV) {
     const { RxDBDevModePlugin } = await import("rxdb/plugins/dev-mode");
     addRxPlugin(RxDBDevModePlugin);
   }
-  const { RxDBUpdatePlugin } = await import("rxdb/plugins/update");
-  const { RxDBQueryBuilderPlugin } = await import("rxdb/plugins/query-builder");
+
+  addRxPlugin(RxDBMigrationSchemaPlugin);
   addRxPlugin(RxDBUpdatePlugin);
   addRxPlugin(RxDBQueryBuilderPlugin);
 
