@@ -27,24 +27,18 @@ const modalSearchSchema = z.object({
 export const Route = createFileRoute("/_layout/")({
   validateSearch: zodValidator(modalSearchSchema),
   codeSplitGroupings: [["component", "loader"]],
+
   loader: async ({ context: { queryClient } }) => {
-    // Prefetch data for home page
+    const networks = [TmdbNetworks.NETFLIX, TmdbNetworks.HBO];
+
     await Promise.all([
       queryClient.prefetchQuery({
-        queryKey: ["home", "blutv"],
-        queryFn: () => TmdbService.fetchNetworkSeries(TmdbNetworks.BLUTV),
+        queryKey: ["home", "networks"],
+        queryFn: () => TmdbService.fetchMultipleNetworksSeries(networks),
       }),
       queryClient.prefetchQuery({
-        queryKey: ["home", "gain"],
-        queryFn: () => TmdbService.fetchNetworkSeries(TmdbNetworks.GAIN),
-      }),
-      queryClient.prefetchQuery({
-        queryKey: ["home", "exxen"],
-        queryFn: () => TmdbService.fetchNetworkSeries(TmdbNetworks.EXXEN),
-      }),
-      queryClient.prefetchQuery({
-        queryKey: ["home-data"],
-        queryFn: () => TmdbService.fetchHomeData(),
+        queryKey: ["home", "popular"],
+        queryFn: () => TmdbService.fetchHomePopular(),
       }),
     ]);
   },
