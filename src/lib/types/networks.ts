@@ -4,6 +4,7 @@ export enum TmdbNetworks {
   BLUTV = 1747,
   EXXEN = 4405,
   TABII = 6854,
+  HBO = 49,
 }
 
 export const TurkishProviderIds = [

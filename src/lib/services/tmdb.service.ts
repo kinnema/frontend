@@ -26,19 +26,17 @@ class TmdbService {
 
   static fetchSeasonEpisodes = async (tvId: number, seasonNumber: number) => {
     return this.fetchTMDB<ISeasonEpisodes>(
-      `/tv/${tvId}/season/${seasonNumber}?language=tr-TR`
+      `/tv/${tvId}/season/${seasonNumber}`
     );
   };
 
   static searchSeries = async (query: string) => {
-    return this.fetchTMDB<ITmdbSearchResults>(
-      `/search/tv?query=${query}&language=tr-TR`
-    );
+    return this.fetchTMDB<ITmdbSearchResults>(`/search/tv?query=${query}`);
   };
 
   static fetchSerie = async (serieId: number) => {
     return this.fetchTMDB<ITmdbSerieDetails>(
-      `/tv/${serieId}?append_to_response=episode_groups&language=tr-TR`
+      `/tv/${serieId}?append_to_response=episode_groups`
     );
   };
 
@@ -92,26 +90,20 @@ class TmdbService {
     page: number = 1
   ) => {
     return this.fetchTMDB<ITmdbSearchResults>(
-      `/discover/tv?with_networks=${network}&page=${page}&language=tr-TR&with_status=0`
+      `/discover/tv?with_networks=${network}&page=${page}&with_status=0`
     );
   };
 
-  private static fetchHomePopular = async () => {
-    return this.fetchTMDB<ITmdbSearchResults>(
-      `/trending/tv/day?language=tr-TR`
-    );
+  static fetchHomePopular = async () => {
+    return this.fetchTMDB<ITmdbSearchResults>(`/trending/tv/day`);
   };
 
   private static fetchHomeTrending = async () => {
-    return this.fetchTMDB<ITmdbSearchResults>(
-      "/trending/tv/week?language=tr-TR"
-    );
+    return this.fetchTMDB<ITmdbSearchResults>("/trending/tv/week");
   };
 
   private static fetchAiringToday = async () => {
-    return this.fetchTMDB<ITmdbSearchResults>(
-      `/tv/airing_today?language=tr-TR`
-    );
+    return this.fetchTMDB<ITmdbSearchResults>(`/tv/airing_today`);
   };
 }
 
