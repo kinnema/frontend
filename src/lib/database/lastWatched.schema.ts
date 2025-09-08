@@ -4,7 +4,7 @@ import { ILastWatched } from "../types/lastWatched.type";
 export type LastWatchedCollection = RxCollection<ILastWatched>;
 
 export const lastWatchedSchema: RxJsonSchema<ILastWatched> = {
-  version: 0,
+  version: 1,
   primaryKey: "id",
   type: "object",
   required: [
@@ -49,6 +49,7 @@ export const lastWatchedSchema: RxJsonSchema<ILastWatched> = {
     },
     isWatched: {
       type: "boolean",
+      default: false,
     },
     tmdbId: {
       type: "number",

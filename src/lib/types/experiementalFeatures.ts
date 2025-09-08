@@ -12,4 +12,5 @@ export interface IExperimentalFeature {
 export enum ExperimentalFeature {
   Sync = "sync",
   WatchTogether = "watchTogether",
+  Subtitles = "subtitles",
 }

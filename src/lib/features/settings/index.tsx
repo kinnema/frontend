@@ -79,10 +79,17 @@ export default function AppSettingsFeature() {
         nativeOnly: false,
       };
 
+      const subtitlesOption = {
+        name: "Subtitles",
+        href: "/settings/subtitles",
+        translationKey: "settings.subtitles",
+        nativeOnly: false,
+      };
+
       return {
         ...setting,
         sub: isExperimentalFeatureEnabled
-          ? [...setting.sub, syncOption]
+          ? [...setting.sub, syncOption, subtitlesOption]
           : setting.sub,
       };
     }

@@ -42,6 +42,9 @@ export default function ChapterPage({
   const isWatchTogetherFeatureEnabled = useExperimentalStore((state) =>
     state.isFeatureEnabled(ExperimentalFeature.WatchTogether)
   );
+  const isSubtitlesFeatureEnabled = useExperimentalStore((state) =>
+    state.isFeatureEnabled(ExperimentalFeature.Subtitles)
+  );
   const clearWatchLink = useWatchStore((state) => state.clearWatchLink);
   const clearSubtitles = useWatchStore((state) => state.clearSubtitles);
   const isWatched = useRef<boolean>(false);
@@ -243,7 +246,7 @@ export default function ChapterPage({
           }}
         >
           <div className="flex gap-5 mb-5">
-            {isNativePlatform() && (
+            {isNativePlatform() && isSubtitlesFeatureEnabled && (
               <SubtitleSelectDialog
                 tmdbId={tmdbData.data.id}
                 season={season}

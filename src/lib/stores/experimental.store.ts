@@ -44,6 +44,17 @@ const DEFAULT_FEATURES: IExperimentalFeature[] = [
       "This feature is experimental and may be unstable. Use with caution.",
     warningTranslationKey: "experimental.watchTogether.warning",
   },
+  {
+    id: ExperimentalFeature.Subtitles,
+    name: "Subtitles",
+    description: "Display subtitles for videos",
+    descriptionTranslationKey: "experimental.subtitles.description",
+    enabled: false,
+    translationKey: "experimental.subtitles.name",
+    warning:
+      "This feature is experimental and may be unstable. Use with caution.",
+    warningTranslationKey: "experimental.subtitles.warning",
+  },
 ];
 
 export const useExperimentalStore = create<ExperimentalStore>()(

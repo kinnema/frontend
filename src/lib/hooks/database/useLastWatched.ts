@@ -17,12 +17,9 @@ export function useLastWatched() {
   async function getAllLastWatched$() {
     const db = await getDb();
 
-    const lastWatchedQuery = db.lastWatched
-      ?.find()
-      .where({
-        isWatched: null,
-      })
-      .sort("desc").$;
+    const lastWatchedQuery = db.lastWatched?.find().where({
+      isWatched: false,
+    }).$;
 
     return lastWatchedQuery;
   }
