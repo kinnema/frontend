@@ -10,10 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SearchRouteImport } from './routes/search'
-import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PluginsRouteImport } from './routes/plugins'
 import { Route as NotFoundRouteImport } from './routes/not-found'
-import { Route as LoginRouteImport } from './routes/login'
 import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
@@ -33,11 +31,6 @@ const SearchRoute = SearchRouteImport.update({
   path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RegisterRoute = RegisterRouteImport.update({
-  id: '/register',
-  path: '/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const PluginsRoute = PluginsRouteImport.update({
   id: '/plugins',
   path: '/plugins',
@@ -46,11 +39,6 @@ const PluginsRoute = PluginsRouteImport.update({
 const NotFoundRoute = NotFoundRouteImport.update({
   id: '/not-found',
   path: '/not-found',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FavoritesRoute = FavoritesRouteImport.update({
@@ -122,10 +110,8 @@ const SettingsSyncSyncIdRoute = SettingsSyncSyncIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/favorites': typeof FavoritesRoute
-  '/login': typeof LoginRoute
   '/not-found': typeof NotFoundRoute
   '/plugins': typeof PluginsRoute
-  '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
   '/collection/$network': typeof CollectionNetworkRoute
   '/room/$roomId': typeof RoomRoomIdRoute
@@ -142,10 +128,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/favorites': typeof FavoritesRoute
-  '/login': typeof LoginRoute
   '/not-found': typeof NotFoundRoute
   '/plugins': typeof PluginsRoute
-  '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
   '/collection/$network': typeof CollectionNetworkRoute
   '/room/$roomId': typeof RoomRoomIdRoute
@@ -163,10 +147,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/favorites': typeof FavoritesRoute
-  '/login': typeof LoginRoute
   '/not-found': typeof NotFoundRoute
   '/plugins': typeof PluginsRoute
-  '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
   '/collection/$network': typeof CollectionNetworkRoute
   '/room/$roomId': typeof RoomRoomIdRoute
@@ -185,10 +167,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/favorites'
-    | '/login'
     | '/not-found'
     | '/plugins'
-    | '/register'
     | '/search'
     | '/collection/$network'
     | '/room/$roomId'
@@ -205,10 +185,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/favorites'
-    | '/login'
     | '/not-found'
     | '/plugins'
-    | '/register'
     | '/search'
     | '/collection/$network'
     | '/room/$roomId'
@@ -225,10 +203,8 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/favorites'
-    | '/login'
     | '/not-found'
     | '/plugins'
-    | '/register'
     | '/search'
     | '/collection/$network'
     | '/room/$roomId'
@@ -246,10 +222,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   FavoritesRoute: typeof FavoritesRoute
-  LoginRoute: typeof LoginRoute
   NotFoundRoute: typeof NotFoundRoute
   PluginsRoute: typeof PluginsRoute
-  RegisterRoute: typeof RegisterRoute
   SearchRoute: typeof SearchRoute
   CollectionNetworkRoute: typeof CollectionNetworkRoute
   RoomRoomIdRoute: typeof RoomRoomIdRoute
@@ -274,13 +248,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/register': {
-      id: '/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof RegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/plugins': {
       id: '/plugins'
       path: '/plugins'
@@ -293,13 +260,6 @@ declare module '@tanstack/react-router' {
       path: '/not-found'
       fullPath: '/not-found'
       preLoaderRoute: typeof NotFoundRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/favorites': {
@@ -398,10 +358,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   FavoritesRoute: FavoritesRoute,
-  LoginRoute: LoginRoute,
   NotFoundRoute: NotFoundRoute,
   PluginsRoute: PluginsRoute,
-  RegisterRoute: RegisterRoute,
   SearchRoute: SearchRoute,
   CollectionNetworkRoute: CollectionNetworkRoute,
   RoomRoomIdRoute: RoomRoomIdRoute,
