@@ -212,7 +212,8 @@
     },
     "status": {
       "enabled": "Etkin",
-      "disabled": "Devre Dışı"
+      "disabled": "Devre Dışı",
+      "nativeOnly": "Uygulama İçi"
     },
     "info": {
       "title": "Deneysel Özellikler Hakkında",

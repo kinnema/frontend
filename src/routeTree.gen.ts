@@ -12,9 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PluginsRouteImport } from './routes/plugins'
+import { Route as NotFoundRouteImport } from './routes/not-found'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as FavoritesRouteImport } from './routes/favorites'
-import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as SettingsUpdatesRouteImport } from './routes/settings/updates'
@@ -43,6 +43,11 @@ const PluginsRoute = PluginsRouteImport.update({
   path: '/plugins',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NotFoundRoute = NotFoundRouteImport.update({
+  id: '/not-found',
+  path: '/not-found',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -53,19 +58,15 @@ const FavoritesRoute = FavoritesRouteImport.update({
   path: '/favorites',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LayoutRoute = LayoutRouteImport.update({
-  id: '/_layout',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SettingsIndexRoute = SettingsIndexRouteImport.update({
   id: '/settings/',
   path: '/settings/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LayoutIndexRoute = LayoutIndexRouteImport.update({
-  id: '/',
+  id: '/_layout/',
   path: '/',
-  getParentRoute: () => LayoutRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsUpdatesRoute = SettingsUpdatesRouteImport.update({
   id: '/settings/updates',
@@ -122,6 +123,7 @@ const SettingsSyncSyncIdRoute = SettingsSyncSyncIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/favorites': typeof FavoritesRoute
   '/login': typeof LoginRoute
+  '/not-found': typeof NotFoundRoute
   '/plugins': typeof PluginsRoute
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
@@ -141,6 +143,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/favorites': typeof FavoritesRoute
   '/login': typeof LoginRoute
+  '/not-found': typeof NotFoundRoute
   '/plugins': typeof PluginsRoute
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
@@ -159,9 +162,9 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/_layout': typeof LayoutRouteWithChildren
   '/favorites': typeof FavoritesRoute
   '/login': typeof LoginRoute
+  '/not-found': typeof NotFoundRoute
   '/plugins': typeof PluginsRoute
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
@@ -183,6 +186,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/favorites'
     | '/login'
+    | '/not-found'
     | '/plugins'
     | '/register'
     | '/search'
@@ -202,6 +206,7 @@ export interface FileRouteTypes {
   to:
     | '/favorites'
     | '/login'
+    | '/not-found'
     | '/plugins'
     | '/register'
     | '/search'
@@ -219,9 +224,9 @@ export interface FileRouteTypes {
     | '/settings/sync'
   id:
     | '__root__'
-    | '/_layout'
     | '/favorites'
     | '/login'
+    | '/not-found'
     | '/plugins'
     | '/register'
     | '/search'
@@ -240,9 +245,9 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  LayoutRoute: typeof LayoutRouteWithChildren
   FavoritesRoute: typeof FavoritesRoute
   LoginRoute: typeof LoginRoute
+  NotFoundRoute: typeof NotFoundRoute
   PluginsRoute: typeof PluginsRoute
   RegisterRoute: typeof RegisterRoute
   SearchRoute: typeof SearchRoute
@@ -251,6 +256,7 @@ export interface RootRouteChildren {
   SettingsLanguageRoute: typeof SettingsLanguageRoute
   SettingsSubtitlesRoute: typeof SettingsSubtitlesRoute
   SettingsUpdatesRoute: typeof SettingsUpdatesRoute
+  LayoutIndexRoute: typeof LayoutIndexRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
   SettingsSyncSyncIdRoute: typeof SettingsSyncSyncIdRoute
   SettingsSyncNostrRoute: typeof SettingsSyncNostrRoute
@@ -282,6 +288,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PluginsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/not-found': {
+      id: '/not-found'
+      path: '/not-found'
+      fullPath: '/not-found'
+      preLoaderRoute: typeof NotFoundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -296,13 +309,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FavoritesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_layout': {
-      id: '/_layout'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof LayoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/settings/': {
       id: '/settings/'
       path: '/settings'
@@ -315,7 +321,7 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof LayoutIndexRouteImport
-      parentRoute: typeof LayoutRoute
+      parentRoute: typeof rootRouteImport
     }
     '/settings/updates': {
       id: '/settings/updates'
@@ -390,21 +396,10 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface LayoutRouteChildren {
-  LayoutIndexRoute: typeof LayoutIndexRoute
-}
-
-const LayoutRouteChildren: LayoutRouteChildren = {
-  LayoutIndexRoute: LayoutIndexRoute,
-}
-
-const LayoutRouteWithChildren =
-  LayoutRoute._addFileChildren(LayoutRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
-  LayoutRoute: LayoutRouteWithChildren,
   FavoritesRoute: FavoritesRoute,
   LoginRoute: LoginRoute,
+  NotFoundRoute: NotFoundRoute,
   PluginsRoute: PluginsRoute,
   RegisterRoute: RegisterRoute,
   SearchRoute: SearchRoute,
@@ -413,6 +408,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsLanguageRoute: SettingsLanguageRoute,
   SettingsSubtitlesRoute: SettingsSubtitlesRoute,
   SettingsUpdatesRoute: SettingsUpdatesRoute,
+  LayoutIndexRoute: LayoutIndexRoute,
   SettingsIndexRoute: SettingsIndexRoute,
   SettingsSyncSyncIdRoute: SettingsSyncSyncIdRoute,
   SettingsSyncNostrRoute: SettingsSyncNostrRoute,

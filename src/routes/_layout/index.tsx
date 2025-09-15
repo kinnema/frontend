@@ -1,6 +1,4 @@
 import { FavoritesModal } from "@/components/modals/FavoritesModal";
-import { LoginModal } from "@/components/modals/LoginModal";
-import { RegisterModal } from "@/components/modals/RegisterModal";
 import { SerieModal } from "@/components/modals/SerieModal";
 import { WatchModal } from "@/components/modals/WatchModal";
 import { HomeFeature } from "@/lib/features/home/HomeFeature";
@@ -57,9 +55,6 @@ export const Route = createFileRoute("/_layout/")({
       <>
         <Suspense>
           <HomeFeature />
-          {/* Modal rendering based on search params */}
-          {modal === "login" && <LoginModal />}
-          {modal === "register" && <RegisterModal />}
           {modal === "favorites" && <FavoritesModal />}
           {serieSlug && serieTmdbId && (
             <SerieModal slug={serieSlug} tmdbId={serieTmdbId} />

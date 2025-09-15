@@ -1,5 +1,3 @@
-"use client";
-
 import { SyncStatus } from "@/components/sync/sync-status";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +13,7 @@ import { ExperimentalFeature } from "@/lib/types/experiementalFeatures";
 import { isNativePlatform } from "@/lib/utils/native";
 import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 interface Setting {
@@ -65,36 +64,45 @@ const SETTINGS: Setting[] = [
 
 export default function AppSettingsFeature() {
   const { t } = useTranslation();
-  const isExperimentalFeatureEnabled = useExperimentalStore((state) =>
+  const isSyncFeatureEnabled = useExperimentalStore((state) =>
     state.isFeatureEnabled(ExperimentalFeature.Sync)
   );
-
-  // Add sync to settings dynamically if experimental feature is enabled
-  const settingsWithSync = SETTINGS.map((setting) => {
-    if (setting.name === "App") {
-      const syncOption = {
+  const isSubtitlesFeatureEnabled = useExperimentalStore((state) =>
+    state.isFeatureEnabled(ExperimentalFeature.Subtitles)
+  );
+  const menuEntriesBasedOnFeature = useMemo(() => {
+    const entries = [];
+    if (isSyncFeatureEnabled) {
+      entries.push({
         name: "Sync",
         href: "/settings/sync",
         translationKey: "settings.sync",
         nativeOnly: false,
-      };
-
-      const subtitlesOption = {
+      });
+    }
+    if (isSubtitlesFeatureEnabled) {
+      entries.push({
         name: "Subtitles",
         href: "/settings/subtitles",
         translationKey: "settings.subtitles",
-        nativeOnly: false,
-      };
-
-      return {
-        ...setting,
-        sub: isExperimentalFeatureEnabled
-          ? [...setting.sub, syncOption, subtitlesOption]
-          : setting.sub,
-      };
+        nativeOnly: true,
+      });
     }
-    return setting;
-  });
+
+    return entries;
+  }, [isSyncFeatureEnabled, isSubtitlesFeatureEnabled]);
+
+  const settingsWithFeatures = useMemo(() => {
+    return SETTINGS.map((setting) => {
+      if (setting.name === "App") {
+        return {
+          ...setting,
+          sub: [...setting.sub, ...menuEntriesBasedOnFeature],
+        };
+      }
+      return setting;
+    });
+  }, [menuEntriesBasedOnFeature]);
   return (
     <Card className="w-full max-w-md mx-auto my-8 md:my-12">
       <CardHeader className="text-center">
@@ -104,7 +112,7 @@ export default function AppSettingsFeature() {
         <CardDescription>{t("settings.description")}</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-6">
-        {settingsWithSync.map((setting) => (
+        {settingsWithFeatures.map((setting) => (
           <div className="grid gap-4" key={setting.name}>
             <h3 className="text-lg font-semibold">
               {setting.translationKey

@@ -1,5 +1,3 @@
-"use client";
-
 import { Progress } from "@/components/ui/progress";
 import { TmdbImage } from "@/lib/components/Image";
 import { slugify } from "@/lib/helpers";

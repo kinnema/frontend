@@ -1,4 +1,4 @@
-// "use client";
+// ;
 
 // import { ChevronRight } from "lucide-react";
 // import { ShowCard } from "./show-card";

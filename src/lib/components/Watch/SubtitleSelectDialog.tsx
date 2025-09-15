@@ -1,23 +1,20 @@
-"use client";
-
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { useToast } from "@/hooks/use-toast";
 import { useSubtitles } from "@/lib/hooks/useSubtitles";
 import { useSubtitleStore } from "@/lib/stores/subtitle.store";
 import { useWatchStore } from "@/lib/stores/watch.store";
 import { ILanguage } from "@/lib/types/language.type";
 import { ISubtitleResult } from "@/lib/types/subtitle.type";
-import { cn } from "@/lib/utils";
 import {
   Check,
   Download,
@@ -136,26 +133,26 @@ export function SubtitleSelectDialog({ tmdbId, season, episode }: IProps) {
   );
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
         <Button variant="outline" className="gap-2 bg-transparent">
           <Globe className="h-4 w-4" />
           {currentLanguage?.name || "Select Language"}
         </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+      </SheetTrigger>
+      <SheetContent className="sm:max-w-md">
+        <SheetHeader>
+          <SheetTitle className="flex items-center gap-2">
             <Languages className="h-5 w-5" />
             Select Subtitle Language
-          </DialogTitle>
-          <DialogDescription>
+          </SheetTitle>
+          <SheetDescription>
             Choose your preferred language from the list below.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-2 py-4 max-h-80 overflow-y-auto">
+          </SheetDescription>
+        </SheetHeader>
+        <div className="flex flex-col gap-5 max-h-full overflow-y-auto pr-5">
           {!isProvidersExists && (
-            <Alert variant="destructive">
+            <Alert variant="destructive" className="mt-5">
               <InfoIcon className="h-4 w-4" />
               <AlertTitle>Configure Subtitle Providers!</AlertTitle>
               <AlertDescription>
@@ -166,31 +163,26 @@ export function SubtitleSelectDialog({ tmdbId, season, episode }: IProps) {
 
           <Input
             placeholder="Search"
+            className="mt-5"
             onChange={(text) => handleSearch(text.currentTarget.value)}
           />
           {languages.map((language) => (
-            <div key={language.code} className="space-y-2">
-              <button
+            <div key={language.code}>
+              <Button
+                className="w-full justify-between"
+                variant={
+                  selectedLanguage === language.code ? "default" : "outline"
+                }
                 onClick={() => handleLanguageSelect(language.code)}
                 disabled={loadingLanguage !== null || !isProvidersExists}
-                className={cn(
-                  "flex items-center justify-between p-3 rounded-lg border text-left transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed w-full",
-                  selectedLanguage === language.code &&
-                    "bg-primary text-primary-foreground hover:bg-primary/90",
-                  loadingLanguage === language.code &&
-                    "bg-primary/80 text-primary-foreground"
-                )}
               >
-                <div className="flex flex-col">
-                  <span className="font-medium">{language.name}</span>
-                  <span className="text-sm opacity-70">{language.code}</span>
-                </div>
+                {language.name}
                 {loadingLanguage === language.code ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : selectedLanguage === language.code ? (
                   <Check className="h-4 w-4" />
                 ) : null}
-              </button>
+              </Button>
               {selectedLanguage === language.code && (
                 <div className="flex flex-col gap-3">
                   {Object.keys(apiResults).map((key) =>
@@ -216,7 +208,7 @@ export function SubtitleSelectDialog({ tmdbId, season, episode }: IProps) {
             </div>
           ))}
         </div>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 }

@@ -1,5 +1,3 @@
-"use client";
-
 import { useToast } from "@/hooks/use-toast";
 import { Loading } from "@/lib/components/Loading";
 import { Providers } from "@/lib/components/Providers";
@@ -202,7 +200,6 @@ export default function ChapterPage({
       toast.toast({
         title: "İzlemeye devam ediyorsunuz",
         description: `İzlemeye devam ediyorsunuz. ${secondsToMinutes}.dakika da devam ediyorsunuz.`,
-        duration: 1000,
       });
 
       if (videoRef.current) videoRef.current.currentTime = lastWatched.atSecond;
@@ -246,30 +243,32 @@ export default function ChapterPage({
           }}
         >
           <div className="flex gap-5 mb-5">
-            {isNativePlatform() && isSubtitlesFeatureEnabled && (
-              <SubtitleSelectDialog
-                tmdbId={tmdbData.data.id}
-                season={season}
-                episode={chapter}
-              />
-            )}
+            <>
+              {isNativePlatform() && isSubtitlesFeatureEnabled && (
+                <SubtitleSelectDialog
+                  tmdbId={tmdbData.data.id}
+                  season={season}
+                  episode={chapter}
+                />
+              )}
 
-            {selectedWatchLink && isWatchTogetherFeatureEnabled && (
-              <WatchTogether
-                videoRef={videoRef}
-                episodeData={tmdbEpisodeData.data}
-                tmdbData={tmdbData.data}
-              />
-            )}
+              {selectedWatchLink && isWatchTogetherFeatureEnabled && (
+                <WatchTogether
+                  videoRef={videoRef}
+                  episodeData={tmdbEpisodeData.data}
+                  tmdbData={tmdbData.data}
+                />
+              )}
+            </>
           </div>
           <h1 className="text-2xl md:text-4xl font-bold mb-2">
             {tmdbData.data.name}
           </h1>
-          {
-            <div className="text-sm text-gray-300 my-4">
-              {tmdbData.data.overview}
-            </div>
-          }
+
+          <div className="text-sm text-gray-300 my-4">
+            {tmdbData.data.overview}
+          </div>
+
           <h3 className="text-xl mb-2 ">{tmdbEpisodeData.data.name}</h3>
           <div className="flex items-center gap-2 text-xs md:text-sm text-gray-300">
             {tmdbData.data.genres.map((genre, index) => {

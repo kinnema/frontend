@@ -7,6 +7,7 @@ export interface IExperimentalFeature {
   warning?: string;
   warningTranslationKey?: string;
   descriptionTranslationKey?: string;
+  nativeOnly?: boolean;
 }
 
 export enum ExperimentalFeature {

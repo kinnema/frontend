@@ -30,6 +30,7 @@ const router = createRouter({
     queryClient,
   },
   history,
+  defaultPreload: "intent",
 });
 
 // Register the router instance for type safety

@@ -1,5 +1,3 @@
-"use client";
-
 import { MainNav } from "@/components/main-nav";
 import { SyncStatus } from "@/components/sync/sync-status";
 import { Button } from "@/components/ui/button";

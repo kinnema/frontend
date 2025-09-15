@@ -1,5 +1,3 @@
-"use client";
-
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -21,7 +19,6 @@ export default function ExperimentalFeaturesComponent() {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="mx-auto max-w-4xl space-y-6">
-        {/* Header */}
         <div className="space-y-2">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-orange-100 dark:bg-orange-900/20 rounded-lg">
@@ -40,8 +37,6 @@ export default function ExperimentalFeaturesComponent() {
             </div>
           </div>
         </div>
-
-        {/* Warning Alert */}
         <Alert className="border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-900/10">
           <AlertTriangle className="h-4 w-4 text-orange-600 dark:text-orange-400" />
           <AlertTitle className="text-orange-800 dark:text-orange-200">
@@ -54,8 +49,6 @@ export default function ExperimentalFeaturesComponent() {
             )}
           </AlertDescription>
         </Alert>
-
-        {/* Features List */}
         <div className="space-y-4">
           {features.map((feature) => (
             <Card key={feature.id} className="relative">
@@ -75,8 +68,13 @@ export default function ExperimentalFeaturesComponent() {
                     >
                       {feature.enabled
                         ? t("experimental.status.enabled", "Enabled")
-                        : t("experimental.status.disabled", "Disabled")}
+                        : t("experimental.status.disabled", "Disabled")}{" "}
                     </Badge>
+                    {feature.nativeOnly && (
+                      <Badge>
+                        {t("experimental.status.nativeOnly", "Native Only")}
+                      </Badge>
+                    )}
                   </div>
                   <Switch
                     checked={feature.enabled}
@@ -108,8 +106,6 @@ export default function ExperimentalFeaturesComponent() {
             </Card>
           ))}
         </div>
-
-        {/* Info Footer */}
         <Card className="bg-muted/50">
           <CardContent className="pt-6">
             <div className="flex items-start gap-3">

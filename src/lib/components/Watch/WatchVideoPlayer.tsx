@@ -39,7 +39,9 @@ export function WatchVideoPlayer({
       if (document.visibilityState === "hidden") {
         await videoRef.current?.requestPictureInPicture();
       } else {
-        await document.exitPictureInPicture();
+        if (document.pictureInPictureElement) {
+          await document.exitPictureInPicture();
+        }
       }
     };
 
@@ -54,7 +56,9 @@ export function WatchVideoPlayer({
     document.addEventListener("visibilitychange", pipMode);
 
     return () => {
-      document.exitPictureInPicture();
+      if (document.pictureInPictureElement) {
+        document.exitPictureInPicture();
+      }
       document.removeEventListener("visibilitychange", pipMode);
       sub.unsubscribe();
       videoRef.current?.removeEventListener("loadeddata", handleLoadedData);

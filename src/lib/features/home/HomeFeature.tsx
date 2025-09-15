@@ -1,5 +1,3 @@
-"use client";
-
 import { FeaturedCarousel } from "@/components/featured-carousel";
 import { ShowCard } from "@/components/show-card";
 import { ShowCarousel } from "@/components/show-carousel";

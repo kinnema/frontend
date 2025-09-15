@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { TmdbImage } from "@/lib/components/Image";
 import { slugify } from "@/lib/helpers";

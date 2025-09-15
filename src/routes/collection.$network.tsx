@@ -1,4 +1,6 @@
 import { CollectionSeries } from "@/app/collection/[network]/series";
+import getQueryClient from "@/lib/getQueryClient";
+import TmdbService from "@/lib/services/tmdb.service";
 import { TmdbNetworks } from "@/lib/types/networks";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
@@ -9,31 +11,42 @@ const collectionSearchSchema = z.object({
   page: z.number().catch(1),
 });
 
+function validateNetwork(network: string) {
+  const validNetworks = ["blutv", "gain", "exxen", "netflix", "disney"];
+  return validNetworks.includes(network);
+}
+
+function mapToTmdbNetwork(network: string) {
+  const networkAsTmdbKey = network.toUpperCase() as keyof typeof TmdbNetworks;
+
+  return TmdbNetworks[networkAsTmdbKey] || null;
+}
+
 export const Route = createFileRoute("/collection/$network")({
   beforeLoad: ({ params }) => {
-    // Add validation if needed
-    const validNetworks = ["blutv", "gain", "exxen", "netflix", "disney"];
-    if (!validNetworks.includes(params.network)) {
+    if (!validateNetwork(params.network)) {
       throw redirect({ to: "/" });
     }
   },
   validateSearch: zodValidator(collectionSearchSchema),
+  loader: async ({ params }) => {
+    const queryClient = getQueryClient();
+    const network = mapToTmdbNetwork(params.network);
+    await queryClient.prefetchQuery({
+      queryKey: ["network-series", network, 1],
+      queryFn: () => TmdbService.fetchNetworkSeries(network, 1),
+    });
+
+    return { network: params.network };
+  },
   component: () => {
-    const { network } = Route.useParams();
-    const networkAsTmdbKey = network.toUpperCase() as keyof typeof TmdbNetworks;
-
-    if (!Object.values(TmdbNetworks).includes(networkAsTmdbKey)) {
-      return redirect({
-        to: "/",
-      });
-    }
-
-    const networkk = TmdbNetworks[networkAsTmdbKey];
+    const { network: _network } = Route.useParams();
+    const network = mapToTmdbNetwork(_network);
 
     return (
       <div className="container mx-auto px-4 py-8">
         <Suspense>
-          <CollectionSeries network={networkk} />
+          <CollectionSeries network={network} />
         </Suspense>
       </div>
     );

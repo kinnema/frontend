@@ -1,5 +1,3 @@
-"use client";
-
 import { App as CapApp } from "@capacitor/app";
 import { Capacitor, PluginListenerHandle } from "@capacitor/core";
 import { useRouter } from "@tanstack/react-router";

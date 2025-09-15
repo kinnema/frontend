@@ -1,4 +1,3 @@
-"use client";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
@@ -38,7 +37,6 @@ export const Providers = ({
         title: "Uyarı",
         description:
           "Lutfen daha iyi bir kullanim icin uygulamamizi kullaniniz",
-        duration: 1500,
       });
     }
 

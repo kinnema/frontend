@@ -54,6 +54,7 @@ const DEFAULT_FEATURES: IExperimentalFeature[] = [
     warning:
       "This feature is experimental and may be unstable. Use with caution.",
     warningTranslationKey: "experimental.subtitles.warning",
+    nativeOnly: true,
   },
 ];
 

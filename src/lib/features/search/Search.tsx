@@ -1,5 +1,3 @@
-"use client";
-
 import { ShowCard } from "@/components/show-card";
 import { Input } from "@/components/ui/input";
 import { useSearchStore } from "@/lib/stores/search.store";

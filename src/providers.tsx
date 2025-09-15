@@ -4,13 +4,13 @@ import { useAppStore } from "@/lib/stores/app.store";
 import { useSyncStore } from "@/lib/stores/sync.store";
 import { SafeArea } from "@capacitor-community/safe-area";
 import { Capacitor } from "@capacitor/core";
-import { StatusBar, Style } from "@capacitor/status-bar";
 import { CapacitorUpdater } from "@capgo/capacitor-updater";
 import { PropsWithChildren, useEffect } from "react";
 import { SyncProvider } from "./lib/providers/syncProvider";
 import { SYNC_CONNECTION_STATUS } from "./lib/types/sync.type";
 
 if (Capacitor.isNativePlatform()) {
+  const { StatusBar, Style } = await import("@capacitor/status-bar");
   CapacitorUpdater.notifyAppReady();
 
   SafeArea.enable({
