@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
 import { useP2P } from "@/lib/hooks/useP2P";
 import { useWatchStore } from "@/lib/stores/watch.store";
@@ -43,11 +42,11 @@ export function WatchTogether({ videoRef, ...params }: IProps) {
     toast({
       title: "Odan hazir!",
       description: "Lutfen asagidaki butona basip arkadasinizla linki paylasin",
-      action: (
-        <ToastAction altText="share" onClick={() => onClickGo(roomId)}>
-          Git
-        </ToastAction>
-      ),
+      variant: "success",
+      action: {
+        label: "Git",
+        onClick: () => onClickGo(roomId),
+      },
     });
   }
 

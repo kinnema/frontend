@@ -29,7 +29,7 @@ export function FavoriteButton({ tmdbData }: IProps) {
     onSuccess: async () => {
       toast({
         title: "Favorilerden kaldirildi",
-        variant: "default",
+        variant: "success",
       });
     },
     onError: () => {
@@ -45,7 +45,7 @@ export function FavoriteButton({ tmdbData }: IProps) {
     onSuccess: async () => {
       toast({
         title: t("favorites.added"),
-        variant: "default",
+        variant: "success",
       });
     },
     onError: () => {

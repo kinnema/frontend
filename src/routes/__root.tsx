@@ -1,19 +1,22 @@
-import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
-import { QueryClient } from '@tanstack/react-query'
-import { Header } from '@/lib/components/Header'
-import { Footer } from '@/components/footer'
-import { Toaster } from '@/components/ui/toaster'
-import { Providers } from '../providers'
-import classNames from 'classnames'
-import '../globals.css'
+import { Footer } from "@/components/footer";
+import { Header } from "@/lib/components/Header";
+import { QueryClient } from "@tanstack/react-query";
+import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
+import classNames from "classnames";
+import "../globals.css";
+import { Providers } from "../providers";
 
 interface MyRouterContext {
-  queryClient: QueryClient
+  queryClient: QueryClient;
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => (
-    <div className={classNames("font-montserrat text-sm bg-white dark:bg-zinc-900")}>
+    <div
+      className={classNames(
+        "font-montserrat text-sm bg-white dark:bg-zinc-900"
+      )}
+    >
       <Providers>
         <Header />
         <div className="min-h-screen bg-black/95 text-white">
@@ -22,8 +25,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
           </main>
         </div>
         <Footer />
-        <Toaster />
       </Providers>
     </div>
   ),
-})
+});

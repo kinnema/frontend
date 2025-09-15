@@ -3,7 +3,6 @@
 import { MainNav } from "@/components/main-nav";
 import { SyncStatus } from "@/components/sync/sync-status";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
 import { Link, useRouterState } from "@tanstack/react-router";
 import classNames from "classnames";
 import { Menu, Search, SearchIcon } from "lucide-react";
@@ -13,7 +12,6 @@ export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathName = useRouterState({ select: (s) => s.location.pathname });
   const oldPathname = useRef<string>(undefined);
-  const toast = useToast();
 
   useEffect(() => {
     if (oldPathname.current !== pathName) {
@@ -32,15 +30,6 @@ export function Header() {
   const toggleMenu = useCallback(() => {
     setMenuOpen((state) => !state);
   }, [pathName]);
-
-  function onPressLogout(): void {
-    setMenuOpen(false);
-    // logout();
-
-    toast.toast({
-      title: "Çıkış yapıldı",
-    });
-  }
 
   return (
     <>

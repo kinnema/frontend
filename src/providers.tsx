@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/ui/sonner";
 import BackButtonHandler from "@/lib/components/App/BackButtonHandler";
 import { useAppStore } from "@/lib/stores/app.store";
 import { useSyncStore } from "@/lib/stores/sync.store";
@@ -42,7 +43,11 @@ export function Providers({ children }: PropsWithChildren) {
 
   return (
     <>
-      <SyncProvider>{children}</SyncProvider>
+      <SyncProvider>
+        {children}
+        <Toaster />
+      </SyncProvider>
+
       <BackButtonHandler />
     </>
   );
