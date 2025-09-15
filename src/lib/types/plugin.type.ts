@@ -3,7 +3,21 @@ export interface IPlugin {
   enabled: boolean;
   name: string;
   url: string;
+  type: "local" | "remote";
+  handler?: IPluginHandler; // For local plugins
   manifest: IPluginManifest;
+}
+
+export interface IPluginHandler {
+  search?: (query: string) => Promise<IPluginEndpointResponse>;
+  movie?: (params: { id: string }) => Promise<IPluginEndpointResponse>;
+  series?: (params: {
+    id: string;
+    season?: number;
+    episode?: number;
+  }) => Promise<IPluginEndpointResponse>;
+  details?: (params: { id: string }) => Promise<any>;
+  [key: string]: ((params: any) => Promise<any>) | undefined;
 }
 
 export interface IPluginManifest {

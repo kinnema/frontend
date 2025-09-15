@@ -1,10 +1,13 @@
 import { CapacitorHttp } from "@capacitor/core";
+import { produce } from "immer";
 import { compare } from "semver";
 import { v4 as uuidv4 } from "uuid";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
+import { indexedDbZustandStorage } from "../stores/stores/indexedDb";
 import {
   IPlugin,
+  IPluginHandler,
   IPluginManifest,
   IPluginUpdating,
 } from "../types/plugin.type";
@@ -13,6 +16,10 @@ import { isNativePlatform } from "../utils/native";
 interface PluginRegistryState {
   plugins: IPlugin[];
   registerPlugin: (url: string) => Promise<IPlugin | void>;
+  registerLocalPlugin: (
+    manifest: IPluginManifest,
+    handler: IPluginHandler
+  ) => IPlugin;
   unregisterPlugin: (id: string) => void;
   enablePlugin: (id: string) => void;
   disablePlugin: (id: string) => void;
@@ -60,10 +67,53 @@ export const usePluginRegistry = create<PluginRegistryState>()(
           id: uuidv4(),
           name: manifest.name,
           enabled: true,
+          type: "remote",
           url: urlObj.origin,
           manifest,
         };
         set((state) => ({ plugins: [...state.plugins, plugin] }));
+        return plugin;
+      },
+
+      registerLocalPlugin: (
+        manifest: IPluginManifest,
+        handler: IPluginHandler
+      ) => {
+        const plugins = produce(get().plugins, (draft) => {
+          const index = draft.findIndex((p) => p.name === manifest.name);
+          if (index !== -1) {
+            draft[index] = {
+              id: uuidv4(),
+              name: manifest.name,
+              enabled: true,
+              type: "local",
+              url: "",
+              handler,
+              manifest,
+            };
+          } else {
+            draft.push({
+              id: uuidv4(),
+              name: manifest.name,
+              enabled: true,
+              type: "local",
+              url: "",
+              handler,
+              manifest,
+            });
+          }
+
+          return draft;
+        });
+
+        const plugin = plugins.find((p) => p.name === manifest.name);
+
+        if (!plugin) {
+          throw new Error(`Failed to register local plugin: ${manifest.name}`);
+        }
+
+        set(() => ({ plugins }));
+
         return plugin;
       },
 
@@ -85,6 +135,12 @@ export const usePluginRegistry = create<PluginRegistryState>()(
         const plugin = storage.getPlugin(pluginId);
 
         if (!plugin) return;
+
+        if (plugin.type === "local") {
+          console.log(`Skipping update for local plugin: ${plugin.name}`);
+          return;
+        }
+
         set({
           isUpdating: {
             isUpdating: true,
@@ -147,7 +203,16 @@ export const usePluginRegistry = create<PluginRegistryState>()(
       },
     }),
     {
-      name: "plugin-registry", // localStorage key
+      name: "plugin-registry",
+      storage: createJSONStorage(() => indexedDbZustandStorage),
+      version: import.meta.env.__APP_VERSION__,
+      partialize: (state) => ({
+        plugins: state.plugins.map((plugin) => ({
+          ...plugin,
+          handler: undefined, // Remove handlers before persisting
+        })),
+        isUpdating: state.isUpdating,
+      }),
     }
   )
 );

@@ -84,7 +84,11 @@
     "noPlugins": "No plugins found",
     "status": "Plugin Status",
     "actions": "Actions",
-    "remove": "Remove"
+    "remove": "Remove",
+    "type": "Type",
+    "typeLocal": "Built-in",
+    "typeRemote": "Remote",
+    "localPluginNotEditable": "Built-in plugin - cannot be edited"
   },
   "favorites": {
     "removeError": "Error occurred while removing from favorites",

@@ -119,6 +119,13 @@ function PluginManager() {
               </CardHeader>
               <CardContent>
                 <p>Versiyon: {plugin.manifest.version}</p>
+                <p>
+                  {t("plugins.type")}:
+                  {plugin.type === "local"
+                    ? t("plugins.typeLocal")
+                    : t("plugins.typeRemote")}
+                </p>
+                {plugin.type === "remote" && <p>URL: {plugin.url}</p>}
               </CardContent>
               <CardFooter>
                 <div className="flex justify-between items-center gap-4 flex-wrap">
@@ -146,16 +153,25 @@ function PluginManager() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                      <DropdownMenuItem
-                        onClick={() => handlePluginUpdate(plugin.id)}
-                      >
-                        {t("plugins.update")}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => unregisterPlugin(plugin.id)}
-                      >
-                        {t("plugins.remove")}
-                      </DropdownMenuItem>
+                      {plugin.type === "remote" && (
+                        <DropdownMenuItem
+                          onClick={() => handlePluginUpdate(plugin.id)}
+                        >
+                          {t("plugins.update")}
+                        </DropdownMenuItem>
+                      )}
+                      {plugin.type === "remote" && (
+                        <DropdownMenuItem
+                          onClick={() => unregisterPlugin(plugin.id)}
+                        >
+                          {t("plugins.remove")}
+                        </DropdownMenuItem>
+                      )}
+                      {plugin.type === "local" && (
+                        <DropdownMenuItem disabled>
+                          {t("plugins.localPluginNotEditable")}
+                        </DropdownMenuItem>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>

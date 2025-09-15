@@ -85,7 +85,11 @@
     "noPlugins": "Herhangi bir eklenti bulunamadı",
     "status": "Eklenti Durumu",
     "actions": "Aksiyonlar",
-    "remove": "Kaldır"
+    "remove": "Kaldır",
+    "type": "Tür",
+    "typeLocal": "Yerel",
+    "typeRemote": "Uzak",
+    "localPluginNotEditable": "Yerel eklenti - düzenlenemez"
   },
   "favorites": {
     "removeError": "Favorilerden kaldırılırken bir hata oluştu",

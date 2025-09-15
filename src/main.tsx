@@ -10,8 +10,11 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./lib/i18n";
+import { initializeLocalPlugins } from "./lib/plugins/local";
 import { isElectron } from "./lib/utils/native";
 import { routeTree } from "./routeTree.gen";
+
+initializeLocalPlugins();
 
 const queryClient = new QueryClient({
   defaultOptions: {

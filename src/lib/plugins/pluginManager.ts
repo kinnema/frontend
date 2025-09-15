@@ -1,6 +1,6 @@
 import { CapacitorHttp } from "@capacitor/core";
 import { Subject } from "rxjs";
-import { IPluginEndpointResponse } from "../types/plugin.type";
+import { IPlugin, IPluginEndpointResponse } from "../types/plugin.type";
 import { IPluginEventData } from "../types/pluginEvents.type";
 import { isNativePlatform } from "../utils/native";
 import { usePluginRegistry } from "./usePluginRegistry";
@@ -30,6 +30,73 @@ export class PluginManager {
     }
   }
 
+  private async handleLocalPlugins(
+    plugin: IPlugin,
+    pluginId: string,
+    params: { id: string; season?: number; chapter?: number }
+  ) {
+    if (plugin.type === "local" && !plugin.handler) {
+      const { getLocalPluginHandler } = await import("./local");
+      const handler = getLocalPluginHandler(plugin.name);
+
+      if (!handler) {
+        throw new Error(`No handler found for local plugin ${plugin.name}`);
+      }
+
+      this.pluginRegistry.setState((state) => ({
+        ...state,
+        plugins: state.plugins.map((p) =>
+          p.id === plugin.id ? { ...p, handler } : p
+        ),
+      }));
+
+      plugin.handler = handler;
+      console.log(`Reattached handler for local plugin: ${plugin.name}`);
+    }
+
+    if (plugin.type === "local" && plugin.handler) {
+      this.events.next({
+        type: "trying_provider",
+        data: {
+          pluginId: plugin.id,
+        },
+      });
+
+      try {
+        const endpoint = params.season !== undefined ? "series" : "movie";
+        const handlerMethod = plugin.handler[endpoint];
+        console.log("Using local plugin:", plugin);
+        if (!handlerMethod) {
+          throw new Error(
+            `No ${endpoint} handler defined for local plugin ${pluginId}.`
+          );
+        }
+
+        const result = await handlerMethod(params);
+
+        this.events.next({
+          type: "provider_success",
+          data: {
+            pluginId: plugin.id,
+            url: result.data.url,
+            subtitles: result.subtitles,
+          },
+        });
+
+        return result;
+      } catch (error) {
+        console.error("Error in local plugin:", error);
+        this.events.next({
+          type: "provider_failed",
+          data: {
+            pluginId: plugin.id,
+          },
+        });
+        throw error;
+      }
+    }
+  }
+
   async fetchSourceByPlugin(
     pluginId: string,
     params: { id: string; season?: number; chapter?: number }
@@ -50,8 +117,13 @@ export class PluginManager {
       return;
     }
 
-    console.log("OK");
+    console.log("OK", plugin);
 
+    if (plugin.type === "local") {
+      return await this.handleLocalPlugins(plugin, pluginId, params);
+    }
+
+    // Handle remote plugins
     const endpoint =
       plugin.manifest.endpoints.series || plugin.manifest.endpoints.movie;
 
