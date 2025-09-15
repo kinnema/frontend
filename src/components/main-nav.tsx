@@ -15,7 +15,7 @@ export function MainNav() {
             <li key={item.name}>
               <Link
                 to={item.href ?? "#"}
-                className="text-sm font-medium transition-colors hover:text-white/70"
+                className="text-sm font-bold transition-colors hover:text-white/70"
               >
                 {item.translationKey ? t(item.translationKey) : item.name}
               </Link>

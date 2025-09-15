@@ -13,7 +13,12 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        montserrat: ["Montserrat", "sans-serif"],
+        montserrat: [
+          "Montserrat",
+          "Montserrat-Bold",
+          "Montserrat-SemiBold",
+          "sans-serif",
+        ],
       },
       borderRadius: {
         lg: "var(--radius)",
