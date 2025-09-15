@@ -1,4 +1,3 @@
-import NostrWorker from "@/lib/workers/nostr.worker?worker";
 import { createContext, useEffect, useRef } from "react";
 import { useExperimentalStore } from "../stores/experimental.store";
 import { useSyncStore } from "../stores/sync.store";
@@ -23,69 +22,75 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
   );
 
   useEffect(() => {
+    async function initNostr() {
+      const { default: NostrWorker } = await import(
+        "../workers/nostr.worker?worker"
+      );
+      workerRef.current = new NostrWorker();
+
+      const worker = workerRef.current;
+
+      // Initialize worker with store data
+      worker.postMessage({
+        action: "init",
+        data: {
+          availableCollections,
+          nostrSecretKey,
+          nostrRelayUrls,
+        },
+      });
+
+      worker.onmessage = (event) => {
+        const { action, data } = event.data;
+
+        switch (action) {
+          case "connection_status":
+            if (data === SYNC_CONNECTION_STATUS.CONNECTED && isNostrEnabled) {
+              // Start initial sync after connection is established
+              worker.postMessage({
+                action: "sync",
+                data: { availableCollections },
+              });
+            }
+            useSyncStore.getState().setNostrConnectionStatus(data);
+            break;
+          case "status":
+            switch (data as SYNC_STATUS) {
+              case SYNC_STATUS.SYNCING:
+                setNostrSyncInProgress(true);
+                break;
+              default:
+                setNostrSyncInProgress(false);
+            }
+            break;
+          case "complete":
+            console.log("Nostr Sync Completed:", data);
+            break;
+          case "initialized":
+            console.log("Nostr Initialized:", data);
+            break;
+          case "error":
+            console.error("Worker error:", data);
+            useSyncStore
+              .getState()
+              .setNostrConnectionStatus(SYNC_CONNECTION_STATUS.ERROR);
+            break;
+          default:
+            console.warn("Unknown action from worker:", action);
+        }
+      };
+
+      worker.onerror = (error) => {
+        console.error("Worker error:", error);
+        useSyncStore
+          .getState()
+          .setNostrConnectionStatus(SYNC_CONNECTION_STATUS.ERROR);
+      };
+    }
+
     if (!isSyncFeatureEnabled) return;
-    // Create worker instance
-    workerRef.current = new NostrWorker();
-    const worker = workerRef.current;
+    initNostr();
 
-    // Initialize worker with store data
-    worker.postMessage({
-      action: "init",
-      data: {
-        availableCollections,
-        nostrSecretKey,
-        nostrRelayUrls,
-      },
-    });
-
-    worker.onmessage = (event) => {
-      const { action, data } = event.data;
-
-      switch (action) {
-        case "connection_status":
-          if (data === SYNC_CONNECTION_STATUS.CONNECTED && isNostrEnabled) {
-            // Start initial sync after connection is established
-            worker.postMessage({
-              action: "sync",
-              data: { availableCollections },
-            });
-          }
-          useSyncStore.getState().setNostrConnectionStatus(data);
-          break;
-        case "status":
-          switch (data as SYNC_STATUS) {
-            case SYNC_STATUS.SYNCING:
-              setNostrSyncInProgress(true);
-              break;
-            default:
-              setNostrSyncInProgress(false);
-          }
-          break;
-        case "complete":
-          console.log("Nostr Sync Completed:", data);
-          break;
-        case "initialized":
-          console.log("Nostr Initialized:", data);
-          break;
-        case "error":
-          console.error("Worker error:", data);
-          useSyncStore
-            .getState()
-            .setNostrConnectionStatus(SYNC_CONNECTION_STATUS.ERROR);
-          break;
-        default:
-          console.warn("Unknown action from worker:", action);
-      }
-    };
-
-    worker.onerror = (error) => {
-      console.error("Worker error:", error);
-      useSyncStore
-        .getState()
-        .setNostrConnectionStatus(SYNC_CONNECTION_STATUS.ERROR);
-    };
-
-    // Cleanup on unmount
     return () => {
       if (workerRef.current) {
         workerRef.current.postMessage({ action: "cleanup" });

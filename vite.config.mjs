@@ -33,6 +33,7 @@ export default defineConfig({
         external: ["electron"],
       },
     }),
+    cssMinify: "lightningcss",
   },
   server: {
     port: 3000,
