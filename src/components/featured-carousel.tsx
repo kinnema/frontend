@@ -76,6 +76,7 @@ export function FeaturedCarousel() {
                     alt={item.original_name}
                     width={1024}
                     height={768}
+                    sizes="(max-width: 768px) 100vw, 50vw"
                     className="object-cover w-full h-full"
                     loading={
                       item.id === featuredItems![0]?.id ? "eager" : "lazy"

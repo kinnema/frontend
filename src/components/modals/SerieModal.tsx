@@ -8,7 +8,7 @@ interface SerieModalProps {
   tmdbId: number;
 }
 
-export function SerieModal({ slug, tmdbId }: SerieModalProps) {
+export default function SerieModal({ slug, tmdbId }: SerieModalProps) {
   const navigate = useNavigate();
 
   const onClose = (open: boolean) => {

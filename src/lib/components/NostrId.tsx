@@ -2,12 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Check, PencilIcon } from "lucide-react";
-import { nip19 } from "nostr-tools";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSyncStore } from "../stores/sync.store";
 
-export function NostrIdInput() {
+export default function NostrIdInput() {
   const id = useSyncStore((state) => state.nostrSecretKey);
   const setId = useSyncStore((state) => state.setNostrSecretKey);
   const [_id, _setId] = useState<string>(id ?? "");
@@ -19,8 +18,9 @@ export function NostrIdInput() {
     _setId(e.target.value);
   };
 
-  const saveChanges = () => {
+  const saveChanges = async () => {
     try {
+      const nip19 = await import("nostr-tools/nip19");
       const decoded = nip19.decode(_id);
       setEditingId(false);
       setId(_id);

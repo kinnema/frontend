@@ -11,7 +11,12 @@ interface WatchModalProps {
   chapter: number;
 }
 
-export function WatchModal({ slug, tmdbId, season, chapter }: WatchModalProps) {
+export default function WatchModal({
+  slug,
+  tmdbId,
+  season,
+  chapter,
+}: WatchModalProps) {
   const navigate = useNavigate();
   const videoRef = useRef<HTMLVideoElement>(null);
 

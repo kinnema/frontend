@@ -1,6 +1,5 @@
 import { createRxDatabase, RxCollectionCreator, RxDatabase } from "rxdb";
 import { getRxStorageDexie } from "rxdb/plugins/storage-dexie";
-import { wrappedValidateAjvStorage } from "rxdb/plugins/validate-ajv";
 
 import { addRxPlugin } from "rxdb/plugins/core";
 import { RxDBMigrationSchemaPlugin } from "rxdb/plugins/migration-schema";
@@ -42,9 +41,7 @@ async function _create(): Promise<RxDatabase<KinnemaCollections>> {
 
   const db = await createRxDatabase<KinnemaCollections>({
     name: "kinnema",
-    storage: wrappedValidateAjvStorage({
-      storage: getRxStorageDexie(),
-    }),
+    storage: getRxStorageDexie(),
   });
 
   await db.addCollections(collections);

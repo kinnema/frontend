@@ -1,6 +1,5 @@
 import { CapacitorHttp } from "@capacitor/core";
 import { produce } from "immer";
-import { compare } from "semver";
 import { v4 as uuidv4 } from "uuid";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
@@ -147,6 +146,7 @@ export const usePluginRegistry = create<PluginRegistryState>()(
             pluginId: plugin.id,
           },
         });
+        const { compare } = await import("semver");
 
         const requestedPlugin = await _fetchPlugin(
           `${plugin.url}/manifest.json`

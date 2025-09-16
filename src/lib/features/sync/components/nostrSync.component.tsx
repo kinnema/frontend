@@ -8,8 +8,10 @@ import {
 } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/hooks/use-toast";
+import { useNostr } from "@/hooks/useNostr";
 import { useNostrSync } from "@/hooks/useNostrSync";
 import { useSyncStore } from "@/lib/stores/sync.store";
+import { SYNC_CONNECTION_STATUS } from "@/lib/types/sync.type";
 import { Link } from "@tanstack/react-router";
 import {
   AlertCircle,
@@ -18,9 +20,12 @@ import {
   Loader2,
   WifiOff,
 } from "lucide-react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-export function NostrSyncComponent() {
+export default function NostrSyncComponent() {
+  const { isConnected: nostrConnected, publicKeyNpub } = useNostr();
+
   const { syncToNostr, syncFromNostr, fullSync } = useNostrSync();
   const setIsNostrEnabled = useSyncStore((state) => state.setIsNostrEnabled);
   const availableCollections = useSyncStore(
@@ -30,7 +35,27 @@ export function NostrSyncComponent() {
   const setLastNostrSync = useSyncStore((state) => state.setLastNostrSync);
   const { t } = useTranslation();
 
-  // Nostr sync state
+  const setNostrConnectionStatus = useSyncStore(
+    (state) => state.setNostrConnectionStatus
+  );
+  const setNostrPublicKey = useSyncStore((state) => state.setNostrPublicKey);
+
+  useEffect(() => {
+    if (nostrConnected) {
+      setNostrConnectionStatus(SYNC_CONNECTION_STATUS.CONNECTED);
+      if (publicKeyNpub) {
+        setNostrPublicKey(publicKeyNpub);
+      }
+    } else {
+      setNostrConnectionStatus(SYNC_CONNECTION_STATUS.DISCONNECTED);
+    }
+  }, [
+    nostrConnected,
+    publicKeyNpub,
+    setNostrConnectionStatus,
+    setNostrPublicKey,
+  ]);
+
   const isNostrEnabled = useSyncStore((state) => state.isNostrEnabled);
   const nostrConnectionStatus = useSyncStore(
     (state) => state.nostrConnectionStatus

@@ -1,15 +1,21 @@
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { useNavigate } from "@tanstack/react-router"
-import { FavoritesPageFeature } from "@/lib/features/favorites/FavoritesPage"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { FavoritesPageFeature } from "@/lib/features/favorites/FavoritesPage";
+import { useNavigate } from "@tanstack/react-router";
 
-export function FavoritesModal() {
-  const navigate = useNavigate()
+export default function FavoritesModal() {
+  const navigate = useNavigate();
 
   const onClose = (open: boolean) => {
     if (!open) {
-      navigate({ search: {} })
+      navigate({ to: "/", search: {} });
     }
-  }
+  };
 
   return (
     <Dialog open modal onOpenChange={onClose}>
@@ -21,5 +27,5 @@ export function FavoritesModal() {
         <FavoritesPageFeature />
       </DialogContent>
     </Dialog>
-  )
+  );
 }

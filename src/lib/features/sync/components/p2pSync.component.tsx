@@ -11,7 +11,7 @@ import { useSyncStore } from "@/lib/stores/sync.store";
 import { t } from "i18next";
 import { Users, Wifi, WifiOff } from "lucide-react";
 
-export function P2PSyncComponent() {
+export default function P2PSyncComponent() {
   const { toast } = useToast();
   const isP2PEnabled = useSyncStore((state) => state.isP2PEnabled);
   const setIsP2PEnabled = useSyncStore((state) => state.setIsP2PEnabled);
