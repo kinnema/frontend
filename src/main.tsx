@@ -40,7 +40,7 @@ declare module "@tanstack/react-router" {
 }
 
 const DevTools = import.meta.env.DEV
-  ? React.lazy(() => import("./DevTools"))
+  ? React.lazy(() => import("./components/DevTools"))
   : null;
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

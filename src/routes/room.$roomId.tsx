@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { WaitPeers } from "@/lib/components/Watch/WaitPeers";
-import { WatchVideoPlayer } from "@/lib/components/Watch/WatchVideoPlayer";
+import { WaitPeers } from "@/components/Watch/WaitPeers";
+import { WatchVideoPlayer } from "@/components/Watch/WatchVideoPlayer";
 import { useP2P } from "@/lib/hooks/useP2P";
 import { useExperimentalStore } from "@/lib/stores/experimental.store";
 import { IWatchTogetherRoom, useWatchStore } from "@/lib/stores/watch.store";

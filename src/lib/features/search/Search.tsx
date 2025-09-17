@@ -6,7 +6,7 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Loading } from "../../components/Loading";
+import { Loading } from "../../../components/Loading";
 import TmdbService from "../../services/tmdb.service";
 import { ITmdbSearchResults, Result } from "../../types/tmdb";
 

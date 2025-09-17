@@ -1,9 +1,8 @@
 import { createRxDatabase, RxCollectionCreator, RxDatabase } from "rxdb";
-import { getRxStorageDexie } from "rxdb/plugins/storage-dexie";
-
 import { addRxPlugin } from "rxdb/plugins/core";
 import { RxDBMigrationSchemaPlugin } from "rxdb/plugins/migration-schema";
 import { RxDBQueryBuilderPlugin } from "rxdb/plugins/query-builder";
+import { getRxStorageDexie } from "rxdb/plugins/storage-dexie";
 import { RxDBUpdatePlugin } from "rxdb/plugins/update";
 import { SyncObservables } from "../observables/sync.observable";
 import { useExperimentalStore } from "../stores/experimental.store";
@@ -30,9 +29,18 @@ const collections: { [key in keyof KinnemaCollections]: RxCollectionCreator } =
   };
 
 async function _create(): Promise<RxDatabase<KinnemaCollections>> {
+  const dexieStorage = getRxStorageDexie();
+  let wrapped;
   if (import.meta.env.DEV) {
     const { RxDBDevModePlugin } = await import("rxdb/plugins/dev-mode");
     addRxPlugin(RxDBDevModePlugin);
+
+    const { wrappedValidateAjvStorage } = await import(
+      "rxdb/plugins/validate-ajv"
+    );
+    wrapped = wrappedValidateAjvStorage({
+      storage: dexieStorage,
+    });
   }
 
   addRxPlugin(RxDBMigrationSchemaPlugin);
@@ -41,7 +49,7 @@ async function _create(): Promise<RxDatabase<KinnemaCollections>> {
 
   const db = await createRxDatabase<KinnemaCollections>({
     name: "kinnema",
-    storage: getRxStorageDexie(),
+    storage: wrapped || dexieStorage,
   });
 
   await db.addCollections(collections);

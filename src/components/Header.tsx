@@ -5,7 +5,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import classNames from "classnames";
 import { Menu, Search, SearchIcon } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { NAV_LINKS } from "../constants";
+import { NAV_LINKS } from "../lib/constants";
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathName = useRouterState({ select: (s) => s.location.pathname });

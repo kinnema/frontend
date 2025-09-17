@@ -1,3 +1,4 @@
+import { Loading } from "@/components/Loading";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,7 +12,6 @@ import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { Loading } from "@/lib/components/Loading";
 import { useAppStore } from "@/lib/stores/app.store";
 import { IGithubRelease } from "@/lib/types/github.type";
 import { isNativePlatform } from "@/lib/utils/native";

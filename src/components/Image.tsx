@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { tmdbPosterResponsive } from "../helpers";
+import { tmdbPosterResponsive } from "../lib/helpers";
 
 // Create a new OptimizedImage component
 interface OptimizedImageProps

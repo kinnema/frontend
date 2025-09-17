@@ -20,7 +20,7 @@ import { CheckCircle, Clock, Download, Loader2 } from "lucide-react";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-const NostrIdInput = lazy(() => import("@/lib/components/NostrId"));
+const NostrIdInput = lazy(() => import("@/components/NostrId"));
 const NostrSyncComponent = lazy(
   () => import("./components/nostrSync.component")
 );

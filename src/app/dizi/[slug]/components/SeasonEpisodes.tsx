@@ -1,6 +1,6 @@
+import { TmdbImage } from "@/components/Image";
+import { Loading } from "@/components/Loading";
 import { Badge } from "@/components/ui/badge";
-import { TmdbImage } from "@/lib/components/Image";
-import { Loading } from "@/lib/components/Loading";
 import { slugify } from "@/lib/helpers";
 import { useLastWatched } from "@/lib/hooks/database/useLastWatched";
 import TmdbService from "@/lib/services/tmdb.service";

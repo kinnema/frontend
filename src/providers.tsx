@@ -5,13 +5,13 @@ import { SafeArea } from "@capacitor-community/safe-area";
 import { Capacitor } from "@capacitor/core";
 import { CapacitorUpdater } from "@capgo/capacitor-updater";
 import { PropsWithChildren, Suspense, lazy, useEffect } from "react";
-import { Loading } from "./lib/components/Loading";
+import { Loading } from "./components/Loading";
 import { SYNC_CONNECTION_STATUS } from "./lib/types/sync.type";
 import { isNativePlatform } from "./lib/utils/native";
 
 const SyncProvider = lazy(() => import("./lib/providers/syncProvider"));
 const BackButtonHandler = lazy(
-  () => import("@/lib/components/App/BackButtonHandler")
+  () => import("@/components/App/BackButtonHandler")
 );
 
 if (Capacitor.isNativePlatform()) {

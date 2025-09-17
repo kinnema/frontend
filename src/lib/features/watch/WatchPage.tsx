@@ -1,9 +1,9 @@
+import { Loading } from "@/components/Loading";
+import { Providers } from "@/components/Providers";
+import { SubtitleSelectDialog } from "@/components/Watch/SubtitleSelectDialog";
+import { WatchTogether } from "@/components/Watch/WatchTogether";
+import { WatchVideoPlayer } from "@/components/Watch/WatchVideoPlayer";
 import { useToast } from "@/hooks/use-toast";
-import { Loading } from "@/lib/components/Loading";
-import { Providers } from "@/lib/components/Providers";
-import { SubtitleSelectDialog } from "@/lib/components/Watch/SubtitleSelectDialog";
-import { WatchTogether } from "@/lib/components/Watch/WatchTogether";
-import { WatchVideoPlayer } from "@/lib/components/Watch/WatchVideoPlayer";
 import { tmdbPosterResponsive } from "@/lib/helpers";
 import { useLastWatched } from "@/lib/hooks/database/useLastWatched";
 import TmdbService from "@/lib/services/tmdb.service";

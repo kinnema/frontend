@@ -1,6 +1,6 @@
+import { TmdbImage } from "@/components/Image";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TmdbImage } from "@/lib/components/Image";
 import { slugify } from "@/lib/helpers";
 import TmdbService from "@/lib/services/tmdb.service";
 import { useQuery } from "@tanstack/react-query";

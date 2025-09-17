@@ -2,16 +2,16 @@ import { useToast } from "@/hooks/use-toast";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Card } from "../../components/ui/card";
-import { pluginManager } from "../plugins/pluginManager";
-import { usePluginRegistry } from "../plugins/usePluginRegistry";
-import { useWatchStore } from "../stores/watch.store";
-import { IPlugin } from "../types/plugin.type";
+import { pluginManager } from "../lib/plugins/pluginManager";
+import { usePluginRegistry } from "../lib/plugins/usePluginRegistry";
+import { useWatchStore } from "../lib/stores/watch.store";
+import { IPlugin } from "../lib/types/plugin.type";
 import {
   IPluginEventData,
   IPluginEventEmitterSuccessPayload,
-} from "../types/pluginEvents.type";
-import { isNativePlatform } from "../utils/native";
+} from "../lib/types/pluginEvents.type";
+import { isNativePlatform } from "../lib/utils/native";
+import { Card } from "./ui/card";
 
 const MotionCard = motion.create(Card);
 

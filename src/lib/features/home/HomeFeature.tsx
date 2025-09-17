@@ -1,7 +1,7 @@
 import { FeaturedCarousel } from "@/components/featured-carousel";
 import { ShowCard } from "@/components/show-card";
 import { ShowCarousel } from "@/components/show-carousel";
-import { LastWatchedSeries } from "@/lib/components/User/LastWatchedSeries";
+import { LastWatchedSeries } from "@/components/User/LastWatchedSeries";
 import TmdbService from "@/lib/services/tmdb.service";
 import { TmdbNetworks } from "@/lib/types/networks";
 import { useQuery } from "@tanstack/react-query";

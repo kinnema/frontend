@@ -1,3 +1,5 @@
+import { TmdbImage } from "@/components/Image";
+import { Loading } from "@/components/Loading";
 import {
   Pagination,
   PaginationContent,
@@ -6,8 +8,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { TmdbImage } from "@/lib/components/Image";
-import { Loading } from "@/lib/components/Loading";
 import { slugify } from "@/lib/helpers";
 import TmdbService from "@/lib/services/tmdb.service";
 import { TmdbNetworks } from "@/lib/types/networks";

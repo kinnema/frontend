@@ -1,17 +1,19 @@
 import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import { initReactI18next } from "react-i18next";
-
-// Import translation files
 import en from "./locales/en.json";
-import tr from "./locales/tr.json";
+
+const loadTranslations = async (language: string) => {
+  const translations = await import(`./locales/${language}.json`);
+  return translations.default;
+};
 
 const resources = {
   en: {
     translation: en,
   },
   tr: {
-    translation: tr,
+    translation: await loadTranslations("tr"),
   },
 };
 

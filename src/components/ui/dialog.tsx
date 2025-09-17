@@ -3,7 +3,8 @@ import { X } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
-import { useRouter } from "@tanstack/react-router";
+import { useCanGoBack, useRouter } from "@tanstack/react-router";
+import { useCallback } from "react";
 
 const Dialog = DialogPrimitive.Root;
 
@@ -33,6 +34,17 @@ const DialogContent = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
 >(({ className, children, ...props }, ref) => {
   const router = useRouter();
+  const canGoBack = useCanGoBack();
+
+  const close = useCallback(() => {
+    if (canGoBack) {
+      router.history.back();
+    } else {
+      router.navigate({
+        to: "/",
+      });
+    }
+  }, [canGoBack, router]);
 
   return (
     <DialogPortal>
@@ -48,9 +60,7 @@ const DialogContent = React.forwardRef<
         {children}
 
         <DialogPrimitive.Close
-          onClick={() => {
-            router.history.back();
-          }}
+          onClick={close}
           className="absolute z-50 right-4 top-4 rounded-sm ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
         >
           <X className="h-6 w-6" />

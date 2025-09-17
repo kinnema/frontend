@@ -1,6 +1,6 @@
 import { Footer } from "@/components/footer";
-import { Header } from "@/lib/components/Header";
-import { Loading } from "@/lib/components/Loading";
+import { Header } from "@/components/Header";
+import { Loading } from "@/components/Loading";
 import { Providers } from "@/providers";
 import { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";

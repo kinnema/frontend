@@ -6,7 +6,7 @@ import { IFavorite } from "@/lib/types/favorite.type";
 import { QUERY_KEYS } from "@/lib/utils/queryKeys";
 import { useQuery } from "@tanstack/react-query";
 import { HeartCrack } from "lucide-react";
-import { Loading } from "../../components/Loading";
+import { Loading } from "../../../components/Loading";
 
 export function FavoritesPageFeature() {
   const { getAllFavorites } = useFavorites();

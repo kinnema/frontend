@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useNavigate } from "@tanstack/react-router";
+import { useCanGoBack, useRouter } from "@tanstack/react-router";
 
 interface DialogWrapperProps {
   title: string;
@@ -24,12 +24,16 @@ export default function DialogWrapper({
   footer,
   contentProps,
 }: DialogWrapperProps) {
-  const navigate = useNavigate();
+  const router = useRouter();
+  const canGoBack = useCanGoBack();
 
-  const onClose = (open: boolean) => {
-    if (!open) {
-      navigate({ search: {} });
+  const onClose = () => {
+    if (!canGoBack) {
+      router.navigate({ to: "/" });
+      return;
     }
+
+    router.history.back();
   };
 
   return (

@@ -1,14 +1,13 @@
 import SeasonEpisodes from "@/app/dizi/[slug]/components/SeasonEpisodes";
+import { TmdbImage } from "@/components/Image";
+import { Loading } from "@/components/Loading";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TmdbImage } from "@/lib/components/Image";
-import { Loading } from "@/lib/components/Loading";
-import { FavoriteButton } from "@/lib/components/User/FavoriteButton";
+import { FavoriteButton } from "@/components/User/FavoriteButton";
 import TmdbService from "@/lib/services/tmdb.service";
 import { TurkishProviderIds } from "@/lib/types/networks";
 import { ITmdbSerieDetails } from "@/lib/types/tmdb";
 import { useQuery } from "@tanstack/react-query";
-// Image component replaced with img tag
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -103,9 +102,7 @@ export function SerieDialogFeature({ params }: IProps) {
           </div>
 
           <div className="mt-10">
-            {/* {isAuthenticated && ( */}
             <FavoriteButton tmdbData={tmdbDetailsData.data} />
-            {/* )} */}
           </div>
         </div>
       </div>

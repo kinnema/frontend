@@ -1,5 +1,5 @@
+import { TmdbImage } from "@/components/Image";
 import { Progress } from "@/components/ui/progress";
-import { TmdbImage } from "@/lib/components/Image";
 import { slugify } from "@/lib/helpers";
 import { IShowCard } from "@/lib/types/show_card";
 import { Link, ToOptions } from "@tanstack/react-router";

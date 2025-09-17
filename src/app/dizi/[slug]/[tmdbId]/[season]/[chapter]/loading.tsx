@@ -1,4 +1,4 @@
-import { Loading } from "@/lib/components/Loading";
+import { Loading } from "@/components/Loading";
 
 export default function _Loading() {
   return <Loading fullscreen />;

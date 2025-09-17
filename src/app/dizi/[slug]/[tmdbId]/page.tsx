@@ -1,10 +1,6 @@
 import { SerieDialogFeature } from "@/lib/features/dizi/SerieDialog";
 import TmdbService from "@/lib/services/tmdb.service";
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 
 export default async function SeriePage(props: {
   params: Promise<{ slug: string; tmdbId: string }>;
@@ -21,10 +17,8 @@ export default async function SeriePage(props: {
   });
 
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <SerieDialogFeature
-        params={{ ...params, tmdbId: parseInt(params.tmdbId) }}
-      />
-    </HydrationBoundary>
+    <SerieDialogFeature
+      params={{ ...params, tmdbId: parseInt(params.tmdbId) }}
+    />
   );
 }

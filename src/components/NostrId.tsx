@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Check, PencilIcon } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useSyncStore } from "../stores/sync.store";
+import { useSyncStore } from "../lib/stores/sync.store";
 
 export default function NostrIdInput() {
   const id = useSyncStore((state) => state.nostrSecretKey);
