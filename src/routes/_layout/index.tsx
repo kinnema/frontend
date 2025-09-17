@@ -1,4 +1,3 @@
-import { HomeFeature } from "@/lib/features/home/HomeFeature";
 import TmdbService from "@/lib/services/tmdb.service";
 import { TmdbNetworks } from "@/lib/types/networks";
 import { createFileRoute } from "@tanstack/react-router";
@@ -6,6 +5,7 @@ import { zodValidator } from "@tanstack/zod-adapter";
 import { lazy, Suspense } from "react";
 import z from "zod";
 
+const HomeFeature = lazy(() => import("@/lib/features/home/HomeFeature"));
 const SerieModal = lazy(() => import("@/components/modals/SerieModal"));
 const WatchModal = lazy(() => import("@/components/modals/WatchModal"));
 const FavoritesModal = lazy(() => import("@/components/modals/FavoritesModal"));

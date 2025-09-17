@@ -1,13 +1,11 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
   RouterProvider,
   createBrowserHistory,
   createHashHistory,
   createRouter,
 } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import React from "react";
+import React, { Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import "./lib/i18n";
 import { initializeLocalPlugins } from "./lib/plugins/local";
@@ -26,7 +24,6 @@ const queryClient = new QueryClient({
 
 const history = isElectron() ? createHashHistory() : createBrowserHistory();
 
-// Create a new router instance
 const router = createRouter({
   routeTree,
   context: {
@@ -36,19 +33,25 @@ const router = createRouter({
   defaultPreload: "intent",
 });
 
-// Register the router instance for type safety
 declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;
   }
 }
 
+const DevTools = import.meta.env.DEV
+  ? React.lazy(() => import("./DevTools"))
+  : null;
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
-      <ReactQueryDevtools initialIsOpen={false} />
-      <TanStackRouterDevtools router={router} />
+      {DevTools && (
+        <Suspense fallback={null}>
+          <DevTools router={router} />
+        </Suspense>
+      )}
     </QueryClientProvider>
   </React.StrictMode>
 );

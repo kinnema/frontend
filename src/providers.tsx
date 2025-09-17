@@ -1,13 +1,18 @@
 import { Toaster } from "@/components/ui/sonner";
-import BackButtonHandler from "@/lib/components/App/BackButtonHandler";
 import { useAppStore } from "@/lib/stores/app.store";
 import { useSyncStore } from "@/lib/stores/sync.store";
 import { SafeArea } from "@capacitor-community/safe-area";
 import { Capacitor } from "@capacitor/core";
 import { CapacitorUpdater } from "@capgo/capacitor-updater";
-import { PropsWithChildren, useEffect } from "react";
-import { SyncProvider } from "./lib/providers/syncProvider";
+import { PropsWithChildren, Suspense, lazy, useEffect } from "react";
+import { Loading } from "./lib/components/Loading";
 import { SYNC_CONNECTION_STATUS } from "./lib/types/sync.type";
+import { isNativePlatform } from "./lib/utils/native";
+
+const SyncProvider = lazy(() => import("./lib/providers/syncProvider"));
+const BackButtonHandler = lazy(
+  () => import("@/lib/components/App/BackButtonHandler")
+);
 
 if (Capacitor.isNativePlatform()) {
   const { StatusBar, Style } = await import("@capacitor/status-bar");
@@ -43,12 +48,13 @@ export function Providers({ children }: PropsWithChildren) {
 
   return (
     <>
-      <SyncProvider>
-        {children}
-        <Toaster />
-      </SyncProvider>
-
-      <BackButtonHandler />
+      <Suspense fallback={<Loading fullscreen />}>
+        <SyncProvider>
+          {children}
+          <Toaster />
+        </SyncProvider>
+        {isNativePlatform() && <BackButtonHandler />}
+      </Suspense>
     </>
   );
 }

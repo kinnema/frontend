@@ -6,7 +6,7 @@ import TmdbService from "@/lib/services/tmdb.service";
 import { TmdbNetworks } from "@/lib/types/networks";
 import { useQuery } from "@tanstack/react-query";
 
-export function HomeFeature() {
+export default function HomeFeature() {
   const networks = [TmdbNetworks.NETFLIX, TmdbNetworks.HBO];
   const { data: networkData, isPending: isNetworkPending } = useQuery({
     queryKey: ["home", "networks"],

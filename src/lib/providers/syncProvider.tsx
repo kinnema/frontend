@@ -6,7 +6,11 @@ import { SYNC_CONNECTION_STATUS, SYNC_STATUS } from "../types/sync.type";
 
 export const syncProviderContext = createContext<Worker | null>(null);
 
-export function SyncProvider({ children }: { children: React.ReactNode }) {
+export default function SyncProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const workerRef = useRef<Worker | null>(null);
   const isNostrEnabled = useSyncStore((state) => state.isNostrEnabled);
   const nostrSecretKey = useSyncStore((state) => state.nostrSecretKey);

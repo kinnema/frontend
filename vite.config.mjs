@@ -12,7 +12,6 @@ export default defineConfig({
     tsconfigPaths(),
     topLevelAwait(),
     nodePolyfills({
-      // Include polyfills for `process` and other Node.js globals
       process: true,
     }),
     tanstackRouter({
@@ -27,7 +26,15 @@ export default defineConfig({
   },
   build: {
     outDir: "dist",
-    // Ensure proper base path for Electron
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          hls: ["hls.js"],
+          rxdb: ["rxdb", "rxjs"],
+          nostr: ["nostr-tools"],
+        },
+      },
+    },
     ...(isElectron && {
       rollupOptions: {
         external: ["electron"],
@@ -38,6 +45,5 @@ export default defineConfig({
   server: {
     port: 3000,
   },
-  // Handle file:// protocol for Electron
   base: isElectron ? "./" : "/",
 });
