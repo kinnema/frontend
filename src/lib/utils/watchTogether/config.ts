@@ -16,9 +16,9 @@ const STUN_SERVER = stunServer;
 
 type P2PConfig = BaseRoomConfig & RelayConfig & TurnConfig;
 
-export const getP2pConfig: (config?: Partial<P2PConfig>) => P2PConfig = (
-  config
-) => ({
+export const getWatchTogetherConfig: (
+  config?: Partial<P2PConfig>
+) => P2PConfig = (config) => ({
   appId: "com.kinnema",
   password,
   turnConfig: [
