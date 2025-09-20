@@ -4,12 +4,8 @@ import { RxDBMigrationSchemaPlugin } from "rxdb/plugins/migration-schema";
 import { RxDBQueryBuilderPlugin } from "rxdb/plugins/query-builder";
 import { getRxStorageDexie } from "rxdb/plugins/storage-dexie";
 import { RxDBUpdatePlugin } from "rxdb/plugins/update";
-import { SyncObservables } from "../observables/sync.observable";
-import { useExperimentalStore } from "../stores/experimental.store";
-import { ExperimentalFeature } from "../types/experiementalFeatures";
 import { FavoritedCollection, favoriteSchema } from "./favorites.schema";
 import { LastWatchedCollection, lastWatchedSchema } from "./lastWatched.schema";
-import { rxdbReplicationFactory } from "./replication/replicationFactory";
 
 export type KinnemaCollections = {
   lastWatched: LastWatchedCollection;
@@ -53,23 +49,6 @@ async function _create(): Promise<RxDatabase<KinnemaCollections>> {
   });
 
   await db.addCollections(collections);
-
-  const isEnabled = SyncObservables.isEnabled$;
-  const hasSyncFeatureEnabled = useExperimentalStore
-    .getState()
-    .isFeatureEnabled(ExperimentalFeature.Sync);
-
-  isEnabled.subscribe(async (isEnabled) => {
-    if (!hasSyncFeatureEnabled) return;
-
-    if (isEnabled) {
-      await rxdbReplicationFactory.initialize();
-      console.log("Sync is enabled");
-    } else {
-      rxdbReplicationFactory.disable();
-      console.log("Sync is disabled");
-    }
-  });
 
   return db;
 }

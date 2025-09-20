@@ -1,11 +1,8 @@
-import { useSyncedDeletion } from "@/hooks/useSyncedDeletion";
 import { getDb } from "@/lib/database/rxdb";
 import { ILastWatched } from "@/lib/types/lastWatched.type";
 import { RxDocument } from "rxdb";
 
 export function useLastWatched() {
-  const { deleteSyncedItem } = useSyncedDeletion();
-
   async function getAllLastWatched() {
     const db = await getDb();
 
@@ -93,15 +90,13 @@ export function useLastWatched() {
     seasonNumber: number,
     episodeNumber: number
   ) {
-    deleteSyncedItem("lastWatched", id, async () => {
-      const doc = await getSingleLastWatchedWithDetails(
-        tmdbId,
-        seasonNumber,
-        episodeNumber
-      );
+    const doc = await getSingleLastWatchedWithDetails(
+      tmdbId,
+      seasonNumber,
+      episodeNumber
+    );
 
-      await doc?.remove();
-    });
+    await doc?.remove();
   }
 
   return {

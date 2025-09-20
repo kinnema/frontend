@@ -1,4 +1,3 @@
-import { SyncStatus } from "@/components/sync/sync-status";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -64,22 +63,11 @@ const SETTINGS: Setting[] = [
 
 export default function AppSettingsFeature() {
   const { t } = useTranslation();
-  const isSyncFeatureEnabled = useExperimentalStore((state) =>
-    state.isFeatureEnabled(ExperimentalFeature.Sync)
-  );
   const isSubtitlesFeatureEnabled = useExperimentalStore((state) =>
     state.isFeatureEnabled(ExperimentalFeature.Subtitles)
   );
   const menuEntriesBasedOnFeature = useMemo(() => {
     const entries = [];
-    if (isSyncFeatureEnabled) {
-      entries.push({
-        name: "Sync",
-        href: "/settings/sync",
-        translationKey: "settings.sync",
-        nativeOnly: false,
-      });
-    }
     if (isSubtitlesFeatureEnabled) {
       entries.push({
         name: "Subtitles",
@@ -90,7 +78,7 @@ export default function AppSettingsFeature() {
     }
 
     return entries;
-  }, [isSyncFeatureEnabled, isSubtitlesFeatureEnabled]);
+  }, [isSubtitlesFeatureEnabled]);
 
   const settingsWithFeatures = useMemo(() => {
     return SETTINGS.map((setting) => {
@@ -137,9 +125,6 @@ export default function AppSettingsFeature() {
                           ? t(subMenu.translationKey)
                           : subMenu.name}
                       </span>
-                      {subMenu.name === "Sync" && (
-                        <SyncStatus showDetails={false} />
-                      )}
                     </div>
                     <ChevronRight className="w-4 h-4" />
                   </Button>

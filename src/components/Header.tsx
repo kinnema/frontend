@@ -1,5 +1,4 @@
 import { MainNav } from "@/components/main-nav";
-import { SyncStatus } from "@/components/sync/sync-status";
 import { Button } from "@/components/ui/button";
 import { Link, useRouterState } from "@tanstack/react-router";
 import classNames from "classnames";
@@ -60,8 +59,6 @@ export function Header() {
             <MainNav />
           </div>
           <div className="flex items-center gap-4">
-            <SyncStatus showDetails={false} />
-
             {/* {isLoggedIn ? (
               <UserNav />
             ) : (
