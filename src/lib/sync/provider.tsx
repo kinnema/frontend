@@ -1,14 +1,20 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { useExperimentalStore } from "../stores/experimental.store";
+import { ExperimentalFeature } from "../types/experiementalFeatures";
 import { syncEngine } from "./engine";
 import { useSyncStore } from "./store";
 
 const SyncContext = createContext<typeof syncEngine | null>(null);
 
 export function SyncProvider({ children }: { children: React.ReactNode }) {
+  const isSyncFeatureEnabled = useExperimentalStore((state) =>
+    state.isFeatureEnabled(ExperimentalFeature.Sync)
+  );
   const { identity, isActive } = useSyncStore();
   const [shouldStart, setShouldStart] = useState(false);
 
   useEffect(() => {
+    if (!isSyncFeatureEnabled) return;
     if (typeof document === "undefined") return;
 
     const onReadyStateChange = () => {
@@ -27,7 +33,7 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
     return () => {
       document.removeEventListener("readystatechange", onReadyStateChange);
     };
-  }, []);
+  }, [isSyncFeatureEnabled]);
 
   useEffect(() => {
     if (!shouldStart) return;

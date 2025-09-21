@@ -66,6 +66,9 @@ export default function AppSettingsFeature() {
   const isSubtitlesFeatureEnabled = useExperimentalStore((state) =>
     state.isFeatureEnabled(ExperimentalFeature.Subtitles)
   );
+  const isSyncFeatureEnabled = useExperimentalStore((state) =>
+    state.isFeatureEnabled(ExperimentalFeature.Sync)
+  );
   const menuEntriesBasedOnFeature = useMemo(() => {
     const entries = [];
     if (isSubtitlesFeatureEnabled) {
@@ -74,6 +77,15 @@ export default function AppSettingsFeature() {
         href: "/settings/subtitles",
         translationKey: "settings.subtitles",
         nativeOnly: true,
+      });
+    }
+
+    if (isSyncFeatureEnabled) {
+      entries.push({
+        name: "Sync",
+        href: "/settings/sync",
+        translationKey: "settings.sync",
+        nativeOnly: false,
       });
     }
 
