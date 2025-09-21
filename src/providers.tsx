@@ -5,6 +5,7 @@ import { Capacitor } from "@capacitor/core";
 import { CapacitorUpdater } from "@capgo/capacitor-updater";
 import { PropsWithChildren, Suspense, lazy, useEffect } from "react";
 import { Loading } from "./components/Loading";
+import { SyncProvider } from "./lib/sync";
 import { isNativePlatform } from "./lib/utils/native";
 
 const BackButtonHandler = lazy(
@@ -33,7 +34,7 @@ export function Providers({ children }: PropsWithChildren) {
   return (
     <>
       <Suspense fallback={<Loading fullscreen />}>
-        {children}
+        <SyncProvider>{children}</SyncProvider>
         <Toaster />
         {isNativePlatform() && <BackButtonHandler />}
       </Suspense>

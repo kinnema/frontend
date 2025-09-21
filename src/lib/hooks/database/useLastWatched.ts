@@ -1,8 +1,11 @@
 import { getDb } from "@/lib/database/rxdb";
+import { useDeleteNostrEvents } from "@/lib/sync/hooks";
 import { ILastWatched } from "@/lib/types/lastWatched.type";
 import { RxDocument } from "rxdb";
 
 export function useLastWatched() {
+  const { deleteNostrEvents } = useDeleteNostrEvents();
+
   async function getAllLastWatched() {
     const db = await getDb();
 
@@ -90,6 +93,8 @@ export function useLastWatched() {
     seasonNumber: number,
     episodeNumber: number
   ) {
+    await deleteNostrEvents(id);
+
     const doc = await getSingleLastWatchedWithDetails(
       tmdbId,
       seasonNumber,

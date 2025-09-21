@@ -4,6 +4,7 @@ export interface IFavorite {
   posterPath: string;
   tmdbId: number;
   createdAt: string;
+  syncedAt?: string | null;
 }
 
 export type IAddFavorite = IFavorite;

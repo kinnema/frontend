@@ -30,5 +30,9 @@ export const favoriteSchema: RxJsonSchema<IFavorite> = {
       minimum: 0,
       maximum: 9999999999,
     },
+    syncedAt: {
+      type: ["string", "null"],
+      default: null,
+    },
   },
 };

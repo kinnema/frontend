@@ -1,5 +1,6 @@
 import { MainNav } from "@/components/main-nav";
 import { Button } from "@/components/ui/button";
+import { SyncStatus } from "@/lib/sync/sync-status";
 import { Link, useRouterState } from "@tanstack/react-router";
 import classNames from "classnames";
 import { Menu, Search, SearchIcon } from "lucide-react";
@@ -66,6 +67,7 @@ export function Header() {
                 <Button>Giriş Yap</Button>
               </Link>
             )} */}
+            <SyncStatus className="hidden md:inline-flex" showDetails={false} />
             <Link to="/search">
               <Button
                 variant="ghost"
