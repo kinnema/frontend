@@ -10,4 +10,5 @@ export interface ILastWatched {
   totalSeconds: number;
   episodeName: string;
   network: number;
+  syncedAt?: string | null;
 }

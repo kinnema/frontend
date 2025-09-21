@@ -1,30 +1,46 @@
+import { Loading } from "@/components/Loading";
 import TmdbService from "@/lib/services/tmdb.service";
 import { TmdbNetworks } from "@/lib/types/networks";
 import { createFileRoute } from "@tanstack/react-router";
-import { zodValidator } from "@tanstack/zod-adapter";
 import { lazy, Suspense } from "react";
-import z from "zod";
+
+type IndexSearchParams = {
+  modal?: "login" | "register" | "favorites" | "serie" | "watch";
+  serieSlug?: string;
+  serieTmdbId?: number;
+  watchSlug?: string;
+  watchTmdbId?: number;
+  watchSeason?: number;
+  watchChapter?: number;
+  watchRoomId?: string;
+};
 
 const HomeFeature = lazy(() => import("@/lib/features/home/HomeFeature"));
 const SerieModal = lazy(() => import("@/components/modals/SerieModal"));
 const WatchModal = lazy(() => import("@/components/modals/WatchModal"));
 const FavoritesModal = lazy(() => import("@/components/modals/FavoritesModal"));
 
-const modalSearchSchema = z.object({
-  modal: z.optional(
-    z.enum(["login", "register", "favorites", "serie", "watch"]).nullable()
-  ),
-  serieSlug: z.string().optional(),
-  serieTmdbId: z.number().optional(),
-  watchSlug: z.string().optional(),
-  watchTmdbId: z.number().optional(),
-  watchSeason: z.number().optional(),
-  watchChapter: z.number().optional(),
-  watchRoomId: z.string().optional(),
-});
-
 export const Route = createFileRoute("/_layout/")({
-  validateSearch: zodValidator(modalSearchSchema),
+  validateSearch: (search): IndexSearchParams => {
+    return {
+      modal:
+        (search.modal as
+          | "login"
+          | "register"
+          | "favorites"
+          | "serie"
+          | "watch") || undefined,
+      serieSlug: (search.serieSlug as string) || undefined,
+      serieTmdbId: search.serieTmdbId ? Number(search.serieTmdbId) : undefined,
+      watchSlug: (search.watchSlug as string) || undefined,
+      watchTmdbId: search.watchTmdbId ? Number(search.watchTmdbId) : undefined,
+      watchSeason: search.watchSeason ? Number(search.watchSeason) : undefined,
+      watchChapter: search.watchChapter
+        ? Number(search.watchChapter)
+        : undefined,
+      watchRoomId: (search.watchRoomId as string) || undefined,
+    };
+  },
   codeSplitGroupings: [["component", "loader"]],
 
   loader: async ({ context: { queryClient } }) => {
@@ -54,21 +70,29 @@ export const Route = createFileRoute("/_layout/")({
 
     return (
       <>
-        <Suspense>
+        <Suspense fallback={<Loading fullscreen />}>
           <HomeFeature />
-          {modal === "favorites" && <FavoritesModal />}
-          {serieSlug && serieTmdbId && (
+        </Suspense>
+        {modal === "favorites" && (
+          <Suspense fallback={<Loading fullscreen />}>
+            <FavoritesModal />
+          </Suspense>
+        )}
+        {serieSlug && serieTmdbId && (
+          <Suspense fallback={<Loading fullscreen />}>
             <SerieModal slug={serieSlug} tmdbId={serieTmdbId} />
-          )}
-          {watchSlug && watchTmdbId && watchSeason && watchChapter && (
+          </Suspense>
+        )}
+        {watchSlug && watchTmdbId && watchSeason && watchChapter && (
+          <Suspense fallback={<Loading fullscreen />}>
             <WatchModal
               slug={watchSlug}
               tmdbId={watchTmdbId}
               season={watchSeason}
               chapter={watchChapter}
             />
-          )}
-        </Suspense>
+          </Suspense>
+        )}
       </>
     );
   },

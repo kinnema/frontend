@@ -1,24 +1,30 @@
-import P2PSyncSetupFeature from "@/lib/features/sync/setup";
+import { Loading } from "@/components/Loading";
+import SyncSetupFeature from "@/lib/features/sync/components/SyncSetupFeature";
 import { useExperimentalStore } from "@/lib/stores/experimental.store";
 import { ExperimentalFeature } from "@/lib/types/experiementalFeatures";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Suspense } from "react";
 
 export const Route = createFileRoute("/settings/sync/setup")({
   component: RouteComponent,
-  loader: async () => {
-    const isExperimentalFeatureEnabled = useExperimentalStore
-      .getState()
-      .isFeatureEnabled(ExperimentalFeature.Sync);
-
-    if (!isExperimentalFeatureEnabled) {
-      return redirect({
-        from: "/settings/sync/setup",
-        to: "/settings/experimental",
-      });
-    }
-  },
 });
 
 function RouteComponent() {
-  return <P2PSyncSetupFeature />;
+  const isSyncFeatureEnabled = useExperimentalStore((state) =>
+    state.isFeatureEnabled(ExperimentalFeature.Sync)
+  );
+  const navigate = useNavigate();
+
+  if (!isSyncFeatureEnabled) {
+    navigate({ to: "/" });
+    return null;
+  }
+
+  return (
+    <div>
+      <Suspense fallback={<Loading fullscreen />}>
+        <SyncSetupFeature />
+      </Suspense>
+    </div>
+  );
 }

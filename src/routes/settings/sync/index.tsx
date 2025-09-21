@@ -1,33 +1,30 @@
-import SyncSettingsFeature from "@/lib/features/sync/sync";
+import { Loading } from "@/components/Loading";
+import SyncFeature from "@/lib/features/sync/components/SyncFeature";
 import { useExperimentalStore } from "@/lib/stores/experimental.store";
-import { useSyncStore } from "@/lib/stores/sync.store";
 import { ExperimentalFeature } from "@/lib/types/experiementalFeatures";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Suspense } from "react";
 
 export const Route = createFileRoute("/settings/sync/")({
   component: RouteComponent,
-  loader: async () => {
-    const isExperimentalFeatureEnabled = useExperimentalStore
-      .getState()
-      .isFeatureEnabled(ExperimentalFeature.Sync);
-
-    if (!isExperimentalFeatureEnabled) {
-      return redirect({
-        from: "/settings/sync",
-        to: "/settings/experimental",
-      });
-    }
-
-    const syncId = useSyncStore.getState().syncId;
-
-    if (!syncId)
-      return redirect({
-        from: "/settings/sync",
-        to: "./setup",
-      });
-  },
 });
 
 function RouteComponent() {
-  return <SyncSettingsFeature />;
+  const isSyncFeatureEnabled = useExperimentalStore((state) =>
+    state.isFeatureEnabled(ExperimentalFeature.Sync)
+  );
+  const navigate = useNavigate();
+
+  if (!isSyncFeatureEnabled) {
+    navigate({ to: "/" });
+    return null;
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <Suspense fallback={<Loading fullscreen />}>
+        <SyncFeature />
+      </Suspense>
+    </div>
+  );
 }

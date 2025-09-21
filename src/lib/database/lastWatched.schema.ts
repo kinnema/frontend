@@ -51,6 +51,10 @@ export const lastWatchedSchema: RxJsonSchema<ILastWatched> = {
       type: "boolean",
       default: false,
     },
+    syncedAt: {
+      type: ["string", "null"],
+      default: null,
+    },
     tmdbId: {
       type: "number",
       multipleOf: 1,

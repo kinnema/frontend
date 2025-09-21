@@ -11,7 +11,7 @@ const status$ = new Subject<{ status: Status; peerId: string }>();
 const command$ = new Subject<{ command: Commands; payload: unknown }>();
 const loadedVideo$ = new Subject<{ videoUrl?: string }>();
 
-export const p2pEvents = {
+export const watchTogetherEvents = {
   status$,
   command$,
   loadedVideo$,

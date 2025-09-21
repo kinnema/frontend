@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { useP2P } from "@/lib/hooks/useP2P";
+import { useWatchTogether } from "@/lib/hooks/useWatchTogether";
 import { useWatchStore } from "@/lib/stores/watch.store";
 import { Episode, ITmdbSerieDetails } from "@/lib/types/tmdb";
 import { useNavigate } from "@tanstack/react-router";
@@ -12,7 +12,7 @@ interface IProps {
 }
 
 export function WatchTogether({ videoRef, ...params }: IProps) {
-  const p2p = useP2P();
+  const watchTogether = useWatchTogether();
   const { toast } = useToast();
   const navigate = useNavigate();
   const { episodeData, tmdbData } = params;
@@ -37,7 +37,7 @@ export function WatchTogether({ videoRef, ...params }: IProps) {
       });
     }
 
-    const roomId = p2p.createRoomId();
+    const roomId = watchTogether.createRoomId();
 
     toast({
       title: "Odan hazir!",

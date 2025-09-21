@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { WaitPeers } from "@/components/Watch/WaitPeers";
 import { WatchVideoPlayer } from "@/components/Watch/WatchVideoPlayer";
-import { useP2P } from "@/lib/hooks/useP2P";
+import { useWatchTogether } from "@/lib/hooks/useWatchTogether";
 import { useExperimentalStore } from "@/lib/stores/experimental.store";
 import { IWatchTogetherRoom, useWatchStore } from "@/lib/stores/watch.store";
 import { ExperimentalFeature } from "@/lib/types/experiementalFeatures";
@@ -12,9 +12,9 @@ import {
   IRoomDetails,
   P2PAction,
   P2PCreateAction,
-} from "@/lib/types/p2p.types";
-import { p2pEvents } from "@/lib/utils/p2pEvents";
+} from "@/lib/types/watchTogether.types";
 import { loadedVideoUrl$ } from "@/lib/utils/videoEvents";
+import { watchTogetherEvents } from "@/lib/utils/watchTogetherEvents";
 import { createFileRoute, redirect, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Subscription } from "rxjs";
@@ -43,7 +43,7 @@ export const Route = createFileRoute("/room/$roomId")({
 });
 
 function RouteComponent() {
-  const { createRoom, leaveRoom, joinRoom, createAction } = useP2P();
+  const { createRoom, leaveRoom, joinRoom, createAction } = useWatchTogether();
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [peers, setPeers] = useState<string[]>([]);
   const roomStore = useWatchStore((state) => state.room);
@@ -211,7 +211,7 @@ function RouteComponent() {
         adminId: selfId,
       });
 
-      statusSubscription = p2pEvents.status$.subscribe(
+      statusSubscription = watchTogetherEvents.status$.subscribe(
         async ({ status, peerId }) => {
           if (status === "JOINED") {
             addPeer(peerId);
@@ -224,7 +224,7 @@ function RouteComponent() {
         }
       );
 
-      loadedVideoSubscription = p2pEvents.loadedVideo$.subscribe(
+      loadedVideoSubscription = watchTogetherEvents.loadedVideo$.subscribe(
         async (url) => {
           videoRef.current?.addEventListener("timeupdate", handleTimeUpdate);
 
@@ -234,11 +234,11 @@ function RouteComponent() {
         }
       );
     } else {
-      commandSubscription = p2pEvents.command$.subscribe(
+      commandSubscription = watchTogetherEvents.command$.subscribe(
         ({ command, payload }) => slave_handleRoomCommands({ command, payload })
       );
 
-      loadedVideoSubscription = p2pEvents.loadedVideo$.subscribe(
+      loadedVideoSubscription = watchTogetherEvents.loadedVideo$.subscribe(
         async (url) => {
           videoRef.current?.addEventListener("timeupdate", handleTimeUpdate);
         }
@@ -256,7 +256,7 @@ function RouteComponent() {
         }
       });
 
-      statusSubscription = p2pEvents.status$.subscribe(
+      statusSubscription = watchTogetherEvents.status$.subscribe(
         async ({ status, peerId }) => {
           if (status === "JOINED") {
             addPeer(peerId);
@@ -320,7 +320,9 @@ function RouteComponent() {
                     <WatchVideoPlayer
                       videoRef={videoRef}
                       handleLoadedData={() => {
-                        p2pEvents.loadedVideo$.next({ videoUrl: "qwe" });
+                        watchTogetherEvents.loadedVideo$.next({
+                          videoUrl: "qwe",
+                        });
                       }}
                       posterPath=""
                       onPlay={() => {}}

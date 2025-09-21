@@ -20,7 +20,10 @@ export function toast(options: ToastOptions) {
 
   const showToast = variantMap[options.variant ?? "default"] ?? sonner;
 
-  showToast(options.title, { description: options.description });
+  showToast(options.title, {
+    description: options.description,
+    action: options.action,
+  });
 }
 
 export function useToast() {

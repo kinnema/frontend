@@ -1,6 +1,6 @@
 import { MainNav } from "@/components/main-nav";
-import { SyncStatus } from "@/components/sync/sync-status";
 import { Button } from "@/components/ui/button";
+import { SyncStatus } from "@/lib/features/sync/sync-status";
 import { Link, useRouterState } from "@tanstack/react-router";
 import classNames from "classnames";
 import { Menu, Search, SearchIcon } from "lucide-react";
@@ -60,8 +60,6 @@ export function Header() {
             <MainNav />
           </div>
           <div className="flex items-center gap-4">
-            <SyncStatus showDetails={false} />
-
             {/* {isLoggedIn ? (
               <UserNav />
             ) : (
@@ -69,6 +67,7 @@ export function Header() {
                 <Button>Giriş Yap</Button>
               </Link>
             )} */}
+            <SyncStatus className="hidden md:inline-flex" showDetails={false} />
             <Link to="/search">
               <Button
                 variant="ghost"

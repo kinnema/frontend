@@ -8,13 +8,35 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/hooks/use-toast";
 import { useExperimentalStore } from "@/lib/stores/experimental.store";
+import { isNativePlatform } from "@/lib/utils/native";
 import { AlertTriangle, Beaker, Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export default function ExperimentalFeaturesComponent() {
   const { t } = useTranslation();
+  const { toast } = useToast();
   const { features, toggleFeature } = useExperimentalStore();
+
+  const toggleFeatureWithChecks = (featureId: string) => {
+    const feature = features.find((f) => f.id === featureId);
+    if (!feature) return;
+
+    if (!isNativePlatform()) {
+      toast({
+        title: t("experimental.error.toggleFailed", "Cannot Toggle Feature"),
+        description: t(
+          "experimental.error.nativeOnly",
+          "This feature is only available in the desktop application."
+        ),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toggleFeature(featureId);
+  };
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -78,7 +100,7 @@ export default function ExperimentalFeaturesComponent() {
                   </div>
                   <Switch
                     checked={feature.enabled}
-                    onCheckedChange={() => toggleFeature(feature.id)}
+                    onCheckedChange={() => toggleFeatureWithChecks(feature.id)}
                     aria-label={`Toggle ${feature.name}`}
                   />
                 </div>

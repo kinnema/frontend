@@ -1,17 +1,21 @@
+import { Loading } from "@/components/Loading";
 import { SearchFeature } from "@/lib/features/search/Search";
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
-import z from "zod";
 
-const schema = z.object({
-  q: z.string().optional(),
-});
+type SearchParams = {
+  q?: string;
+};
 
 export const Route = createFileRoute("/search")({
-  validateSearch: schema,
+  validateSearch: (search): SearchParams => {
+    return {
+      q: (search.q as string) ?? undefined,
+    };
+  },
   component: () => (
     <div className="container mx-auto px-4 py-8">
-      <Suspense>
+      <Suspense fallback={<Loading fullscreen />}>
         <SearchFeature />
       </Suspense>
     </div>

@@ -45,6 +45,7 @@ export function FavoriteButton({ tmdbData }: IProps) {
         tmdbId: tmdbData.id,
         createdAt: new Date().toISOString(),
         id: v4(),
+        syncedAt: null,
       });
       toast({
         title: t("favorites.added"),

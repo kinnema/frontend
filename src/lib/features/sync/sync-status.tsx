@@ -1,6 +1,5 @@
 import { Badge } from "@/components/ui/badge";
 import { useExperimentalStore } from "@/lib/stores/experimental.store";
-import { useSyncStore } from "@/lib/stores/sync.store";
 import { ExperimentalFeature } from "@/lib/types/experiementalFeatures";
 import { useRouter } from "@tanstack/react-router";
 import clsx from "clsx";
@@ -12,6 +11,11 @@ import {
   Wifi,
   WifiOff,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { lastSyncedAt$, syncingStatus$ } from "./observables";
+import { useSyncStore } from "./store";
+import { ConnectionStatus } from "./types";
 
 interface SyncStatusProps {
   showDetails?: boolean;
@@ -22,36 +26,53 @@ export function SyncStatus({ showDetails = true, className }: SyncStatusProps) {
   const isExperimentalFeatureEnabled = useExperimentalStore((state) =>
     state.isFeatureEnabled(ExperimentalFeature.Sync)
   );
-  const isP2PEnabled = useSyncStore((state) => state.isP2PEnabled);
-  const isNostrEnabled = useSyncStore((state) => state.isNostrEnabled);
-  const nostrConnectionStatus = useSyncStore(
-    (state) => state.nostrConnectionStatus
+  const { t } = useTranslation();
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [lastNostrSync, setLastNostrSync] = useState<Date | null>(null);
+  const isActive = useSyncStore((state) => state.isActive);
+  const isP2PEnabled = useSyncStore(
+    (state) =>
+      state.webrtcStatus === ConnectionStatus.CONNECTED ||
+      state.webrtcStatus === ConnectionStatus.CONNECTING ||
+      state.webrtcStatus === ConnectionStatus.ERROR
   );
-  const nostrSyncInProgress = useSyncStore(
-    (state) => state.nostrSyncInProgress
+  const isNostrEnabled = useSyncStore(
+    (state) =>
+      state.nostrStatus === ConnectionStatus.CONNECTED ||
+      state.nostrStatus === ConnectionStatus.CONNECTING ||
+      state.nostrStatus === ConnectionStatus.ERROR
   );
-  const lastNostrSync = useSyncStore((state) => state.lastNostrSync);
-  const peers = useSyncStore((state) => state.peers);
   const router = useRouter();
 
-  // If experimental feature is not enabled, don't show sync status
-  if (!isExperimentalFeatureEnabled) {
-    return null;
-  }
+  useEffect(() => {
+    const syncingStatusSubscription = syncingStatus$.subscribe((isSyncing) => {
+      setIsSyncing(isSyncing);
+    });
+
+    const lastSyncedAtSubscription = lastSyncedAt$.subscribe((date) => {
+      setLastNostrSync(date);
+    });
+
+    return () => {
+      syncingStatusSubscription.unsubscribe();
+      lastSyncedAtSubscription.unsubscribe();
+    };
+  }, []);
+
   const getSyncStatus = () => {
-    if (nostrSyncInProgress)
-      return { status: "syncing", label: "Syncing", color: "secondary" };
-    if (isP2PEnabled && peers.length > 0)
-      return { status: "connected", label: "P2P Active", color: "default" };
-    if (isNostrEnabled && nostrConnectionStatus === "connected")
-      return { status: "connected", label: "Nostr Active", color: "default" };
-    if (isNostrEnabled && nostrConnectionStatus === "connecting")
-      return { status: "connected", label: "Connecting", color: "secondary" };
-    if ((isP2PEnabled || isNostrEnabled) && nostrConnectionStatus === "error")
-      return { status: "error", label: "Error", color: "destructive" };
-    if (isP2PEnabled || isNostrEnabled)
-      return { status: "enabled", label: "Ready", color: "secondary" };
-    return { status: "disabled", label: "Disabled", color: "outline" };
+    if (!isActive) {
+      return { status: "disabled", label: t("sync.disabled"), color: "muted" };
+    }
+
+    if (isSyncing) {
+      return { status: "syncing", label: t("sync.syncing"), color: "blue" };
+    }
+
+    return {
+      status: "enabled",
+      label: t("sync.enabled"),
+      color: "green",
+    };
   };
 
   const { status, label, color } = getSyncStatus();
@@ -74,6 +95,10 @@ export function SyncStatus({ showDetails = true, className }: SyncStatusProps) {
   const handleClick = async () => {
     await router.navigate({ to: "/settings/sync" });
   };
+
+  if (!isExperimentalFeatureEnabled) {
+    return null;
+  }
 
   return (
     <div className={clsx("cursor-pointer", className)} onClick={handleClick}>
@@ -103,7 +128,7 @@ export function SyncStatus({ showDetails = true, className }: SyncStatusProps) {
 
       {showDetails && lastNostrSync && (
         <p className="text-xs text-muted-foreground mt-1">
-          Last sync: {new Date(lastNostrSync).toLocaleString()}
+          {t("sync.last_synced")}: {new Date(lastNostrSync).toLocaleString()}
         </p>
       )}
     </div>

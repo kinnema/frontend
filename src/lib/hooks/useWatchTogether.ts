@@ -6,11 +6,11 @@ import {
   IP2PCommand,
   P2PAction,
   P2PCreateAction,
-} from "../types/p2p.types";
-import { getP2pConfig } from "../utils/p2p/config";
-import { p2pEvents } from "../utils/p2pEvents";
+} from "../types/watchTogether.types";
+import { getWatchTogetherConfig } from "../utils/watchTogether/config";
+import { watchTogetherEvents } from "../utils/watchTogetherEvents";
 
-export function useP2P() {
+export function useWatchTogether() {
   const room = useRef<Room | undefined>(undefined);
 
   function createRoomId(): string {
@@ -31,26 +31,26 @@ export function useP2P() {
   }
 
   function createRoom(roomId: string) {
-    const p2pConfig = getP2pConfig();
+    const p2pConfig = getWatchTogetherConfig();
     const _room = joinChannel(p2pConfig, roomId);
     room.current = _room;
     const [sendAction, getAction] = room.current?.makeAction("WATCH");
 
     _room.onPeerJoin((peerId: string) => {
       console.log("Peer joined");
-      p2pEvents.status$.next({ status: "JOINED", peerId });
+      watchTogetherEvents.status$.next({ status: "JOINED", peerId });
     });
 
     _room.onPeerLeave((peerId: string) => {
       console.log("Peer left");
-      p2pEvents.status$.next({ status: "LEAVED", peerId });
+      watchTogetherEvents.status$.next({ status: "LEAVED", peerId });
     });
 
     getAction((data) => {
       const _data = data as unknown as IP2PCommand;
       console.log(_data);
 
-      p2pEvents.command$.next({
+      watchTogetherEvents.command$.next({
         command: _data.command,
         payload: _data.payload,
       });
@@ -60,7 +60,7 @@ export function useP2P() {
   }
 
   function joinRoom(roomId: string) {
-    const p2pConfig = getP2pConfig();
+    const p2pConfig = getWatchTogetherConfig();
     const _room = joinChannel(p2pConfig, roomId);
     room.current = _room;
     const [sendAction, getAction] = room.current?.makeAction("WATCH");
@@ -69,7 +69,7 @@ export function useP2P() {
       const _data = data as unknown as IP2PCommand;
       console.log(_data);
 
-      p2pEvents.command$.next({
+      watchTogetherEvents.command$.next({
         command: _data.command,
         payload: _data.payload,
       });
@@ -77,13 +77,13 @@ export function useP2P() {
 
     _room.onPeerJoin((peerId: string) => {
       console.log("Peer joined");
-      p2pEvents.status$.next({ status: "JOINED", peerId });
+      watchTogetherEvents.status$.next({ status: "JOINED", peerId });
     });
 
     _room.onPeerLeave((peerId: string) => {
       console.log("Peer left");
 
-      p2pEvents.status$.next({ status: "LEAVED", peerId });
+      watchTogetherEvents.status$.next({ status: "LEAVED", peerId });
     });
 
     return { sendAction };

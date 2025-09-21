@@ -1,15 +1,10 @@
 import { CollectionSeries } from "@/app/collection/[network]/series";
+import { Loading } from "@/components/Loading";
 import getQueryClient from "@/lib/getQueryClient";
 import TmdbService from "@/lib/services/tmdb.service";
 import { TmdbNetworks } from "@/lib/types/networks";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { zodValidator } from "@tanstack/zod-adapter";
 import { Suspense } from "react";
-import z from "zod";
-
-const collectionSearchSchema = z.object({
-  page: z.number().catch(1),
-});
 
 function validateNetwork(network: string) {
   const validNetworks = ["blutv", "gain", "exxen", "netflix", "disney"];
@@ -22,13 +17,21 @@ function mapToTmdbNetwork(network: string) {
   return TmdbNetworks[networkAsTmdbKey] || null;
 }
 
+type SearchParams = {
+  page?: number;
+};
+
 export const Route = createFileRoute("/collection/$network")({
   beforeLoad: ({ params }) => {
     if (!validateNetwork(params.network)) {
-      throw redirect({ to: "/" });
+      throw redirect({ to: "/", search: {} });
     }
   },
-  validateSearch: zodValidator(collectionSearchSchema),
+  validateSearch: (search): SearchParams => {
+    return {
+      page: search.page ? Number(search.page) : 1,
+    };
+  },
   loader: async ({ params }) => {
     const queryClient = getQueryClient();
     const network = mapToTmdbNetwork(params.network);
@@ -45,7 +48,7 @@ export const Route = createFileRoute("/collection/$network")({
 
     return (
       <div className="container mx-auto px-4 py-8">
-        <Suspense>
+        <Suspense fallback={<Loading fullscreen />}>
           <CollectionSeries network={network} />
         </Suspense>
       </div>
