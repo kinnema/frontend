@@ -12,6 +12,7 @@ import {
   WifiOff,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { lastSyncedAt$, syncingStatus$ } from "./observables";
 import { useSyncStore } from "./store";
 import { ConnectionStatus } from "./types";
@@ -25,6 +26,7 @@ export function SyncStatus({ showDetails = true, className }: SyncStatusProps) {
   const isExperimentalFeatureEnabled = useExperimentalStore((state) =>
     state.isFeatureEnabled(ExperimentalFeature.Sync)
   );
+  const { t } = useTranslation();
   const [isSyncing, setIsSyncing] = useState(false);
   const [lastNostrSync, setLastNostrSync] = useState<Date | null>(null);
   const isActive = useSyncStore((state) => state.isActive);
@@ -59,16 +61,16 @@ export function SyncStatus({ showDetails = true, className }: SyncStatusProps) {
 
   const getSyncStatus = () => {
     if (!isActive) {
-      return { status: "disabled", label: "Sync Disabled", color: "muted" };
+      return { status: "disabled", label: t("sync.disabled"), color: "muted" };
     }
 
     if (isSyncing) {
-      return { status: "syncing", label: "Syncing...", color: "blue" };
+      return { status: "syncing", label: t("sync.syncing"), color: "blue" };
     }
 
     return {
       status: "enabled",
-      label: "Sync Enabled",
+      label: t("sync.enabled"),
       color: "green",
     };
   };
@@ -124,11 +126,11 @@ export function SyncStatus({ showDetails = true, className }: SyncStatusProps) {
         )}
       </div>
 
-      {/* {showDetails && lastNostrSync && (
+      {showDetails && lastNostrSync && (
         <p className="text-xs text-muted-foreground mt-1">
-          Last sync: {new Date(lastNostrSync).toLocaleString()}
+          {t("sync.last_synced")}: {new Date(lastNostrSync).toLocaleString()}
         </p>
-      )} */}
+      )}
     </div>
   );
 }

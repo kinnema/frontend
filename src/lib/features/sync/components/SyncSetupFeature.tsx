@@ -14,6 +14,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { Key, QrCode, RefreshCw, Shield, Smartphone, Wifi } from "lucide-react";
 import { toDataURL } from "qrcode";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function SyncSetupFeature() {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -25,7 +26,7 @@ export default function SyncSetupFeature() {
   const generateIdentity = useSyncStore((state) => state.generateIdentity);
   const clearIdentity = useSyncStore((state) => state.clearIdentity);
   const navigate = useNavigate();
-
+  const { t } = useTranslation();
   useEffect(() => {
     if (syncId) {
       generateQRCode();
@@ -101,11 +102,10 @@ export default function SyncSetupFeature() {
             </div>
           </div>
           <h1 className="text-2xl font-bold text-foreground">
-            Sync Your Devices
+            {t("sync.title")}
           </h1>
           <p className="text-muted-foreground text-balance">
-            Scan the QR code with your other device to establish a secure
-            peer-to-peer connection
+            {t("sync.description")}
           </p>
         </div>
 
@@ -116,7 +116,7 @@ export default function SyncSetupFeature() {
             className="rounded-r-none"
           >
             <QrCode className="h-4 w-4 mr-2" />
-            Generate New
+            {t("sync.generate_new")}
           </Button>
           <Button
             variant={isImportMode ? "default" : "outline"}
@@ -124,7 +124,7 @@ export default function SyncSetupFeature() {
             className="rounded-l-none"
           >
             <Key className="h-4 w-4 mr-2" />
-            Import Existing
+            {t("sync.import_existing")}
           </Button>
         </div>
 
@@ -133,18 +133,18 @@ export default function SyncSetupFeature() {
             <CardHeader className="text-center pb-4">
               <CardTitle className="text-lg flex items-center justify-center gap-2">
                 <Key className="h-5 w-5" />
-                Import Mnemonic Key
+                {t("sync.import_mnemonic_key")}
               </CardTitle>
               <CardDescription>
-                Paste your existing mnemonic key to sync with your other devices
+                {t("sync.import_mnemonic_key_description")}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="mnemonic">Mnemonic Key</Label>
+                <Label htmlFor="mnemonic">{t("sync.mnemonic_key")}</Label>
                 <Input
                   id="mnemonic"
-                  placeholder="Enter your 12-word mnemonic key..."
+                  placeholder={t("sync.mnemonic_key_placeholder")}
                   value={importMnemonic}
                   onChange={(e) => setImportMnemonic(e.target.value)}
                   className="font-mono text-sm"
@@ -156,7 +156,7 @@ export default function SyncSetupFeature() {
                 className="w-full"
               >
                 <Key className="h-4 w-4 mr-2" />
-                Import & Generate QR
+                {t("sync.import_and_generate_qr")}
               </Button>
             </CardContent>
           </Card>
@@ -165,10 +165,10 @@ export default function SyncSetupFeature() {
             <CardHeader className="text-center pb-4">
               <CardTitle className="text-lg flex items-center justify-center gap-2">
                 <QrCode className="h-5 w-5" />
-                Connection Code
+                {t("sync.connection_code")}
               </CardTitle>
               <CardDescription>
-                This code expires in 5 minutes for security
+                {t("sync.scan_qr_code_description")}
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col items-center space-y-4">
@@ -181,7 +181,7 @@ export default function SyncSetupFeature() {
               )}
 
               <Label className="text-sm text-muted-foreground">
-                Or use the following code
+                {t("sync.or_enter_mnemonic_key")}
               </Label>
 
               <div className="flex items-center gap-2">
@@ -200,14 +200,13 @@ export default function SyncSetupFeature() {
                 </Button>
               </div>
 
-              {/* Instructions */}
               <div className="text-center space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  Open the app on your other device and scan this code
+                  {t("sync.scan_qr_code_description")}
                 </p>
                 <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
                   <Smartphone className="h-4 w-4" />
-                  <span>Works with phones, tablets, and computers</span>
+                  <span>{t("sync.works_with_devices")}</span>
                 </div>
               </div>
             </CardContent>
@@ -225,12 +224,12 @@ export default function SyncSetupFeature() {
               {isGenerating ? (
                 <>
                   <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                  Generating...
+                  {t("sync.generating")}...
                 </>
               ) : (
                 <>
                   <RefreshCw className="h-4 w-4 mr-2" />
-                  New Code
+                  {t("sync.new_code")}
                 </>
               )}
             </Button>
@@ -241,28 +240,27 @@ export default function SyncSetupFeature() {
             onClick={() => continueSetup()}
             disabled={!syncId}
           >
-            Continue
+            {t("common.continue")}
           </Button>
           <Button
             variant="secondary"
             className="flex-1"
             onClick={() => cancelSetup()}
           >
-            Cancel Setup
+            {t("common.cancel")}
           </Button>
         </div>
 
         <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
           <Badge variant="secondary" className="flex items-center gap-1">
             <Shield className="h-3 w-3" />
-            End-to-end encrypted
+            {t("sync.end_to_end_encrypted")}
           </Badge>
         </div>
 
         <div className="text-center">
           <p className="text-xs text-muted-foreground">
-            Having trouble? Make sure both devices are connected to the internet
-            and the app is updated to the latest version.
+            {t("sync.trouble_connecting")}
           </p>
         </div>
       </div>

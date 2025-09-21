@@ -23,6 +23,7 @@ import {
   Wifi,
   WifiOff,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import SyncRelaySettingsConfigurator from "./SyncRelaySettingsConfigurator";
 
 export default function SyncFeature() {
@@ -37,7 +38,7 @@ export default function SyncFeature() {
     updateCollectionConfig,
     clearIdentity,
   } = useSyncStore();
-
+  const { t } = useTranslation();
   const getStatusColor = (status: ConnectionStatus) => {
     switch (status) {
       case ConnectionStatus.CONNECTED:
@@ -64,8 +65,8 @@ export default function SyncFeature() {
     if (identity) {
       navigator.clipboard.writeText(identity.mnemonic);
       toast({
-        title: "Sync Key Copied",
-        description: "The sync key has been copied to your clipboard.",
+        title: t("sync.key_copied"),
+        description: t("sync.key_copied_description"),
         variant: "success",
       });
     }
@@ -75,9 +76,11 @@ export default function SyncFeature() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Sync Settings</h1>
+          <h1 className="text-2xl font-bold text-foreground">
+            {t("sync.settings")}
+          </h1>
           <p className="text-muted-foreground">
-            Manage device synchronization and data sharing
+            {t("sync.settings_description")}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -99,18 +102,16 @@ export default function SyncFeature() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Activity className="h-5 w-5" />
-            Sync Status
+            {t("sync.status")}
           </CardTitle>
-          <CardDescription>
-            Current synchronization state and connection status
-          </CardDescription>
+          <CardDescription>{t("sync.status_description")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <Label className="text-sm font-medium">Enable Sync</Label>
+              <Label className="text-sm font-medium">{t("sync.enable")}</Label>
               <p className="text-xs text-muted-foreground">
-                Turn on device synchronization
+                {t("sync.enable_description")}
               </p>
             </div>
             <Switch
@@ -128,7 +129,7 @@ export default function SyncFeature() {
                 )}`}
               />
               <div>
-                <p className="text-sm font-medium">Nostr Network</p>
+                <p className="text-sm font-medium">{t("sync.nostr_network")}</p>
                 <p className="text-xs text-muted-foreground capitalize">
                   {nostrStatus}
                 </p>
@@ -141,7 +142,7 @@ export default function SyncFeature() {
                 )}`}
               />
               <div>
-                <p className="text-sm font-medium">WebRTC Direct</p>
+                <p className="text-sm font-medium">{t("sync.webrtc")}</p>
                 <p className="text-xs text-muted-foreground capitalize">
                   {webrtcStatus}
                 </p>
@@ -154,7 +155,7 @@ export default function SyncFeature() {
               <div className="flex items-center gap-3">
                 <Shield className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-sm font-medium">Sync Identity</p>
+                  <p className="text-sm font-medium">{t("sync.identity")}</p>
                   <p className="text-xs text-muted-foreground">
                     {identity
                       ? `Device ID: ${identity.deviceId.substring(0, 8)}...`
@@ -164,19 +165,19 @@ export default function SyncFeature() {
               </div>
               {!identity ? (
                 <Button size="sm" onClick={handleSetupSync}>
-                  Setup Sync
+                  {t("sync.setup")}
                 </Button>
               ) : (
                 <div className="flex gap-5">
                   <Button size="sm" variant="outline" onClick={handleCopyKey}>
-                    Copy
+                    {t("sync.copy")}
                   </Button>
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={handleDisableSync}
                   >
-                    Reset
+                    {t("sync.reset")}
                   </Button>
                 </div>
               )}
@@ -189,10 +190,10 @@ export default function SyncFeature() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Settings className="h-5 w-5" />
-            Data Collections
+            {t("sync.data_collections")}
           </CardTitle>
           <CardDescription>
-            Choose which data to synchronize across devices
+            {t("sync.data_collections_description")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -204,7 +205,11 @@ export default function SyncFeature() {
                     {collection.name.replace(/([A-Z])/g, " $1").trim()}
                   </Label>
                   <p className="text-xs text-muted-foreground">
-                    Sync {collection.name} data between devices
+                    {t("sync.data_collections_description", {
+                      collection: collection.name
+                        .replace(/([A-Z])/g, " $1")
+                        .trim(),
+                    })}
                   </p>
                 </div>
                 <Switch
@@ -220,7 +225,7 @@ export default function SyncFeature() {
                   <div className="flex items-center justify-between">
                     <Label className="text-xs text-muted-foreground flex items-center gap-1">
                       <Globe className="h-3 w-3" />
-                      Nostr Network
+                      {t("sync.nostr_network")}
                     </Label>
                     <Switch
                       checked={collection.nostrEnabled}
@@ -234,7 +239,7 @@ export default function SyncFeature() {
                   <div className="flex items-center justify-between">
                     <Label className="text-xs text-muted-foreground flex items-center gap-1">
                       <Wifi className="h-3 w-3" />
-                      Direct Connection
+                      {t("sync.webrtc")}
                     </Label>
                     <Switch
                       checked={collection.webrtcEnabled}
@@ -258,10 +263,10 @@ export default function SyncFeature() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Monitor className="h-5 w-5" />
-            Connected Devices
+            {t("sync.connected_devices")}
           </CardTitle>
           <CardDescription>
-            Devices currently synchronized with this account
+            {t("sync.connected_devices_description")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -274,7 +279,7 @@ export default function SyncFeature() {
             </p>
             {!identity && (
               <Button className="mt-4" onClick={handleSetupSync}>
-                Setup Sync
+                {t("sync.setup")}
               </Button>
             )}
           </div>

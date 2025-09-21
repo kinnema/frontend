@@ -28,12 +28,14 @@ import {
   XCircle,
 } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function SyncRelaySettingsConfigurator() {
   const { nostrRelays, addRelay, removeRelay } = useSyncStore();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [newRelayUrl, setNewRelayUrl] = useState("");
   const [isValidUrl, setIsValidUrl] = useState(true);
+  const { t } = useTranslation();
 
   const getStatusIcon = (status: ConnectionStatus) => {
     switch (status) {
@@ -107,30 +109,29 @@ export default function SyncRelaySettingsConfigurator() {
           <div>
             <CardTitle className="flex items-center gap-2">
               <Globe className="h-5 w-5" />
-              Nostr Relays
+              {t("sync.nostr_relays")}
             </CardTitle>
             <CardDescription>
-              Configure relay servers for synchronization
+              {t("sync.nostr_relays_description")}
             </CardDescription>
           </div>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
               <Button size="sm" className="flex items-center gap-2">
                 <Plus className="h-4 w-4" />
-                Add Relay
+                {t("sync.add_relay")}
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Add New Relay</DialogTitle>
+                <DialogTitle>{t("sync.add_new_relay")}</DialogTitle>
                 <DialogDescription>
-                  Enter the WebSocket URL of the Nostr relay you want to add.
-                  The URL should start with wss:// or ws://
+                  {t("sync.add_new_relay_description")}
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="relay-url">Relay URL</Label>
+                  <Label htmlFor="relay-url">{t("sync.relay_url")}</Label>
                   <Input
                     id="relay-url"
                     placeholder="wss://relay.example.com"
@@ -140,7 +141,7 @@ export default function SyncRelaySettingsConfigurator() {
                   />
                   {!isValidUrl && (
                     <p className="text-sm text-red-500 mt-1">
-                      Please enter a valid WebSocket URL (wss:// or ws://)
+                      {t("sync.invalid_websocket_url")}
                     </p>
                   )}
                 </div>
@@ -154,10 +155,10 @@ export default function SyncRelaySettingsConfigurator() {
                     setIsValidUrl(true);
                   }}
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
                 <Button onClick={handleAddRelay} disabled={!newRelayUrl.trim()}>
-                  Add Relay
+                  {t("sync.add_relay")}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -170,7 +171,7 @@ export default function SyncRelaySettingsConfigurator() {
             <div className="text-center py-8">
               <Globe className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-sm text-muted-foreground">
-                No relays configured. Add a relay to start synchronizing data.
+                {t("sync.no_relays_configured")}
               </p>
             </div>
           ) : (
@@ -208,9 +209,8 @@ export default function SyncRelaySettingsConfigurator() {
         {nostrRelays.length > 0 && (
           <div className="mt-4 p-3 bg-muted/50 rounded-lg">
             <p className="text-xs text-muted-foreground">
-              <strong>Note:</strong> Changes to relay configuration will take
-              effect the next time sync is restarted. Some relays may have rate
-              limits or require authentication.
+              <strong>{t("sync.relay_configuration_note")}</strong>{" "}
+              {t("sync.relay_configuration_note_description")}
             </p>
           </div>
         )}
