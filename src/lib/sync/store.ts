@@ -4,8 +4,8 @@ import { SyncMnemonic } from "./mnemonic";
 import { ConnectionStatus, SyncCollection, SyncState } from "./types";
 
 interface SyncStore extends SyncState {
-  generateIdentity: () => void;
-  setIdentity: (mnemonic: string) => void;
+  generateIdentity: () => Promise<void>;
+  setIdentity: (mnemonic: string) => Promise<void>;
   clearIdentity: () => void;
   updateCollectionConfig: (
     name: string,
@@ -51,14 +51,14 @@ export const useSyncStore = create<SyncStore>()(
       ],
       isActive: false,
 
-      generateIdentity: () => {
+      generateIdentity: async () => {
         console.log("Store: generateIdentity called");
-        const mnemonic = SyncMnemonic.generate();
+        const mnemonic = await SyncMnemonic.generate();
         console.log(
           "Store: generated mnemonic length:",
           mnemonic.split(" ").length
         );
-        const identity = SyncMnemonic.deriveIdentity(mnemonic);
+        const identity = await SyncMnemonic.deriveIdentity(mnemonic);
         console.log("Store: derived identity:", {
           deviceId: identity.deviceId,
           nostrPublicKey: identity.nostrPublicKey.substring(0, 16) + "...",
@@ -66,9 +66,9 @@ export const useSyncStore = create<SyncStore>()(
         set({ identity });
       },
 
-      setIdentity: (mnemonic: string) => {
+      setIdentity: async (mnemonic: string) => {
         console.log("Store: setIdentity called with mnemonic");
-        const identity = SyncMnemonic.deriveIdentity(mnemonic);
+        const identity = await SyncMnemonic.deriveIdentity(mnemonic);
         console.log("Store: imported identity:", {
           deviceId: identity.deviceId,
           nostrPublicKey: identity.nostrPublicKey.substring(0, 16) + "...",

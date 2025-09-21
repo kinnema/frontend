@@ -54,7 +54,7 @@ export default function SyncSetupFeature() {
 
   const handleRegenerateQR = async () => {
     try {
-      generateIdentity();
+      await generateIdentity();
       await generateQRCode();
     } catch (error) {
       console.error("Failed to regenerate QR code:", error);
@@ -66,7 +66,7 @@ export default function SyncSetupFeature() {
     if (!importMnemonic.trim()) return;
 
     try {
-      setSyncId(importMnemonic.trim());
+      await setSyncId(importMnemonic.trim());
       setIsImportMode(false);
       setImportMnemonic("");
       await generateQRCode();

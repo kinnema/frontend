@@ -36,7 +36,6 @@ export default function SyncFeature() {
     setActive,
     updateCollectionConfig,
     clearIdentity,
-    generateIdentity,
   } = useSyncStore();
 
   const getStatusColor = (status: ConnectionStatus) => {
@@ -52,10 +51,7 @@ export default function SyncFeature() {
     }
   };
 
-  const handleSetupSync = () => {
-    if (!identity) {
-      generateIdentity();
-    }
+  const handleSetupSync = async () => {
     navigate({ to: "/settings/sync/setup" });
   };
 

@@ -1,24 +1,29 @@
-import { HDKey } from "@scure/bip32";
 import {
   generateMnemonic,
   mnemonicToSeedSync,
   validateMnemonic,
 } from "@scure/bip39";
-import { wordlist } from "@scure/bip39/wordlists/english";
 import { getPublicKey } from "nostr-tools";
 import { SyncIdentity } from "./types";
 
 export class SyncMnemonic {
-  static generate(): string {
+  static async generate(): Promise<string> {
+    const { wordlist } = await import("@scure/bip39/wordlists/english");
+
     return generateMnemonic(wordlist);
   }
 
-  static validate(mnemonic: string): boolean {
+  static async validate(mnemonic: string): Promise<boolean> {
+    const { wordlist } = await import("@scure/bip39/wordlists/english");
+
     return validateMnemonic(mnemonic, wordlist);
   }
 
-  static deriveIdentity(mnemonic: string): SyncIdentity {
-    if (!this.validate(mnemonic)) {
+  static async deriveIdentity(mnemonic: string): Promise<SyncIdentity> {
+    const { HDKey } = await import("@scure/bip32");
+
+    const validate = await this.validate(mnemonic);
+    if (!validate) {
       throw new Error("Invalid mnemonic");
     }
 
