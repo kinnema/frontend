@@ -1,7 +1,9 @@
+import { Loading } from "@/components/Loading";
 import SyncFeature from "@/lib/features/sync/components/SyncFeature";
 import { useExperimentalStore } from "@/lib/stores/experimental.store";
 import { ExperimentalFeature } from "@/lib/types/experiementalFeatures";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Suspense } from "react";
 
 export const Route = createFileRoute("/settings/sync/")({
   component: RouteComponent,
@@ -20,7 +22,9 @@ function RouteComponent() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <SyncFeature />
+      <Suspense fallback={<Loading fullscreen />}>
+        <SyncFeature />
+      </Suspense>
     </div>
   );
 }

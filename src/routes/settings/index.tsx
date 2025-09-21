@@ -1,3 +1,4 @@
+import { Loading } from "@/components/Loading";
 import AppSettingsFeature from "@/lib/features/settings";
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
@@ -9,7 +10,7 @@ export const Route = createFileRoute("/settings/")({
 function RouteComponent() {
   return (
     <div className="container mx-auto px-4 py-8">
-      <Suspense>
+      <Suspense fallback={<Loading fullscreen />}>
         <AppSettingsFeature />
       </Suspense>
     </div>

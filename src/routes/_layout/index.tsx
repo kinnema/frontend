@@ -1,3 +1,4 @@
+import { Loading } from "@/components/Loading";
 import TmdbService from "@/lib/services/tmdb.service";
 import { TmdbNetworks } from "@/lib/types/networks";
 import { createFileRoute } from "@tanstack/react-router";
@@ -69,21 +70,29 @@ export const Route = createFileRoute("/_layout/")({
 
     return (
       <>
-        <Suspense>
+        <Suspense fallback={<Loading fullscreen />}>
           <HomeFeature />
-          {modal === "favorites" && <FavoritesModal />}
-          {serieSlug && serieTmdbId && (
+        </Suspense>
+        {modal === "favorites" && (
+          <Suspense fallback={<Loading fullscreen />}>
+            <FavoritesModal />
+          </Suspense>
+        )}
+        {serieSlug && serieTmdbId && (
+          <Suspense fallback={<Loading fullscreen />}>
             <SerieModal slug={serieSlug} tmdbId={serieTmdbId} />
-          )}
-          {watchSlug && watchTmdbId && watchSeason && watchChapter && (
+          </Suspense>
+        )}
+        {watchSlug && watchTmdbId && watchSeason && watchChapter && (
+          <Suspense fallback={<Loading fullscreen />}>
             <WatchModal
               slug={watchSlug}
               tmdbId={watchTmdbId}
               season={watchSeason}
               chapter={watchChapter}
             />
-          )}
-        </Suspense>
+          </Suspense>
+        )}
       </>
     );
   },

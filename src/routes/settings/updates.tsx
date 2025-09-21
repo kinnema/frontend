@@ -1,3 +1,4 @@
+import { Loading } from "@/components/Loading";
 import AppUpdatesFeature from "@/lib/features/settings/updates";
 import { IGithubRelease } from "@/lib/types/github.type";
 import { QUERY_KEYS } from "@/lib/utils/queryKeys";
@@ -37,7 +38,7 @@ export const Route = createFileRoute("/settings/updates")({
 function RouteComponent() {
   return (
     <div className="container mx-auto px-4 py-8">
-      <Suspense>
+      <Suspense fallback={<Loading fullscreen />}>
         <AppUpdatesFeature />
       </Suspense>
     </div>

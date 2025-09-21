@@ -5,7 +5,6 @@ import { Providers } from "@/providers";
 import { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import classNames from "classnames";
-import { Suspense } from "react";
 import "../globals.css";
 
 interface MyRouterContext {
@@ -26,9 +25,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         >
           <Header />
           <div className="min-h-screen bg-black/95 text-white">
-            <main className="pt-16">
-              <Suspense fallback={<Loading fullscreen />}>{children}</Suspense>
-            </main>
+            <main className="pt-16">{children}</main>
           </div>
           <Footer />
         </div>

@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-router";
 import React, { Suspense } from "react";
 import ReactDOM from "react-dom/client";
+import { Loading } from "./components/Loading";
 import "./lib/i18n";
 import { initializeLocalPlugins } from "./lib/plugins/local";
 import { isElectron } from "./lib/utils/native";
@@ -46,7 +47,9 @@ const DevTools = import.meta.env.DEV
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <Suspense fallback={<Loading fullscreen />}>
+        <RouterProvider router={router} />
+      </Suspense>
       {DevTools && (
         <Suspense fallback={null}>
           <DevTools router={router} />

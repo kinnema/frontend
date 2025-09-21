@@ -1,4 +1,5 @@
 import { CollectionSeries } from "@/app/collection/[network]/series";
+import { Loading } from "@/components/Loading";
 import getQueryClient from "@/lib/getQueryClient";
 import TmdbService from "@/lib/services/tmdb.service";
 import { TmdbNetworks } from "@/lib/types/networks";
@@ -47,7 +48,7 @@ export const Route = createFileRoute("/collection/$network")({
 
     return (
       <div className="container mx-auto px-4 py-8">
-        <Suspense>
+        <Suspense fallback={<Loading fullscreen />}>
           <CollectionSeries network={network} />
         </Suspense>
       </div>
