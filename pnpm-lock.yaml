@@ -230,12 +230,6 @@ importers:
       vite-tsconfig-paths:
         specifier: ^5.1.4
         version: 5.1.4(typescript@5.9.2)(vite@7.0.6(@types/node@20.19.9)(jiti@1.21.7)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))
-      zod:
-        specifier: ^3.23.8
-        version: 3.25.76
-      zod-i18n-map:
-        specifier: ^2.27.0
-        version: 2.27.0(i18next@23.16.8)(zod@3.25.76)
       zustand:
         specifier: ^4.5.2
         version: 4.5.7(@types/react@19.0.8)(immer@10.1.1)(react@19.0.0)
@@ -5875,12 +5869,6 @@ packages:
     resolution: {integrity: sha512-9fQb2ZhpMD0ZQXYw0ll5ya6uLQm3Xtt4DXY2RV3QO1QVI4ihSzSWirlgkDsMgGg4qK0EV4tLOJgRSH2bn0cbIw==}
     engines: {node: '>=16.0.0'}
     hasBin: true
-
-  zod-i18n-map@2.27.0:
-    resolution: {integrity: sha512-ORu9XpiVh3WDiEUs5Cr9siGgnpeODoBsTIgSD8sQCH9B//f9KowlzqHUEdPYb3vFonaSH8yPvPCOFM4niwp3Sg==}
-    peerDependencies:
-      i18next: '>=21.3.0'
-      zod: '>=3.17.0'
 
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
@@ -12399,11 +12387,6 @@ snapshots:
       validator: 13.15.15
     optionalDependencies:
       commander: 11.1.0
-
-  zod-i18n-map@2.27.0(i18next@23.16.8)(zod@3.25.76):
-    dependencies:
-      i18next: 23.16.8
-      zod: 3.25.76
 
   zod@3.25.76: {}
 
