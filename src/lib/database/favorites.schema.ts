@@ -4,7 +4,7 @@ import { IFavorite } from "../types/favorite.type";
 export type FavoritedCollection = RxCollection<IFavorite>;
 
 export const favoriteSchema: RxJsonSchema<IFavorite> = {
-  version: 0,
+  version: 1,
   primaryKey: "id",
   type: "object",
   required: ["id", "name", "posterPath", "tmdbId", "createdAt"],

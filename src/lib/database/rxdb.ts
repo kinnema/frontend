@@ -18,9 +18,21 @@ const collections: { [key in keyof KinnemaCollections]: RxCollectionCreator } =
   {
     lastWatched: {
       schema: lastWatchedSchema,
+      migrationStrategies: {
+        1: (oldDoc) => ({
+          ...oldDoc,
+          syncedAt: null,
+        }),
+      },
     },
     favorite: {
       schema: favoriteSchema,
+      migrationStrategies: {
+        1: (oldDoc) => ({
+          ...oldDoc,
+          syncedAt: null,
+        }),
+      },
     },
   };
 

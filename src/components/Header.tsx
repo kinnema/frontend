@@ -59,15 +59,9 @@ export function Header() {
             </Link>
             <MainNav />
           </div>
+
           <div className="flex items-center gap-4">
-            {/* {isLoggedIn ? (
-              <UserNav />
-            ) : (
-              <Link to="/" search={{ modal: 'login' }}>
-                <Button>Giriş Yap</Button>
-              </Link>
-            )} */}
-            <SyncStatus className="hidden md:inline-flex" showDetails={false} />
+            <SyncStatus showDetails={false} />
             <Link to="/search">
               <Button
                 variant="ghost"

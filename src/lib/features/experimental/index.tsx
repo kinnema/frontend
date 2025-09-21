@@ -23,7 +23,7 @@ export default function ExperimentalFeaturesComponent() {
     const feature = features.find((f) => f.id === featureId);
     if (!feature) return;
 
-    if (!isNativePlatform()) {
+    if (feature.nativeOnly && !isNativePlatform()) {
       toast({
         title: t("experimental.error.toggleFailed", "Cannot Toggle Feature"),
         description: t(
