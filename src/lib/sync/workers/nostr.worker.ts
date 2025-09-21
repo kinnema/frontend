@@ -465,6 +465,10 @@ async function removeFromNostr(documentId: string) {
   const eventId = await getEventId(documentId);
   const results = [];
 
+  self.postMessage({
+    type: "sync-start",
+  });
+
   if (!eventId) {
     console.log(
       `No existing deletion event found for documentId ${documentId}, proceeding to create one.`
@@ -514,6 +518,9 @@ async function removeFromNostr(documentId: string) {
       error: error?.toString(),
     });
   }
+  self.postMessage({
+    type: "sync-complete",
+  });
 
   return results;
 }
