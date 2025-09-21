@@ -171,6 +171,10 @@
       "disabled": "Disabled",
       "nativeOnly": "Native Only"
     },
+    "error": {
+      "toggleFailed": "Failed to toggle feature",
+      "nativeOnly": "This feature is only available in the desktop application."
+    },
     "info": {
       "title": "About Experimental Features",
       "description": "Experimental features help us test new functionality with early adopters. Your feedback is valuable in shaping these features before their full release."

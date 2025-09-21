@@ -167,6 +167,10 @@
       "title": "Deneysel Özellikler Uyarısı",
       "description": "Bu özellikler deneyseldir ve kararsız, eksik veya değişime tabi olabilir. Kendi riskinizle kullanın ve potansiyel sorunlar bekleyin."
     },
+    "error": {
+      "toggleFailed": "Özellik durumu değiştirilemedi",
+      "nativeOnly": "Bu özellik yalnızca masaüstü uygulamasında mevcuttur."
+    },
     "status": {
       "enabled": "Etkin",
       "disabled": "Devre Dışı",
