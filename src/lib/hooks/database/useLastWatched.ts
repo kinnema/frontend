@@ -1,5 +1,5 @@
 import { getDb } from "@/lib/database/rxdb";
-import { useDeleteNostrEvents } from "@/lib/sync/hooks";
+import { useDeleteNostrEvents } from "@/lib/features/sync/hooks";
 import { ILastWatched } from "@/lib/types/lastWatched.type";
 import { RxDocument } from "rxdb";
 

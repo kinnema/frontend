@@ -1,6 +1,6 @@
+import { useExperimentalStore } from "@/lib/stores/experimental.store";
+import { ExperimentalFeature } from "@/lib/types/experiementalFeatures";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useExperimentalStore } from "../stores/experimental.store";
-import { ExperimentalFeature } from "../types/experiementalFeatures";
 import { syncEngine } from "./engine";
 import { useSyncStore } from "./store";
 

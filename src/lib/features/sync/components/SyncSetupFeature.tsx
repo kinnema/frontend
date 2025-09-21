@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useSyncStore } from "@/lib/sync/store";
+import { useSyncStore } from "@/lib/features/sync/store";
 import { useNavigate } from "@tanstack/react-router";
 import { Key, QrCode, RefreshCw, Shield, Smartphone, Wifi } from "lucide-react";
 import { toDataURL } from "qrcode";

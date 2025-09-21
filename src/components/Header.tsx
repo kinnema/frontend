@@ -1,6 +1,6 @@
 import { MainNav } from "@/components/main-nav";
 import { Button } from "@/components/ui/button";
-import { SyncStatus } from "@/lib/sync/sync-status";
+import { SyncStatus } from "@/lib/features/sync/sync-status";
 import { Link, useRouterState } from "@tanstack/react-router";
 import classNames from "classnames";
 import { Menu, Search, SearchIcon } from "lucide-react";

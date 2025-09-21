@@ -1,11 +1,11 @@
 import { Toaster } from "@/components/ui/sonner";
+import { SyncProvider } from "@/lib/features/sync/provider";
 import { useAppStore } from "@/lib/stores/app.store";
 import { SafeArea } from "@capacitor-community/safe-area";
 import { Capacitor } from "@capacitor/core";
 import { CapacitorUpdater } from "@capgo/capacitor-updater";
 import { PropsWithChildren, Suspense, lazy, useEffect } from "react";
 import { Loading } from "./components/Loading";
-import { SyncProvider } from "./lib/sync";
 import { isNativePlatform } from "./lib/utils/native";
 
 const BackButtonHandler = lazy(

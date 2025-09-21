@@ -1,5 +1,5 @@
+import { getDb } from "@/lib/database/rxdb";
 import { useEffect, useState } from "react";
-import { getDb } from "../database/rxdb";
 import { useSyncStore } from "./store";
 
 export function SyncDebug() {

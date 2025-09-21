@@ -1,23 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { SyncMnemonic } from "./mnemonic";
-import { ConnectionStatus, SyncCollection, SyncState } from "./types";
-
-interface SyncStore extends SyncState {
-  generateIdentity: () => Promise<void>;
-  setIdentity: (mnemonic: string) => Promise<void>;
-  clearIdentity: () => void;
-  updateCollectionConfig: (
-    name: string,
-    config: Partial<SyncCollection>
-  ) => void;
-  setNostrStatus: (status: ConnectionStatus) => void;
-  setWebRTCStatus: (status: ConnectionStatus) => void;
-  setActive: (active: boolean) => void;
-  addRelay: (url: string) => void;
-  removeRelay: (url: string) => void;
-  setRelayStatus: (url: string, status: ConnectionStatus) => void;
-}
+import { ConnectionStatus, SyncCollection, SyncStore } from "./types";
 
 const defaultCollections: SyncCollection[] = [
   {

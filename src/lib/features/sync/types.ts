@@ -55,3 +55,19 @@ export interface NostrWorkerMessage extends WorkerMessage {
 export interface WebRTCWorkerMessage extends WorkerMessage {
   type: "init" | "sync" | "peer" | "status" | "result";
 }
+
+export interface SyncStore extends SyncState {
+  generateIdentity: () => Promise<void>;
+  setIdentity: (mnemonic: string) => Promise<void>;
+  clearIdentity: () => void;
+  updateCollectionConfig: (
+    name: string,
+    config: Partial<SyncCollection>
+  ) => void;
+  setNostrStatus: (status: ConnectionStatus) => void;
+  setWebRTCStatus: (status: ConnectionStatus) => void;
+  setActive: (active: boolean) => void;
+  addRelay: (url: string) => void;
+  removeRelay: (url: string) => void;
+  setRelayStatus: (url: string, status: ConnectionStatus) => void;
+}

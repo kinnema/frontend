@@ -10,8 +10,8 @@ import {
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/hooks/use-toast";
-import { useSyncStore } from "@/lib/sync/store";
-import { ConnectionStatus } from "@/lib/sync/types";
+import { useSyncStore } from "@/lib/features/sync/store";
+import { ConnectionStatus } from "@/lib/features/sync/types";
 import { useNavigate } from "@tanstack/react-router";
 import {
   Activity,

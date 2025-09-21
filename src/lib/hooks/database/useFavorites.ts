@@ -1,5 +1,5 @@
 import { getDb } from "@/lib/database/rxdb";
-import { useDeleteNostrEvents } from "@/lib/sync/hooks";
+import { useDeleteNostrEvents } from "@/lib/features/sync/hooks";
 import { IAddFavorite } from "@/lib/types/favorite.type";
 import { QUERY_KEYS } from "@/lib/utils/queryKeys";
 import { useQueryClient } from "@tanstack/react-query";

@@ -17,8 +17,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useSyncStore } from "@/lib/sync/store";
-import { ConnectionStatus } from "@/lib/sync/types";
+import { useSyncStore } from "@/lib/features/sync/store";
+import { ConnectionStatus } from "@/lib/features/sync/types";
 import {
   CheckCircle,
   Globe,

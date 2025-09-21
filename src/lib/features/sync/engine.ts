@@ -1,4 +1,4 @@
-import { getDb } from "../database/rxdb";
+import { getDb } from "@/lib/database/rxdb";
 import { lastSyncedAt$, syncingStatus$ } from "./observables";
 import { useSyncStore } from "./store";
 import { ConnectionStatus, SyncResult } from "./types";
