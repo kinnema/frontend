@@ -1,9 +1,12 @@
 import { getDb } from "@/lib/database/rxdb";
+import { useDeleteNostrEvents } from "@/lib/sync/hooks";
 import { IAddFavorite } from "@/lib/types/favorite.type";
 import { QUERY_KEYS } from "@/lib/utils/queryKeys";
 import { useQueryClient } from "@tanstack/react-query";
 
 export function useFavorites(tmdbId?: number) {
+  const { deleteNostrEvents } = useDeleteNostrEvents();
+
   const queryClient = useQueryClient();
 
   async function getAllFavorites() {
@@ -50,6 +53,7 @@ export function useFavorites(tmdbId?: number) {
   }
 
   async function removeFavorite(payload: string) {
+    await deleteNostrEvents(payload);
     const data = await getFavorite(payload);
 
     await data?.remove();
