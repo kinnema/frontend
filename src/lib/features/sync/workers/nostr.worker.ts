@@ -8,7 +8,8 @@ let relayUrls: string[] = [];
 let isInitialized = false;
 
 self.onmessage = async (event: MessageEvent<NostrWorkerMessage>) => {
-  const { type, payload } = event.data;
+  const message = event.data as NostrWorkerMessage;
+  const { type, payload } = message;
 
   console.log(`Nostr Worker: Received message type: ${type}`, payload);
 
@@ -136,19 +137,26 @@ async function handleSync(payload: any) {
     throw new Error("Worker not initialized");
   }
 
+  const startTime = Date.now();
+  console.log(`Sync started at ${new Date(startTime).toISOString()}`);
+
   const { collection, documents } = payload;
 
   self.postMessage({
     type: "sync-start",
   });
 
+  const mergeStart = Date.now();
   const mergedDeletedIds = await mergeDeletedDocuments();
+  console.log(`mergeDeletedDocuments took ${Date.now() - mergeStart}ms`);
 
   console.log(
     `Syncing collection ${collection}: ${documents.length} total, ${mergedDeletedIds.length} deleted`
   );
 
+  const fetchStart = Date.now();
   const remoteData = await fetchFromNostr(collection);
+  console.log(`fetchFromNostr took ${Date.now() - fetchStart}ms`);
   console.log(
     `Fetched ${remoteData.length} remote documents for ${collection}`
   );
@@ -157,14 +165,15 @@ async function handleSync(payload: any) {
     (doc: any) => !mergedDeletedIds.includes(doc.data.id)
   );
 
-  // Publish local documents to Nostr
+  const publishStart = Date.now();
   const publishResults = await publishToNostr(collection, documents);
+  console.log(`publishToNostr took ${Date.now() - publishStart}ms`);
 
   self.postMessage({
     type: "sync-complete",
     payload: { collection },
   });
-  // Return both published and fetched data
+
   self.postMessage({
     type: "result",
     payload: {
@@ -176,6 +185,9 @@ async function handleSync(payload: any) {
       total: documents.length,
     },
   });
+
+  const totalTime = Date.now() - startTime;
+  console.log(`Total sync time: ${totalTime}ms`);
 }
 
 async function fetchFromNostr(collection: string): Promise<any[]> {
@@ -197,7 +209,6 @@ async function fetchFromNostr(collection: string): Promise<any[]> {
     let eoseCount = 0;
 
     return new Promise((resolve) => {
-      // Use subscribeMany with proper event handlers
       const sub = pool.subscribeMany(relayUrls, filter, {
         onevent(event) {
           eventCount++;
@@ -207,7 +218,12 @@ async function fetchFromNostr(collection: string): Promise<any[]> {
             created_at: event.created_at,
             tags: event.tags,
           });
-
+          if (documents.length % 10 === 0) {
+            self.postMessage({
+              type: "partial-sync",
+              payload: { collection, documents: [...documents] },
+            });
+          }
           try {
             if (verifyEvent(event)) {
               const content = JSON.parse(event.content);
@@ -251,14 +267,13 @@ async function fetchFromNostr(collection: string): Promise<any[]> {
         },
       });
 
-      // Fallback timeout in case EOSE doesn't work properly
       setTimeout(() => {
         console.log(
           `Timeout reached: events=${eventCount}, documents=${documents.length}, eose=${eoseCount}`
         );
         sub.close();
         resolve(documents);
-      }, 15000); // 15 second timeout
+      }, 5000);
     });
   } catch (error) {
     console.error("Failed to fetch from Nostr:", error);
@@ -267,14 +282,12 @@ async function fetchFromNostr(collection: string): Promise<any[]> {
 }
 async function getEventId(documentId: string): Promise<string | null> {
   try {
-    const filter: Filter[] = [
-      {
-        kinds: [5],
-        "#t": ["kinnema-sync", documentId],
-        authors: [publicKey],
-        limit: 1,
-      },
-    ];
+    const filter: Filter = {
+      kinds: [5],
+      "#t": ["kinnema-sync", documentId],
+      authors: [publicKey],
+      limit: 1,
+    };
 
     console.log(
       `Fetching deletion event ID from Nostr for documentId: ${documentId}`
@@ -285,7 +298,7 @@ async function getEventId(documentId: string): Promise<string | null> {
     return new Promise((resolve) => {
       let eventFound = false;
 
-      const sub = pool.subscribeMany(relayUrls, filter, {
+      const sub = pool.subscribe(relayUrls, filter, {
         onevent(event) {
           if (!eventFound && verifyEvent(event)) {
             eventFound = true;
@@ -317,7 +330,7 @@ async function getEventId(documentId: string): Promise<string | null> {
           resolve(null);
           sub.close();
         }
-      }, 10000);
+      }, 5000);
     });
   } catch (error) {
     console.error("Failed to fetch deletion event ID from Nostr:", error);
@@ -356,20 +369,16 @@ async function fetchDeletedDocuments(): Promise<string[]> {
             tags: event.tags,
           });
 
-          if (verifyEvent(event)) {
-            const tTags = event.tags.filter((tag) => tag[0] === "t");
-            tTags.forEach((tag) => {
-              if (tag[1] && tag[1] !== "kinnema-sync") {
-                deletedIds.push(tag[1]);
-                console.log("qqq", event);
-                console.log(
-                  `Parsed deleted document ID from event ${event.id}: ${tag[1]}`
-                );
-              }
-            });
-          } else {
-            console.warn("Event verification failed for event:", event.id);
-          }
+          const tTags = event.tags.filter((tag) => tag[0] === "t");
+          tTags.forEach((tag) => {
+            if (tag[1] && tag[1] !== "kinnema-sync") {
+              deletedIds.push(tag[1]);
+              console.log("qqq", event);
+              console.log(
+                `Parsed deleted document ID from event ${event.id}: ${tag[1]}`
+              );
+            }
+          });
         },
         oneose() {
           eoseCount++;
@@ -395,7 +404,7 @@ async function fetchDeletedDocuments(): Promise<string[]> {
         );
         sub.close();
         resolve(deletedIds);
-      }, 15000); // 15 second timeout
+      }, 10000);
     });
   } catch (error) {
     console.error("Failed to fetch deleted documents from Nostr:", error);
@@ -433,25 +442,17 @@ async function publishDeletionEvent(documentId: string) {
       privateKey
     );
 
-    if (verifyEvent(event)) {
-      const publishPromises = pool.publish(relayUrls, event);
-      const publishResults = await Promise.allSettled(publishPromises);
+    const publishPromises = pool.publish(relayUrls, event);
+    const publishResults = await Promise.allSettled(publishPromises);
 
-      const success = publishResults.some(
-        (r) => r.status === "fulfilled" && r.value
-      );
-      return {
-        id: documentId,
-        success,
-        error: success ? null : "Failed to publish deletion to any relay",
-      };
-    } else {
-      return {
-        id: documentId,
-        success: false,
-        error: "Event verification failed",
-      };
-    }
+    const success = publishResults.some(
+      (r) => r.status === "fulfilled" && r.value
+    );
+    return {
+      id: documentId,
+      success,
+      error: success ? null : "Failed to publish deletion to any relay",
+    };
   } catch (error) {
     return {
       id: documentId,
@@ -492,25 +493,17 @@ async function removeFromNostr(documentId: string) {
       privateKey
     );
 
-    if (verifyEvent(event)) {
-      const publishPromises = pool.publish(relayUrls, event);
-      const publishResults = await Promise.allSettled(publishPromises);
+    const publishPromises = pool.publish(relayUrls, event);
+    const publishResults = await Promise.allSettled(publishPromises);
 
-      const success = publishResults.some(
-        (r) => r.status === "fulfilled" && r.value
-      );
-      results.push({
-        id: documentId,
-        success,
-        error: success ? null : "Failed to publish deletion to any relay",
-      });
-    } else {
-      results.push({
-        id: documentId,
-        success: false,
-        error: "Event verification failed",
-      });
-    }
+    const success = publishResults.some(
+      (r) => r.status === "fulfilled" && r.value
+    );
+    results.push({
+      id: documentId,
+      success,
+      error: success ? null : "Failed to publish deletion to any relay",
+    });
   } catch (error) {
     results.push({
       id: documentId,
@@ -527,8 +520,9 @@ async function removeFromNostr(documentId: string) {
 
 async function publishToNostr(collection: string, documents: any[]) {
   const results = [];
+  const concurrencyLimit = 5;
 
-  for (const doc of documents) {
+  const processDocument = async (doc: any) => {
     try {
       const event = finalizeEvent(
         {
@@ -551,32 +545,30 @@ async function publishToNostr(collection: string, documents: any[]) {
         privateKey
       );
 
-      if (verifyEvent(event)) {
-        const publishPromises = pool.publish(relayUrls, event);
-        const publishResults = await Promise.allSettled(publishPromises);
+      const publishPromises = pool.publish(relayUrls, event);
+      const publishResults = await Promise.allSettled(publishPromises);
 
-        const success = publishResults.some(
-          (r) => r.status === "fulfilled" && r.value
-        );
-        results.push({
-          id: doc.id,
-          success,
-          error: success ? null : "Failed to publish to any relay",
-        });
-      } else {
-        results.push({
-          id: doc.id,
-          success: false,
-          error: "Event verification failed",
-        });
-      }
+      const success = publishResults.some(
+        (r) => r.status === "fulfilled" && r.value
+      );
+      return {
+        id: doc.id,
+        success,
+        error: success ? null : "Failed to publish to any relay",
+      };
     } catch (error) {
-      results.push({
+      return {
         id: doc.id,
         success: false,
         error: error?.toString(),
-      });
+      };
     }
+  };
+
+  for (let i = 0; i < documents.length; i += concurrencyLimit) {
+    const chunk = documents.slice(i, i + concurrencyLimit);
+    const chunkResults = await Promise.all(chunk.map(processDocument));
+    results.push(...chunkResults);
   }
 
   return results;

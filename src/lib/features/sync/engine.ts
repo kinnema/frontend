@@ -125,7 +125,7 @@ export class SyncEngine {
     this.nostrWorker = new NostrWorker.default();
 
     return new Promise<void>((resolve, reject) => {
-      this.nostrWorker!.onmessage = (event) => {
+      this.nostrWorker!.onmessage = async (event) => {
         const { type, payload } = event.data;
 
         switch (type) {
@@ -157,6 +157,9 @@ export class SyncEngine {
             break;
           case "result":
             this.handleSyncResult("nostr", payload);
+            break;
+          case "partial-sync":
+            await this.mergeRemoteData(payload.collection, payload.documents);
             break;
           case "error":
             console.error("Nostr worker error:", payload.error);

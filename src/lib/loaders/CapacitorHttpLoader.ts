@@ -1,14 +1,6 @@
 import { Capacitor, CapacitorHttp } from "@capacitor/core";
 import type Hls from "hls.js";
 
-/**
- * Custom HLS loader that uses CapacitorHTTP for native platforms
- * and falls back to the default loader for web platforms.
- *
- * This provides better performance and reliability on mobile devices
- * by leveraging native HTTP capabilities.
- */
-
 export async function createCapacitorHttpLoader() {
   const { default: Hls } = await import("hls.js");
 
@@ -32,13 +24,11 @@ export async function createCapacitorHttpLoader() {
       try {
         const startTime = performance.now();
 
-        // Determine if this is a binary request (TS segments) or text (m3u8 playlists)
         const isBinaryRequest =
           context.responseType === "arraybuffer" ||
           context.url.includes(".ts") ||
           context.url.includes(".m4s");
 
-        // Prepare headers with proper content type expectations
         const headers = new Headers({
           ...context.headers,
           "User-Agent": "VLC/3.0.17.4 LibVLC/3.0.9",
@@ -48,7 +38,6 @@ export async function createCapacitorHttpLoader() {
           `Fetch API loading: ${context.url} (binary: ${isBinaryRequest})`
         );
 
-        // Use Fetch API for the request
         const controller = new AbortController();
         const timeoutId = setTimeout(
           () => controller.abort(),
@@ -66,10 +55,8 @@ export async function createCapacitorHttpLoader() {
         if (response.ok) {
           let data: ArrayBuffer | string;
           if (isBinaryRequest) {
-            // For binary data (TS segments), handle ArrayBuffer
             data = await response.arrayBuffer();
           } else {
-            // For text data (m3u8 playlists)
             data = await response.text();
           }
 
@@ -78,7 +65,6 @@ export async function createCapacitorHttpLoader() {
             data: data,
           };
 
-          // Create stats object with the exact structure hls.js expects
           const stats = {
             aborted: false,
             loaded:
@@ -142,23 +128,20 @@ export async function createCapacitorHttpLoader() {
       try {
         const startTime = performance.now();
 
-        // Determine if this is a binary request (TS segments) or text (m3u8 playlists)
         const isBinaryRequest =
           context.responseType === "arraybuffer" ||
           context.url.includes(".ts") ||
           context.url.includes(".m4s");
 
-        // Prepare headers with proper content type expectations
         const headers = {
           ...context.headers,
-          "User-Agent": "VLC/3.0.17.4 LibVLC/3.0.9", // Match the capacitor config
+          "User-Agent": "VLC/3.0.17.4 LibVLC/3.0.9",
         };
 
         console.log(
           `CapacitorHTTP loading: ${context.url} (binary: ${isBinaryRequest})`
         );
 
-        // Use CapacitorHTTP for the request
         const response = await CapacitorHttp.get({
           url: context.url,
           headers,
@@ -172,11 +155,9 @@ export async function createCapacitorHttpLoader() {
         if (response.status >= 200 && response.status < 300) {
           let data;
           if (isBinaryRequest) {
-            // For binary data (TS segments), handle ArrayBuffer or base64
             if (response.data instanceof ArrayBuffer) {
               data = response.data;
             } else if (typeof response.data === "string") {
-              // Convert base64 to ArrayBuffer
               try {
                 const binaryString = atob(response.data);
                 const bytes = new Uint8Array(binaryString.length);
@@ -192,7 +173,6 @@ export async function createCapacitorHttpLoader() {
               data = response.data;
             }
           } else {
-            // For text data (m3u8 playlists)
             data =
               typeof response.data === "string"
                 ? response.data
@@ -204,7 +184,6 @@ export async function createCapacitorHttpLoader() {
             data: data,
           };
 
-          // Create stats object with the exact structure hls.js expects
           const stats = {
             aborted: false,
             loaded:
@@ -259,13 +238,10 @@ export async function createCapacitorHttpLoader() {
     }
 
     abort() {
-      // CapacitorHTTP doesn't support request cancellation in the same way
-      // but we can implement cleanup if needed
       super.abort();
     }
 
     destroy() {
-      // Cleanup resources
       super.destroy();
     }
   }

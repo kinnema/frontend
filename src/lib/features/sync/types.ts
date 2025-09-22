@@ -50,6 +50,7 @@ export interface WorkerMessage {
 
 export interface NostrWorkerMessage extends WorkerMessage {
   type: "init" | "sync" | "status" | "result" | "delete";
+  payload: any;
 }
 
 export interface WebRTCWorkerMessage extends WorkerMessage {
