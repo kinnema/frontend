@@ -1,110 +1,238 @@
-# Kinnema
+# Kinnema 🎬
 
-Kinnema is a modern movie application that provide users with a seamless experience for discovering, searching, and watching movies and TV series. Built with Next.js, TypeScript, and Tailwind CSS, Kinnema offers a fast, responsive, and user-friendly interface.
+> A modern, **decentralized** cross-platform streaming application built with React, TypeScript, and Electron
+> [https://kinnema.app](https://kinnema.app) > <img src="./public/icons/icon-512x512.png" alt="Kinnema App" width="100">
 
-[Live Demo](https://kinnema.vercel.app)
+## 🌟 Features
 
-<img width="1437" alt="Screenshot" src="image.png">
+- **🌐 Decentralized Sync** (experimental): No central server required - sync your data across devices using the Nostr protocol
+- **🔒 Data Sovereignty**: Your watch history and preferences stay under your control
+- **📡 Peer-to-Peer** (soon): Direct device-to-device synchronization without intermediaries
+- **🎬 Comprehensive Media Library**: Browse movies and TV series from popular networks like Netflix, HBO, and more
+- **🔍 Advanced Search**: Intelligent search functionality across multiple content sources
+- **📱 Cross-Device Sync** (Experimental): Synchronize your watch history and favorites across devices using Nostr protocol
+- **🎵 Subtitle Support** (Experimental, Native Only): Built-in subtitle functionality with customizable settings
+- **👥 Watch Together**: Share watching sessions with friends in real-time rooms
+- **⭐ Favorites Management**: Save and organize your favorite shows and movies
+- **🎨 Modern UI**: Beautiful, responsive interface built with Tailwind CSS/Shadcn
+- **🌙 Theme Support**: Dark/light theme switching
+- **🔌 Plugin System**: Extensible architecture with support for streaming plugins
+- **📺 HLS Streaming**: Support for adaptive streaming with HLS.js
+- **🔄 Auto-Updates**: Seamless app updates via Capacitor Updater
+- **💾 Offline Storage**: Local database with RxDB for offline functionality
+- **🌐 Internationalization**: Multi-language support with i18next
+- **🎮 PWA Ready**: Progressive Web App capabilities
+- **🔒 Secure**: Built-in authentication and secure data handling
 
-## Features
+## 🚀 Quick Start
 
-- **Browse & Search:** Discover trending movies and series, or search for specific titles.
-- **Authentication:** Secure login and user management.
-- **Favorites:** Add movies and series to your favorites list.
-- **Continue Watching:** Resume watching from where you left off.
-- **Responsive UI:** Optimized for all devices with a clean, modern design.
-- **API Integration:** Powered by TMDB for rich metadata and streaming links.
-- **Desktop / Electron support:** Desktop builds and improved Electron initialization and routing for a native desktop experience. (See <attachments> above for file contents.)
-- **Multilingual (i18n):** Integrated i18next for multilingual support and translations. (See <attachments> above for file contents.)
-- **Subtitles manager:** Added a subtitle manager for better subtitle handling, encoding support, and configuration. (See <attachments> above for file contents.)
-- **P2P sync between devices:** Peer-to-peer synchronization of state and collections across devices. (See <attachments> above for file contents.)
-- **Improved event handling (RxJS):** Replaced EventEmitter with RxJS Subjects for more robust event flow and state management. (See <attachments> above for file contents.)
-- **Favorites (RxDB):** Migrated favorites to RxDB for local/offline storage and improved performance. (See <attachments> above for file contents.)
-- **Picture-in-Picture & player theming:** Enhanced video player styling with MediaThemeSutro and added Picture-in-Picture support. (See <attachments> above for file contents.)
-- **CapacitorHttp integration:** Integrated CapacitorHttp for native network requests when running on mobile/native platforms. (See <attachments> above for file contents.)
-- **Sync settings UI:** Sync settings now display a Sync ID and include a clipboard copy action for easy sharing. (See <attachments> above for file contents.)
+### Prerequisites
 
-## Tech Stack
+- Node.js 18+
+- pnpm (recommended package manager)
+- Git
 
-- **Framework:** Vite/React
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS
-- **API:** TMDB
-- **State Management:** Custom hooks and Zustand
-- **Icons:** Lucide-react
+### Installation
 
-## Project Structure
+1. **Clone the repository**
 
-```
-.
-├── app/                # Next.js app directory (pages, layouts, providers)
-├── components/         # Shared React components
-├── hooks/              # Custom React hooks
-├── lib/                # API clients, models, constants, stores
-├── public/             # Static assets (icons, images)
-├── styles/             # Global styles (Tailwind, PostCSS)
-├── .env.example        # Example environment variables
-├── openapi.yaml        # OpenAPI spec for backend API
-├── package.json        # Project dependencies and scripts
-└── README.md           # Project documentation
-```
-
-## Getting Started
-
-1. **Clone the repository:**
-
-   ```sh
+   ```bash
    git clone https://github.com/kinnema/frontend.git
-   cd frontend
+   cd kinnema
    ```
 
-2. **Install dependencies:**
+2. **Install dependencies**
 
-   ```sh
-   npm install
+   ```bash
+   pnpm install
    ```
 
-3. **Configure environment variables:**
+3. **Start development server**
 
-   - Copy `.env.example` to `.env` and fill in the required values.
-
-4. **Run the development server:**
-
-   ```sh
-   npm run dev
+   ```bash
+   pnpm dev
    ```
 
-5. **Build for production:**
-   ```sh
-   npm run build
-   npm start
-   ```
+4. **Open your browser**
+   Navigate to `http://localhost:3000`
 
-## Configuration
+## 🏗️ Build & Deploy
 
-- **API Endpoints:** Configure API URLs and keys in the `.env` file.
+### Web Build
 
-## Contributing
+```bash
+pnpm build
+```
 
-Contributions are welcome! Please open issues or submit pull requests for improvements and bug fixes.
+### Desktop (Electron)
 
-## License
+```bash
+# Development
+pnpm electron:dev
 
-This project is licensed under the MIT License.
+# Build for current platform
+pnpm electron:build
+
+# Build for specific platforms
+pnpm electron:build:win    # Windows
+pnpm electron:build:mac    # macOS
+pnpm electron:build:linux  # Linux
+```
+
+### Mobile (Capacitor)
+
+#### Android
+
+```bash
+npx cap add android
+npx cap sync android
+npx cap open android
+```
+
+#### iOS
+
+```bash
+npx cap add ios
+npx cap sync ios
+npx cap open ios
+```
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+- **React 19** - Modern React with latest features
+- **TypeScript** - Type-safe JavaScript
+- **Vite** - Fast build tool and dev server
+- **TanStack Router** - Type-safe routing
+- **TanStack Query** - Server state management
+- **Zustand** - Client state management
+
+### UI Framework
+
+- **Tailwind CSS** - Utility-first CSS framework
+- **Radix UI** - Unstyled, accessible UI primitives
+- **Lucide React** - Beautiful icon library
+- **Motion** - Smooth animations
+- **Embla Carousel** - Touch-friendly carousels
+
+### Cross-Platform
+
+- **Electron** - Desktop applications
+- **Capacitor** - Native mobile apps
+- **PWA** - Progressive Web App support
+
+### Data & Networking
+
+- **RxDB** - Reactive database
+- **Dexie** - IndexedDB wrapper
+- **HLS.js** - HTTP Live Streaming
+- **Nostr Tools** - Decentralized sync protocol
+
+### Development Tools
+
+- **ESLint** - Code linting
+- **TypeScript** - Static type checking
+- **Concurrently** - Run multiple commands
+- **Wait-on** - Wait for resources
+
+## 📱 Platform Support
+
+| Platform    | Status          | Features                         |
+| ----------- | --------------- | -------------------------------- |
+| **Web**     | ✅ Full Support | All features available           |
+| **Desktop** | ✅ Full Support | Native desktop app with Electron |
+| **Android** | ✅ Full Support | Native Android app               |
+| **iOS**     | ✅ Full Support | Native iOS app                   |
+
+## 🎬 Core Features
+
+### Content Discovery
+
+- Browse trending movies and TV shows
+- Network-specific collections (Netflix, HBO, etc.)
+- Advanced search with filters
+- Personalized recommendations
+
+### Streaming Experience
+
+- High-quality video playback
+- Adaptive streaming with HLS
+- Multiple subtitle options
+- Picture-in-picture support
+- Full-screen mode
+
+### Customization
+
+- Dark/light themes
+- Experimental features
+- Language selection
+
+## 🔧 Configuration
+
+### Environment Variables
+
+Copy `.env.example` as `.env` file in the root directory:
+
+### Capacitor Configuration
+
+The app is configured for native deployment with Capacitor. See `capacitor.config.ts` for platform-specific settings.
+
+## 📚 Scripts
+
+| Script                | Description                   |
+| --------------------- | ----------------------------- |
+| `pnpm dev`            | Start development server      |
+| `pnpm build`          | Build for production          |
+| `pnpm lint`           | Run ESLint                    |
+| `pnpm electron:dev`   | Start Electron in development |
+| `pnpm electron:build` | Build Electron app            |
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- [The Movie Database (TMDB)](https://www.themoviedb.org/) for movie and TV data
+- [Radix UI](https://www.radix-ui.com/) for accessible UI components
+- [TanStack](https://tanstack.com/) for excellent React libraries
+- [Capacitor](https://capacitorjs.com/) for cross-platform capabilities
+
+## 📞 Support
+
+- 🐛 [Report Bugs](https://github.com/kinnema/frontend/issues)
+- 💡 [Feature Requests](https://github.com/kinnema/frontend/discussions)
+- 📧 [Contact Us](mailto:support@kinnema.app)
 
 ---
 
-Enjoy
+<div align="center">
+  <strong>Built with ❤️ by the Kinnema Team</strong>
+</div>
 
-## Recent changes
+## 🌐 Decentralized Architecture
 
-The following features were added recently (not already documented above):
+Kinnema embraces decentralization through:
 
-- i18n / Multilingual support — integrated i18next (commit a518a03). (See <attachments> above for file contents.)
-- Subtitles manager — added a subtitle manager for improved subtitle handling (commit 11e6c5b). (See <attachments> above for file contents.)
-- P2P sync between devices — initial peer-to-peer sync support and related improvements (commits 9d205da, 0ecdacd). (See <attachments> above for file contents.)
-- Favorites & local DB — migrated favorites to RxDB for offline/local storage (commit 3a3ab92 / 706588a). (See <attachments> above for file contents.)
-- Picture-in-Picture & MediaThemeSutro — enhanced video player styling and added Picture-in-Picture support (commit 8c3aeb0). (See <attachments> above for file contents.)
-- Native & Electron support improvements — added native integrations and improved Electron initialization/routing (commits a0b7761, e97eb40, 5dba297). (See <attachments> above for file contents.)
-- CapacitorHttp integration — integrated CapacitorHttp for native network requests in plugin manager and loaders (commit 9cf1328). (See <attachments> above for file contents.)
-- Sync settings UI — show Sync ID and provide clipboard copy functionality in sync settings (commit 9339b81). (See <attachments> above for file contents.)
+- **Nostr Protocol Integration**: Synchronize your watch history, favorites, and settings across devices without relying on centralized servers
+- **Local-First Data Storage**: All your data is stored locally using RxDB, with optional decentralized sync
+- **Plugin Ecosystem**: Extensible architecture supporting both centralized and decentralized content sources
+- **No Vendor Lock-in**: Your data remains portable and under your control
+
+### Why Decentralized?
+
+- **Privacy**: Your viewing habits aren't tracked by central authorities
+- **Resilience**: No single point of failure
+- **Censorship Resistance**: Content discovery through multiple sources
+- **Data Ownership**: You control your own data and preferences
