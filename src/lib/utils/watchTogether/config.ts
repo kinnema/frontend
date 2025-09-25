@@ -17,11 +17,10 @@ const STUN_SERVER = stunServer;
 type P2PConfig = BaseRoomConfig & RelayConfig & TurnConfig;
 
 export const getWatchTogetherConfig: (
-  config?: Partial<P2PConfig>
-) => P2PConfig = (config) => ({
-  appId: "com.kinnema",
-  password,
-  turnConfig: [
+  config?: Partial<P2PConfig>,
+  withTurn?: boolean
+) => P2PConfig = (config, withTurn) => {
+  const turnConfig = [
     {
       urls: "stun:stun.l.google.com:19302",
     },
@@ -35,6 +34,12 @@ export const getWatchTogetherConfig: (
       username: STUN_USERNAME,
       credential: STUN_CREDENTIAL,
     },
-  ],
-  ...config,
-});
+  ];
+
+  return {
+    appId: "com.kinnema",
+    password,
+    turnConfig: withTurn ? turnConfig : [],
+    ...config,
+  };
+};

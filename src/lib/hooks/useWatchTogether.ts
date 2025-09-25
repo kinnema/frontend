@@ -31,7 +31,7 @@ export function useWatchTogether() {
   }
 
   function createRoom(roomId: string) {
-    const p2pConfig = getWatchTogetherConfig();
+    const p2pConfig = getWatchTogetherConfig({}, true);
     const _room = joinChannel(p2pConfig, roomId);
     room.current = _room;
     const [sendAction, getAction] = room.current?.makeAction("WATCH");
