@@ -16,7 +16,7 @@ export default defineConfig({
     }),
     tanstackRouter({
       target: "react",
-      autoCodeSplitting: true,
+      autoCodeSplitting: isElectron ? false : true,
     }),
     react(),
   ],
@@ -28,11 +28,13 @@ export default defineConfig({
     outDir: "dist",
     rollupOptions: {
       output: {
-        manualChunks: {
-          hls: ["hls.js"],
-          rxdb: ["rxdb", "rxjs"],
-          nostr: ["nostr-tools"],
-        },
+        manualChunks: isElectron
+          ? undefined
+          : {
+              hls: ["hls.js"],
+              rxdb: ["rxdb", "rxjs"],
+              nostr: ["nostr-tools"],
+            },
       },
     },
     ...(isElectron && {
