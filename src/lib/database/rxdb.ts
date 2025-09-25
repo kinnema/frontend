@@ -6,6 +6,7 @@ import { getRxStorageDexie } from "rxdb/plugins/storage-dexie";
 import { RxDBUpdatePlugin } from "rxdb/plugins/update";
 import { FavoritedCollection, favoriteSchema } from "./favorites.schema";
 import { LastWatchedCollection, lastWatchedSchema } from "./lastWatched.schema";
+import { setupWebrtcReplication } from "./replication/webrtc.replication";
 
 export type KinnemaCollections = {
   lastWatched: LastWatchedCollection;
@@ -61,6 +62,10 @@ async function _create(): Promise<RxDatabase<KinnemaCollections>> {
   });
 
   await db.addCollections(collections);
+
+  setupWebrtcReplication(db).catch((err) => {
+    console.error("Error setting up WebRTC replication:", err);
+  });
 
   return db;
 }

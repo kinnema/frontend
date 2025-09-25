@@ -10,20 +10,14 @@ import {
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/hooks/use-toast";
+import { getDb } from "@/lib/database/rxdb";
 import { useSyncStore } from "@/lib/features/sync/store";
 import { ConnectionStatus } from "@/lib/features/sync/types";
 import { useNavigate } from "@tanstack/react-router";
-import {
-  Activity,
-  Globe,
-  Monitor,
-  Settings,
-  Shield,
-  Smartphone,
-  Wifi,
-  WifiOff,
-} from "lucide-react";
+import { Activity, Globe, Settings, Shield, Wifi, WifiOff } from "lucide-react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { ConnectedDevices } from "./ConnectedDevices";
 import SyncRelaySettingsConfigurator from "./SyncRelaySettingsConfigurator";
 
 export default function SyncFeature() {
@@ -38,6 +32,7 @@ export default function SyncFeature() {
     updateCollectionConfig,
     clearIdentity,
   } = useSyncStore();
+
   const { t } = useTranslation();
   const getStatusColor = (status: ConnectionStatus) => {
     switch (status) {
@@ -45,12 +40,18 @@ export default function SyncFeature() {
         return "bg-green-500";
       case ConnectionStatus.CONNECTING:
         return "bg-yellow-500";
+      case ConnectionStatus.IDLE:
+        return "bg-yellow-500";
       case ConnectionStatus.ERROR:
         return "bg-red-500";
       default:
         return "bg-gray-500";
     }
   };
+
+  useEffect(() => {
+    getDb();
+  }, []);
 
   const handleSetupSync = async () => {
     navigate({ to: "/settings/sync/setup" });
@@ -259,32 +260,7 @@ export default function SyncFeature() {
 
       <SyncRelaySettingsConfigurator />
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Monitor className="h-5 w-5" />
-            {t("sync.connected_devices")}
-          </CardTitle>
-          <CardDescription>
-            {t("sync.connected_devices_description")}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-8">
-            <Smartphone className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <p className="text-sm text-muted-foreground">
-              {identity
-                ? "Device management coming soon. Your current device is configured for sync."
-                : "Setup sync to connect multiple devices."}
-            </p>
-            {!identity && (
-              <Button className="mt-4" onClick={handleSetupSync}>
-                {t("sync.setup")}
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      <ConnectedDevices />
     </div>
   );
 }

@@ -1,5 +1,6 @@
+import { indexedDbZustandStorage } from "@/lib/stores/stores/indexedDb";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 import { SyncMnemonic } from "./mnemonic";
 import { ConnectionStatus, SyncCollection, SyncStore } from "./types";
 
@@ -115,6 +116,8 @@ export const useSyncStore = create<SyncStore>()(
     }),
     {
       name: "sync-store",
+      storage: createJSONStorage(() => indexedDbZustandStorage),
+      version: import.meta.env.__APP_VERSION__,
     }
   )
 );

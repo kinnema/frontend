@@ -35,6 +35,7 @@ export enum ConnectionStatus {
   CONNECTING = "connecting",
   CONNECTED = "connected",
   ERROR = "error",
+  IDLE = "idle",
 }
 
 export interface SyncResult {
@@ -100,85 +101,6 @@ export interface NostrWorkerMessage extends WorkerMessage {
     | "result-plugins"
     | "deleted-plugins";
   payload: any;
-}
-
-export interface WebRTCWorkerInitMessage {
-  type: "init";
-  payload: {
-    peerId: string;
-  };
-}
-
-export interface WebRTCWorkerSyncMessage {
-  type: "sync";
-  payload: {
-    collection: string;
-    documents: any[];
-  };
-}
-
-export interface WebRTCWorkerSyncPluginsMessage {
-  type: "sync-plugins";
-  payload: IPlugin[];
-}
-export interface WebRTCWorkerPeerMessage {
-  type: "peer";
-  payload: any;
-}
-
-export interface WebRTCWorkerStatusMessage {
-  type: "status";
-  payload: {
-    status: ConnectionStatus;
-  };
-}
-
-export interface WebRTCWorkerResultMessage {
-  type: "result";
-  payload: {
-    collection: string;
-    synced: number;
-    total: number;
-    peers: string[];
-  };
-}
-
-export interface WebRTCWorkerResultPluginsMessage {
-  type: "result-plugins";
-  payload: IPlugin[];
-}
-
-export interface WebRTCWorkerErrorMessage {
-  type: "error";
-  payload: {
-    error: string;
-  };
-}
-
-export type WebRTCWorkerOutgoingMessage =
-  | WebRTCWorkerStatusMessage
-  | WebRTCWorkerResultMessage
-  | WebRTCWorkerResultPluginsMessage
-  | WebRTCWorkerPeerMessage
-  | WebRTCWorkerErrorMessage;
-
-export type WebRTCWorkerIncomingMessage =
-  | WebRTCWorkerInitMessage
-  | WebRTCWorkerSyncMessage
-  | WebRTCWorkerPeerMessage
-  | WebRTCWorkerStatusMessage
-  | WebRTCWorkerResultMessage
-  | WebRTCWorkerSyncPluginsMessage;
-
-export interface WebRTCWorkerMessage extends WorkerMessage {
-  type:
-    | "init"
-    | "sync"
-    | "peer"
-    | "status"
-    | "result"
-    | "sync-plugins"
-    | "result-plugins";
 }
 
 export interface TypedWorker<TIncoming, TOutgoing> extends Worker {

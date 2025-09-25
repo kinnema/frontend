@@ -19,15 +19,6 @@ import {
   NostrWorkerSyncPluginsMessage,
   SyncResult,
   TypedWorker,
-  WebRTCWorkerErrorMessage,
-  WebRTCWorkerInitMessage,
-  WebRTCWorkerOutgoingMessage,
-  WebRTCWorkerPeerMessage,
-  WebRTCWorkerResultMessage,
-  WebRTCWorkerResultPluginsMessage,
-  WebRTCWorkerStatusMessage,
-  WebRTCWorkerSyncMessage,
-  WebRTCWorkerSyncPluginsMessage,
 } from "./types";
 
 export class SyncEngine {
@@ -38,15 +29,7 @@ export class SyncEngine {
     | NostrWorkerSyncPluginsMessage,
     NostrWorkerOutgoingMessage
   > | null = null;
-  private webrtcWorker: TypedWorker<
-    | WebRTCWorkerInitMessage
-    | WebRTCWorkerSyncMessage
-    | WebRTCWorkerPeerMessage
-    | WebRTCWorkerStatusMessage
-    | WebRTCWorkerResultMessage
-    | WebRTCWorkerSyncPluginsMessage,
-    WebRTCWorkerOutgoingMessage
-  > | null = null;
+
   private isRunning = false;
   private syncInterval: NodeJS.Timeout | null = null;
 
@@ -84,7 +67,6 @@ export class SyncEngine {
     console.log("SyncEngine.stop() called - current state:", {
       isRunning: this.isRunning,
       hasNostrWorker: !!this.nostrWorker,
-      hasWebRTCWorker: !!this.webrtcWorker,
       hasSyncInterval: !!this.syncInterval,
     });
 
@@ -103,14 +85,7 @@ export class SyncEngine {
       this.nostrWorker = null;
     }
 
-    if (this.webrtcWorker) {
-      console.log("Terminating WebRTC worker");
-      this.webrtcWorker.terminate();
-      this.webrtcWorker = null;
-    }
-
     useSyncStore.getState().setNostrStatus(ConnectionStatus.DISCONNECTED);
-    useSyncStore.getState().setWebRTCStatus(ConnectionStatus.DISCONNECTED);
     console.log("Sync engine fully stopped");
   }
 
@@ -147,7 +122,6 @@ export class SyncEngine {
           identity.nostrPublicKey,
           nostrRelays
         ),
-        this.initWebRTCWorker(identity.p2pId),
       ]);
       console.log("All workers initialized successfully");
     } catch (error) {
@@ -349,7 +323,6 @@ export class SyncEngine {
     console.log("Current sync engine state:", {
       isRunning: this.isRunning,
       hasNostrWorker: !!this.nostrWorker,
-      hasWebRTCWorker: !!this.webrtcWorker,
     });
 
     await this.syncPlugins();
@@ -389,64 +362,6 @@ export class SyncEngine {
     console.log("=== End Debug ===");
   }
 
-  private async initWebRTCWorker(peerId: string) {
-    const WebRTCWorker = await import("./workers/webrtc.worker?worker");
-    this.webrtcWorker = new WebRTCWorker.default();
-
-    return new Promise<void>((resolve, reject) => {
-      this.webrtcWorker!.onmessage = (event) => {
-        const message = event.data;
-        const { type } = message;
-
-        switch (type) {
-          case "status":
-            const statusMessage = message as WebRTCWorkerStatusMessage;
-            useSyncStore
-              .getState()
-              .setWebRTCStatus(statusMessage.payload.status);
-            // Resolve when worker is connected
-            if (statusMessage.payload.status === ConnectionStatus.CONNECTED) {
-              console.log("WebRTC worker initialization completed");
-              resolve();
-            }
-            break;
-          case "result":
-            const resultMessage = message as WebRTCWorkerResultMessage;
-            this.handleSyncResult("webrtc", resultMessage.payload);
-            break;
-          case "result-plugins":
-            const pluginResultMessage =
-              message as WebRTCWorkerResultPluginsMessage;
-            this.handlePluginSyncResult(pluginResultMessage.payload, "webrtc");
-            break;
-          case "peer":
-            const peerMessage = message as WebRTCWorkerPeerMessage;
-            console.log("Peer event:", peerMessage.payload);
-            break;
-          case "error":
-            const errorMessage = message as WebRTCWorkerErrorMessage;
-            console.error("WebRTC worker error:", errorMessage.payload.error);
-            useSyncStore.getState().setWebRTCStatus(ConnectionStatus.ERROR);
-            if (errorMessage.payload.error.includes("Initialization failed")) {
-              reject(new Error(errorMessage.payload.error));
-            }
-            break;
-        }
-      };
-
-      const webRTCInitMessage: WebRTCWorkerInitMessage = {
-        type: "init",
-        payload: { peerId },
-      };
-      this.webrtcWorker!.postMessage(webRTCInitMessage);
-
-      // Add timeout for initialization
-      setTimeout(() => {
-        reject(new Error("WebRTC worker initialization timeout"));
-      }, 10000); // 10 second timeout
-    });
-  }
-
   private async startSync() {
     const { collections } = useSyncStore.getState();
 
@@ -477,23 +392,8 @@ export class SyncEngine {
         };
         this.nostrWorker.postMessage(syncMessage);
       }
-
-      if (collection.webrtcEnabled && this.webrtcWorker) {
-        console.log(
-          `Starting WebRTC sync for ${collection.name} with ${documents.length} documents`
-        );
-        const webRTCSyncMessage: WebRTCWorkerSyncMessage = {
-          type: "sync",
-          payload: {
-            collection: collection.name,
-            documents,
-          },
-        };
-        this.webrtcWorker.postMessage(webRTCSyncMessage);
-      }
     }
 
-    // Sync plugins with both Nostr and WebRTC if enabled
     await this.syncPlugins();
   }
 
@@ -518,17 +418,6 @@ export class SyncEngine {
       this.nostrWorker.postMessage(syncPluginsMessage);
     } else {
       console.log("Nostr worker not available, skipping Nostr plugin sync");
-    }
-
-    if (this.webrtcWorker) {
-      console.log("Starting WebRTC plugin sync...");
-      const syncPluginsMessage: WebRTCWorkerSyncPluginsMessage = {
-        type: "sync-plugins",
-        payload: plugins,
-      };
-      this.webrtcWorker.postMessage(syncPluginsMessage);
-    } else {
-      console.log("WebRTC worker not available, skipping WebRTC plugin sync");
     }
   }
 
@@ -561,7 +450,7 @@ export class SyncEngine {
 
   private handlePluginSyncResult(
     payload: IPlugin[],
-    source: "nostr" | "webrtc" = "nostr"
+    source: "nostr" = "nostr"
   ) {
     console.log(`Plugin sync result from ${source}:`, payload);
 
@@ -608,7 +497,7 @@ export class SyncEngine {
     });
   }
 
-  private handleSyncResult(type: "nostr" | "webrtc", payload: any) {
+  private handleSyncResult(type: "nostr", payload: any) {
     const result: SyncResult = {
       collection: payload.collection,
       type,
