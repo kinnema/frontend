@@ -313,8 +313,23 @@ export class SyncEngine {
     this.nostrWorker.postMessage(deleteMessage);
   }
 
+  private isPluginSyncEnabled() {
+    const pluginCollection = useSyncStore
+      .getState()
+      .collections.find((c) => c.name === "plugins");
+
+    if (!pluginCollection?.enabled || !pluginCollection.nostrEnabled) {
+      console.error("Plugin collection sync is disabled");
+      return;
+    }
+
+    return true;
+  }
+
   public async syncPluginsManually() {
-    console.log("Manual plugin sync requested");
+    const isEnabled = this.isPluginSyncEnabled();
+    if (!isEnabled) return;
+
     if (!this.isRunning) {
       console.error("Sync engine is not running - call start() first");
       return;
@@ -398,6 +413,19 @@ export class SyncEngine {
   }
 
   private async syncPlugins() {
+    const isEnabled = this.isPluginSyncEnabled();
+    if (!isEnabled) return;
+
+    if (!this.isRunning) {
+      console.error("Sync engine is not running - call start() first");
+      return;
+    }
+
+    console.log("Current sync engine state:", {
+      isRunning: this.isRunning,
+      hasNostrWorker: !!this.nostrWorker,
+    });
+
     const plugins = usePluginRegistry
       .getState()
       .getAllRemoteEnabledPlugins()

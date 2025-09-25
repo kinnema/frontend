@@ -23,7 +23,9 @@ export async function setupWebrtcReplication(
     config: p2pConfig,
   });
   const p2pId = useSyncStore.getState().identity?.p2pId;
-  const availableCollections = useSyncStore.getState().collections;
+  const availableCollections = useSyncStore
+    .getState()
+    .collections.filter((col) => col.isRxdb);
 
   if (!p2pId || !availableCollections) {
     console.warn(

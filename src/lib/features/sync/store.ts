@@ -10,12 +10,21 @@ const defaultCollections: SyncCollection[] = [
     enabled: true,
     nostrEnabled: true,
     webrtcEnabled: true,
+    isRxdb: true,
   },
   {
     name: "favorite",
     enabled: true,
     nostrEnabled: true,
     webrtcEnabled: true,
+    isRxdb: true,
+  },
+  {
+    name: "plugins",
+    enabled: true,
+    nostrEnabled: true,
+    webrtcEnabled: true,
+    isRxdb: false,
   },
 ];
 

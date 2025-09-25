@@ -14,6 +14,7 @@ export interface SyncCollection {
   enabled: boolean;
   nostrEnabled: boolean;
   webrtcEnabled: boolean;
+  isRxdb?: boolean;
 }
 
 export interface SyncState {
