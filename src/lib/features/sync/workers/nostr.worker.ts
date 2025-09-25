@@ -1,5 +1,7 @@
 import { Filter, SimplePool, finalizeEvent, verifyEvent } from "nostr-tools";
 import { ConnectionStatus, NostrWorkerMessage } from "../types";
+import { getEventId } from "./events/core";
+import { deletePluginFromNostr, syncPlugins } from "./events/nostr/plugins";
 
 let pool: SimplePool;
 let privateKey: Uint8Array;
@@ -19,8 +21,35 @@ self.onmessage = async (event: MessageEvent<NostrWorkerMessage>) => {
         await handleInit(payload);
         break;
       case "delete":
-        await removeFromNostr(payload);
+        const p = payload as { type: "plugin" | "document"; id: string };
+        switch (p.type) {
+          case "plugin":
+            await deletePluginFromNostr(p.id, {
+              isInitialized,
+              pool,
+              publicKey,
+              relays: relayUrls,
+              privateKey,
+            });
+            break;
+          case "document":
+            await removeFromNostr(p.id);
+            break;
+          default:
+            console.warn("Unknown delete type:", p.type);
+        }
         break;
+
+      case "sync-plugins":
+        await syncPlugins(payload, {
+          isInitialized,
+          pool,
+          publicKey,
+          relays: relayUrls,
+          privateKey,
+        });
+        break;
+
       case "sync":
         if (!isInitialized) {
           console.error(
@@ -280,63 +309,6 @@ async function fetchFromNostr(collection: string): Promise<any[]> {
     return [];
   }
 }
-async function getEventId(documentId: string): Promise<string | null> {
-  try {
-    const filter: Filter = {
-      kinds: [5],
-      "#t": ["kinnema-sync", documentId],
-      authors: [publicKey],
-      limit: 1,
-    };
-
-    console.log(
-      `Fetching deletion event ID from Nostr for documentId: ${documentId}`
-    );
-    console.log("Filter:", filter);
-    console.log("Relay URLs:", relayUrls);
-
-    return new Promise((resolve) => {
-      let eventFound = false;
-
-      const sub = pool.subscribe(relayUrls, filter, {
-        onevent(event) {
-          if (!eventFound && verifyEvent(event)) {
-            eventFound = true;
-            console.log(
-              `Found deletion event for documentId ${documentId}:`,
-              event.id
-            );
-            resolve(event.id);
-            sub.close();
-          }
-        },
-        oneose() {
-          if (!eventFound) {
-            console.log(`No deletion event found for documentId ${documentId}`);
-            resolve(null);
-            sub.close();
-          }
-        },
-        onclose(reason) {
-          console.log("Subscription closed:", reason);
-        },
-      });
-
-      setTimeout(() => {
-        if (!eventFound) {
-          console.log(
-            `Timeout reached, no deletion event found for documentId ${documentId}`
-          );
-          resolve(null);
-          sub.close();
-        }
-      }, 5000);
-    });
-  } catch (error) {
-    console.error("Failed to fetch deletion event ID from Nostr:", error);
-    return null;
-  }
-}
 
 async function fetchDeletedDocuments(): Promise<string[]> {
   try {
@@ -344,7 +316,6 @@ async function fetchDeletedDocuments(): Promise<string[]> {
       {
         kinds: [5],
         "#t": ["kinnema-sync"],
-
         authors: [publicKey],
         limit: 100,
       },
@@ -463,7 +434,13 @@ async function publishDeletionEvent(documentId: string) {
 }
 
 async function removeFromNostr(documentId: string) {
-  const eventId = await getEventId(documentId);
+  const eventId = await getEventId(documentId, {
+    isInitialized,
+    publicKey,
+    relays: relayUrls,
+    pool,
+    privateKey,
+  });
   const results = [];
 
   self.postMessage({

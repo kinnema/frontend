@@ -1,8 +1,10 @@
+import { IPlugin } from "@/lib/types/plugin.type";
 import { ConnectionStatus, WebRTCWorkerMessage } from "../types";
 
 let peerId: string;
 let isInitialized = false;
 let peers: Set<string> = new Set();
+let syncedPlugins: IPlugin[] = [];
 
 self.onmessage = async (event: MessageEvent<WebRTCWorkerMessage>) => {
   const { type, payload } = event.data;
@@ -14,6 +16,9 @@ self.onmessage = async (event: MessageEvent<WebRTCWorkerMessage>) => {
         break;
       case "sync":
         await handleSync(payload);
+        break;
+      case "sync-plugins":
+        await handleSyncPlugins(payload);
         break;
       case "peer":
         handlePeerEvent(payload);
@@ -28,6 +33,23 @@ self.onmessage = async (event: MessageEvent<WebRTCWorkerMessage>) => {
     });
   }
 };
+
+async function handleSyncPlugins(plugins: IPlugin[]) {
+  console.log("WebRTC Worker: Syncing plugins...", plugins);
+
+  if (!isInitialized) {
+    throw new Error("Worker not initialized");
+  }
+
+  self.postMessage({
+    type: "result-plugins",
+    payload: [], //
+  });
+
+  syncedPlugins = plugins;
+
+  console.log(`WebRTC Worker: Stored ${plugins.length} plugins for P2P sync`);
+}
 
 function handleInit(payload: any) {
   peerId = payload.peerId;

@@ -3,6 +3,7 @@ import { produce } from "immer";
 import { v4 as uuidv4 } from "uuid";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { syncEngine } from "../features/sync";
 import { indexedDbZustandStorage } from "../stores/stores/indexedDb";
 import {
   IPlugin,
@@ -15,6 +16,7 @@ import { isNativePlatform } from "../utils/native";
 interface PluginRegistryState {
   plugins: IPlugin[];
   registerPlugin: (url: string) => Promise<IPlugin | void>;
+  addPlugin: (plugin: IPlugin) => IPlugin;
   registerLocalPlugin: (
     manifest: IPluginManifest,
     handler: IPluginHandler
@@ -27,6 +29,7 @@ interface PluginRegistryState {
   updatePlugins: () => Promise<number>;
   updatePlugin: (pluginId: string) => Promise<void>;
   getAllEnabledPlugins: () => IPlugin[];
+  getAllRemoteEnabledPlugins: () => IPlugin[];
   isUpdating: IPluginUpdating | null;
 }
 
@@ -71,6 +74,8 @@ export const usePluginRegistry = create<PluginRegistryState>()(
           manifest,
         };
         set((state) => ({ plugins: [...state.plugins, plugin] }));
+
+        await syncEngine.syncPluginsManually();
         return plugin;
       },
 
@@ -167,7 +172,11 @@ export const usePluginRegistry = create<PluginRegistryState>()(
         });
       },
 
-      unregisterPlugin: (id: string) => {
+      unregisterPlugin: async (id: string) => {
+        await syncEngine.deleteNostrEvent("plugin", id).catch((error) => {
+          console.error(`Failed to delete plugin event from Nostr:`, error);
+        });
+
         set((state) => ({
           plugins: state.plugins.filter((p) => p.id !== id),
         }));
@@ -200,6 +209,17 @@ export const usePluginRegistry = create<PluginRegistryState>()(
         }
 
         return plugins.filter((p) => p.manifest.supportedTypes?.includes(type));
+      },
+      getAllRemoteEnabledPlugins: () => {
+        return get().plugins.filter((p) => p.enabled && p.type === "remote");
+      },
+      addPlugin: (plugin: IPlugin) => {
+        if (get().plugins.some((p) => p.id === plugin.id)) {
+          throw new Error(`Plugin ${plugin.name} is already registered.`);
+        }
+
+        set((state) => ({ plugins: [...state.plugins, plugin] }));
+        return plugin;
       },
     }),
     {

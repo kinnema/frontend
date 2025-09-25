@@ -1,11 +1,52 @@
 import { getDb } from "@/lib/database/rxdb";
+import { usePluginRegistry } from "@/lib/plugins/usePluginRegistry";
+import { IPlugin } from "@/lib/types/plugin.type";
 import { lastSyncedAt$, syncingStatus$ } from "./observables";
 import { useSyncStore } from "./store";
-import { ConnectionStatus, SyncResult } from "./types";
+import {
+  ConnectionStatus,
+  NostrWorkerDeleteMessage,
+  NostrWorkerErrorMessage,
+  NostrWorkerInitMessage,
+  NostrWorkerMergedDeletionsMessage,
+  NostrWorkerOutgoingMessage,
+  NostrWorkerPartialSyncMessage,
+  NostrWorkerRelayStatusMessage,
+  NostrWorkerResultMessage,
+  NostrWorkerResultPluginsMessage,
+  NostrWorkerStatusMessage,
+  NostrWorkerSyncMessage,
+  NostrWorkerSyncPluginsMessage,
+  SyncResult,
+  TypedWorker,
+  WebRTCWorkerErrorMessage,
+  WebRTCWorkerInitMessage,
+  WebRTCWorkerOutgoingMessage,
+  WebRTCWorkerPeerMessage,
+  WebRTCWorkerResultMessage,
+  WebRTCWorkerResultPluginsMessage,
+  WebRTCWorkerStatusMessage,
+  WebRTCWorkerSyncMessage,
+  WebRTCWorkerSyncPluginsMessage,
+} from "./types";
 
 export class SyncEngine {
-  private nostrWorker: Worker | null = null;
-  private webrtcWorker: Worker | null = null;
+  private nostrWorker: TypedWorker<
+    | NostrWorkerInitMessage
+    | NostrWorkerSyncMessage
+    | NostrWorkerDeleteMessage
+    | NostrWorkerSyncPluginsMessage,
+    NostrWorkerOutgoingMessage
+  > | null = null;
+  private webrtcWorker: TypedWorker<
+    | WebRTCWorkerInitMessage
+    | WebRTCWorkerSyncMessage
+    | WebRTCWorkerPeerMessage
+    | WebRTCWorkerStatusMessage
+    | WebRTCWorkerResultMessage
+    | WebRTCWorkerSyncPluginsMessage,
+    WebRTCWorkerOutgoingMessage
+  > | null = null;
   private isRunning = false;
   private syncInterval: NodeJS.Timeout | null = null;
 
@@ -22,7 +63,7 @@ export class SyncEngine {
       console.log("Sync not starting - no identity configured");
       return;
     }
-    1;
+
     if (this.isRunning) {
       console.log("Sync not starting - already active, call stop() first");
       return;
@@ -85,7 +126,6 @@ export class SyncEngine {
   }
 
   private startPeriodicSync() {
-    // Sync every 5 minutes to fetch remote updates
     this.syncInterval = setInterval(async () => {
       if (this.isRunning) {
         console.log("Running periodic sync...");
@@ -126,7 +166,8 @@ export class SyncEngine {
 
     return new Promise<void>((resolve, reject) => {
       this.nostrWorker!.onmessage = async (event) => {
-        const { type, payload } = event.data;
+        const message = event.data;
+        const { type } = message;
 
         switch (type) {
           case "sync-start":
@@ -137,54 +178,97 @@ export class SyncEngine {
             lastSyncedAt$.next(new Date());
             break;
           case "merged-deletions":
-            const { deletedIds } = payload;
+            const mergedDeletionsMessage =
+              message as NostrWorkerMergedDeletionsMessage;
+            const { deletedIds } = mergedDeletionsMessage.payload;
             console.log(
               `Received ${deletedIds.length} merged deleted IDs from Nostr worker`
             );
             this.handleDeletedIds(deletedIds);
             break;
           case "relay-status":
-            const { relay, status } = payload;
+            const relayStatusMessage = message as NostrWorkerRelayStatusMessage;
+            const { relay, status } = relayStatusMessage.payload;
             useSyncStore.getState().setRelayStatus(relay, status);
             console.log(`Relay ${relay} status: ${status}`);
             break;
           case "status":
-            useSyncStore.getState().setNostrStatus(payload.status);
-            if (payload.status === ConnectionStatus.CONNECTED) {
+            const statusMessage = message as NostrWorkerStatusMessage;
+            useSyncStore
+              .getState()
+              .setNostrStatus(statusMessage.payload.status);
+            if (statusMessage.payload.status === ConnectionStatus.CONNECTED) {
               console.log("Nostr worker initialization completed");
               resolve();
             }
             break;
           case "result":
-            this.handleSyncResult("nostr", payload);
+            const resultMessage = message as NostrWorkerResultMessage;
+            this.handleSyncResult("nostr", resultMessage.payload);
+            break;
+          case "result-plugins":
+            const pluginResultMessage =
+              message as NostrWorkerResultPluginsMessage;
+            this.handlePluginSyncResult(pluginResultMessage.payload, "nostr");
+            break;
+          case "deleted-plugins":
+            this.handleDeletedPlugins(message.payload);
             break;
           case "partial-sync":
-            await this.mergeRemoteData(payload.collection, payload.documents);
+            const partialSyncMessage = message as NostrWorkerPartialSyncMessage;
+            await this.mergeRemoteData(
+              partialSyncMessage.payload.collection,
+              partialSyncMessage.payload.documents
+            );
             break;
           case "error":
-            console.error("Nostr worker error:", payload.error);
+            const errorMessage = message as NostrWorkerErrorMessage;
+            console.error("Nostr worker error:", errorMessage.payload.error);
             useSyncStore.getState().setNostrStatus(ConnectionStatus.ERROR);
 
-            if (payload.error.includes("Initialization failed")) {
-              reject(new Error(payload.error));
+            if (errorMessage.payload.error.includes("Initialization failed")) {
+              reject(new Error(errorMessage.payload.error));
             }
             break;
         }
       };
 
-      this.nostrWorker!.postMessage({
+      const initMessage: NostrWorkerInitMessage = {
         type: "init",
         payload: {
           privateKeyHex: privateKey,
           publicKeyHex: publicKey,
           relays,
         },
-      });
+      };
+      this.nostrWorker!.postMessage(initMessage);
 
       setTimeout(() => {
         reject(new Error("Nostr worker initialization timeout"));
       }, 10000);
     });
+  }
+  private async handleDeletedPlugins(
+    deletedPlugins: { pluginId: string; deletedAt: number }[]
+  ) {
+    try {
+      console.log(
+        `Handling ${deletedPlugins.length} deleted plugins from Nostr worker`
+      );
+
+      for (const { pluginId, deletedAt } of deletedPlugins) {
+        console.log(
+          `Deleting local plugin ${pluginId} (deleted at ${deletedAt})`
+        );
+        const pluginRegistry = usePluginRegistry.getState();
+        const existing = pluginRegistry.getPlugin(pluginId);
+        if (existing) {
+          pluginRegistry.unregisterPlugin(pluginId);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to handle deleted plugins:", error);
+    }
   }
 
   private async handleDeletedIds(deletedIds: string[]) {
@@ -236,16 +320,73 @@ export class SyncEngine {
     }
   }
 
-  public async deleteNostrEvent(documentId: string) {
+  public async deleteNostrEvent(
+    type: "plugin" | "document",
+    documentId: string
+  ) {
     if (!this.nostrWorker) {
       console.error("Nostr worker is not initialized");
       return;
     }
 
-    this.nostrWorker.postMessage({
+    const deleteMessage: NostrWorkerDeleteMessage = {
       type: "delete",
-      payload: documentId,
+      payload: {
+        type,
+        id: documentId,
+      },
+    };
+    this.nostrWorker.postMessage(deleteMessage);
+  }
+
+  public async syncPluginsManually() {
+    console.log("Manual plugin sync requested");
+    if (!this.isRunning) {
+      console.error("Sync engine is not running - call start() first");
+      return;
+    }
+
+    console.log("Current sync engine state:", {
+      isRunning: this.isRunning,
+      hasNostrWorker: !!this.nostrWorker,
+      hasWebRTCWorker: !!this.webrtcWorker,
     });
+
+    await this.syncPlugins();
+  }
+
+  public async debugPluginSync() {
+    console.log("=== Plugin Sync Debug ===");
+
+    const pluginRegistry = usePluginRegistry.getState();
+    const allPlugins = pluginRegistry.plugins;
+    const remotePlugins = pluginRegistry.getAllRemoteEnabledPlugins();
+
+    console.log("Plugin registry state:", {
+      totalPlugins: allPlugins.length,
+      remoteEnabledPlugins: remotePlugins.length,
+      plugins: allPlugins.map((p) => ({
+        id: p.id,
+        name: p.name,
+        type: p.type,
+        enabled: p.enabled,
+        url: p.url,
+      })),
+    });
+
+    const syncState = useSyncStore.getState();
+    console.log("Sync state:", {
+      isActive: syncState.isActive,
+      nostrStatus: syncState.nostrStatus,
+      identity: !!syncState.identity,
+      relays: syncState.nostrRelays.length,
+    });
+
+    if (syncState.identity) {
+      console.log("Identity public key:", syncState.identity.nostrPublicKey);
+    }
+
+    console.log("=== End Debug ===");
   }
 
   private async initWebRTCWorker(peerId: string) {
@@ -254,38 +395,50 @@ export class SyncEngine {
 
     return new Promise<void>((resolve, reject) => {
       this.webrtcWorker!.onmessage = (event) => {
-        const { type, payload } = event.data;
+        const message = event.data;
+        const { type } = message;
 
         switch (type) {
           case "status":
-            useSyncStore.getState().setWebRTCStatus(payload.status);
+            const statusMessage = message as WebRTCWorkerStatusMessage;
+            useSyncStore
+              .getState()
+              .setWebRTCStatus(statusMessage.payload.status);
             // Resolve when worker is connected
-            if (payload.status === ConnectionStatus.CONNECTED) {
+            if (statusMessage.payload.status === ConnectionStatus.CONNECTED) {
               console.log("WebRTC worker initialization completed");
               resolve();
             }
             break;
           case "result":
-            this.handleSyncResult("webrtc", payload);
+            const resultMessage = message as WebRTCWorkerResultMessage;
+            this.handleSyncResult("webrtc", resultMessage.payload);
+            break;
+          case "result-plugins":
+            const pluginResultMessage =
+              message as WebRTCWorkerResultPluginsMessage;
+            this.handlePluginSyncResult(pluginResultMessage.payload, "webrtc");
             break;
           case "peer":
-            console.log("Peer event:", payload);
+            const peerMessage = message as WebRTCWorkerPeerMessage;
+            console.log("Peer event:", peerMessage.payload);
             break;
           case "error":
-            console.error("WebRTC worker error:", payload.error);
+            const errorMessage = message as WebRTCWorkerErrorMessage;
+            console.error("WebRTC worker error:", errorMessage.payload.error);
             useSyncStore.getState().setWebRTCStatus(ConnectionStatus.ERROR);
-            // Reject on initialization error
-            if (payload.error.includes("Initialization failed")) {
-              reject(new Error(payload.error));
+            if (errorMessage.payload.error.includes("Initialization failed")) {
+              reject(new Error(errorMessage.payload.error));
             }
             break;
         }
       };
 
-      this.webrtcWorker!.postMessage({
+      const webRTCInitMessage: WebRTCWorkerInitMessage = {
         type: "init",
         payload: { peerId },
-      });
+      };
+      this.webrtcWorker!.postMessage(webRTCInitMessage);
 
       // Add timeout for initialization
       setTimeout(() => {
@@ -315,27 +468,67 @@ export class SyncEngine {
         console.log(
           `Starting Nostr sync for ${collection.name} with ${documents.length} documents`
         );
-        this.nostrWorker.postMessage({
+        const syncMessage: NostrWorkerSyncMessage = {
           type: "sync",
           payload: {
             collection: collection.name,
             documents,
           },
-        });
+        };
+        this.nostrWorker.postMessage(syncMessage);
       }
 
       if (collection.webrtcEnabled && this.webrtcWorker) {
         console.log(
           `Starting WebRTC sync for ${collection.name} with ${documents.length} documents`
         );
-        this.webrtcWorker.postMessage({
+        const webRTCSyncMessage: WebRTCWorkerSyncMessage = {
           type: "sync",
           payload: {
             collection: collection.name,
             documents,
           },
-        });
+        };
+        this.webrtcWorker.postMessage(webRTCSyncMessage);
       }
+    }
+
+    // Sync plugins with both Nostr and WebRTC if enabled
+    await this.syncPlugins();
+  }
+
+  private async syncPlugins() {
+    const plugins = usePluginRegistry
+      .getState()
+      .getAllRemoteEnabledPlugins()
+      .map((p) => ({ ...p, handler: undefined }));
+
+    console.log(`Syncing ${plugins.length} plugins...`);
+    console.log(
+      "Plugins to sync:",
+      plugins.map((p) => `${p.name} (${p.id})`)
+    );
+
+    if (this.nostrWorker) {
+      console.log("Starting Nostr plugin sync...");
+      const syncPluginsMessage: NostrWorkerSyncPluginsMessage = {
+        type: "sync-plugins",
+        payload: plugins,
+      };
+      this.nostrWorker.postMessage(syncPluginsMessage);
+    } else {
+      console.log("Nostr worker not available, skipping Nostr plugin sync");
+    }
+
+    if (this.webrtcWorker) {
+      console.log("Starting WebRTC plugin sync...");
+      const syncPluginsMessage: WebRTCWorkerSyncPluginsMessage = {
+        type: "sync-plugins",
+        payload: plugins,
+      };
+      this.webrtcWorker.postMessage(syncPluginsMessage);
+    } else {
+      console.log("WebRTC worker not available, skipping WebRTC plugin sync");
     }
   }
 
@@ -364,6 +557,55 @@ export class SyncEngine {
       console.error("Failed to get collection documents:", error);
       return [];
     }
+  }
+
+  private handlePluginSyncResult(
+    payload: IPlugin[],
+    source: "nostr" | "webrtc" = "nostr"
+  ) {
+    console.log(`Plugin sync result from ${source}:`, payload);
+
+    const result: SyncResult = {
+      collection: "plugins",
+      type: source,
+      success: payload.length > 0,
+      synced: payload.length,
+      errors: [],
+    };
+
+    console.log(`Plugin sync result summary from ${source}:`, result);
+
+    if (payload.length === 0) {
+      console.log(`No plugins received from ${source}, nothing to merge`);
+      return;
+    }
+
+    // Merge plugins into local registry
+    const pluginRegistry = usePluginRegistry.getState();
+    console.log(`Current local plugins: ${pluginRegistry.plugins.length}`);
+
+    payload.forEach(async (plugin, index) => {
+      try {
+        console.log(
+          `Processing plugin ${index + 1}/${payload.length}: ${plugin.name} (${
+            plugin.id
+          })`
+        );
+        const existing = pluginRegistry.getPlugin(plugin.id);
+        if (!existing) {
+          console.log(`Adding ne
+            ew plugin from ${source} sync: ${plugin.name}`);
+          pluginRegistry.addPlugin(plugin);
+        } else {
+          console.log(
+            `Plugin already exists locally, skipping: ${plugin.name}`
+          );
+        }
+      } catch (error) {
+        console.error(`Failed to register plugin ${plugin.name}:`, error);
+        result.errors.push(`Failed to register ${plugin.name}: ${error}`);
+      }
+    });
   }
 
   private handleSyncResult(type: "nostr" | "webrtc", payload: any) {
