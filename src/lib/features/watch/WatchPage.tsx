@@ -101,6 +101,12 @@ export default function ChapterPage({
     const totalSeconds = videoRef.current?.duration || 0;
 
     if (playedSeconds >= totalSeconds - 120 && !isWatched.current) {
+      console.log("Updating last watched:", {
+        isWatched,
+        playedSeconds,
+        totalSeconds,
+      });
+
       await updateLastWatched(
         params.tmdbId,
         {
