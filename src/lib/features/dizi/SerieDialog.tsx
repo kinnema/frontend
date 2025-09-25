@@ -1,6 +1,6 @@
-import SeasonEpisodes from "@/app/dizi/[slug]/components/SeasonEpisodes";
 import { TmdbImage } from "@/components/Image";
 import { Loading } from "@/components/Loading";
+import SeasonEpisodes from "@/components/SeasonEpisodes";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FavoriteButton } from "@/components/User/FavoriteButton";

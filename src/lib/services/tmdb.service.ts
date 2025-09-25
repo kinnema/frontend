@@ -1,5 +1,4 @@
 import { TMDB_API_KEY } from "../constants";
-import { IHomeResults } from "../models";
 import { TmdbNetworks } from "../types/networks";
 import {
   Episode,
@@ -14,6 +13,10 @@ const DEFAULT_OPTIONS = {
     Authorization: "Bearer " + TMDB_API_KEY,
   },
 };
+
+interface IHomeResults {
+  popular: ITmdbSearchResults;
+}
 
 class TmdbService {
   private static async fetchTMDB<T>(endpoint: string): Promise<T> {

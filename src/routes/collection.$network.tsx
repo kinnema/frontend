@@ -1,5 +1,5 @@
-import { CollectionSeries } from "@/app/collection/[network]/series";
 import { Loading } from "@/components/Loading";
+import { CollectionSeries } from "@/components/series";
 import getQueryClient from "@/lib/getQueryClient";
 import TmdbService from "@/lib/services/tmdb.service";
 import { TmdbNetworks } from "@/lib/types/networks";

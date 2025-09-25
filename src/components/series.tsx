@@ -20,9 +20,7 @@ interface IProps {
 
 export function CollectionSeries({ network }: IProps) {
   const { t } = useTranslation();
-  // For TanStack Router, we need to use search params differently
-  // This might need to be updated based on how the route is set up
-  const page = 1; // Default to page 1 for now
+  const page = 1;
 
   const { data, isPending, isError } = useQuery({
     queryKey: ["network-series", network, page],

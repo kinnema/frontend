@@ -17,7 +17,6 @@ import { IGithubRelease } from "@/lib/types/github.type";
 import { isNativePlatform } from "@/lib/utils/native";
 import { QUERY_KEYS } from "@/lib/utils/queryKeys";
 import { BundleInfo, CapacitorUpdater } from "@capgo/capacitor-updater";
-import { ToastAction } from "@radix-ui/react-toast";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import DOMPurify from "dompurify";
 import { Download, Info, Loader2 } from "lucide-react";
@@ -69,14 +68,12 @@ export default function AppUpdatesFeature() {
         title: "Update Downloaded",
         description:
           "Update downloaded, please confirm if you want to update it",
-        action: (
-          <ToastAction
-            altText="Try again"
-            onClick={() => setUpdate(state.bundle)}
-          >
-            Update now
-          </ToastAction>
-        ),
+        action: {
+          label: "Update Now",
+          onClick: async () => {
+            await setUpdate(state.bundle);
+          },
+        },
       });
     });
 
