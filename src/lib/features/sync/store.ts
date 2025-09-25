@@ -2,6 +2,7 @@ import { indexedDbZustandStorage } from "@/lib/stores/stores/indexedDb";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { SyncMnemonic } from "./mnemonic";
+import { isSyncActive$ } from "./observables";
 import { ConnectionStatus, SyncCollection, SyncStore } from "./types";
 
 const defaultCollections: SyncCollection[] = [
@@ -99,6 +100,7 @@ export const useSyncStore = create<SyncStore>()(
       },
 
       setActive: (active: boolean) => {
+        isSyncActive$.next(active);
         set({ isActive: active });
       },
 
@@ -127,6 +129,11 @@ export const useSyncStore = create<SyncStore>()(
       name: "sync-store",
       storage: createJSONStorage(() => indexedDbZustandStorage),
       version: import.meta.env.__APP_VERSION__,
+      onRehydrateStorage(state) {
+        return (state) => {
+          isSyncActive$.next(state?.isActive ?? false);
+        };
+      },
     }
   )
 );
