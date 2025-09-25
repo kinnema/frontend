@@ -40,7 +40,8 @@
     "back": "Back",
     "play": "Play",
     "season": "Season",
-    "episode": "Episode"
+    "episode": "Episode",
+    "continue": "Continue"
   },
   "settings": {
     "title": "Settings",
