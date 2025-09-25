@@ -8,7 +8,7 @@ import {
   P2PCreateAction,
 } from "../types/watchTogether.types";
 import { getWatchTogetherConfig } from "../utils/watchTogether/config";
-import { watchTogetherEvents } from "../utils/watchTogetherEvents";
+import { watchTogetherEvents } from "../utils/watchTogether/watchTogetherEvents";
 
 export function useWatchTogether() {
   const room = useRef<Room | undefined>(undefined);

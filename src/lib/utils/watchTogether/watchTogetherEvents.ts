@@ -1,5 +1,5 @@
 import { Subject } from "rxjs";
-import { Commands, Status } from "../types/watchTogether.types";
+import { Commands, Status } from "../../types/watchTogether.types";
 
 type P2PEvents = {
   status: (status: Status, peerId: string) => void;

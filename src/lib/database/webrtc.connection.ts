@@ -7,8 +7,8 @@ import type {
   WebRTCMessage,
 } from "rxdb/plugins/replication-webrtc";
 import { Subject } from "rxjs";
-import type { BaseRoomConfig, Room } from "trystero/torrent";
-import { joinRoom } from "trystero/torrent";
+import type { BaseRoomConfig, Room } from "trystero";
+import { joinRoom } from "trystero";
 import { onlinePeers$ } from "../features/sync/observables";
 
 type PeerId = string;

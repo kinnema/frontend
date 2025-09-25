@@ -14,7 +14,7 @@ import {
   P2PCreateAction,
 } from "@/lib/types/watchTogether.types";
 import { loadedVideoUrl$ } from "@/lib/utils/videoEvents";
-import { watchTogetherEvents } from "@/lib/utils/watchTogetherEvents";
+import { watchTogetherEvents } from "@/lib/utils/watchTogether/watchTogetherEvents";
 import { createFileRoute, redirect, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Subscription } from "rxjs";
