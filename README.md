@@ -9,20 +9,17 @@
 - **🔒 Data Sovereignty**: Your watch history and preferences stay under your control
 - **📡 Peer-to-Peer** (soon): Direct device-to-device synchronization without intermediaries
 - **🎬 Comprehensive Media Library**: Browse movies and TV series from popular networks like Netflix, HBO, and more
-- **🔍 Advanced Search**: Intelligent search functionality across multiple content sources
 - **📱 Cross-Device Sync** (Experimental): Synchronize your watch history and favorites across devices using Nostr protocol
 - **🎵 Subtitle Support** (Experimental, Native Only): Built-in subtitle functionality with customizable settings
-- **👥 Watch Together**: Share watching sessions with friends in real-time rooms
+- **👥 Watch Together** (Experimental): Share watching sessions with friends in real-time rooms
 - **⭐ Favorites Management**: Save and organize your favorite shows and movies
 - **🎨 Modern UI**: Beautiful, responsive interface built with Tailwind CSS/Shadcn
 - **🌙 Theme Support**: Dark/light theme switching
-- **🔌 Plugin System**: Extensible architecture with support for streaming plugins
+- **🔌 Plugin System**: Support for streaming plugins
 - **📺 HLS Streaming**: Support for adaptive streaming with HLS.js
 - **🔄 Auto-Updates**: Seamless app updates via Capacitor Updater
 - **💾 Offline Storage**: Local database with RxDB for offline functionality
 - **🌐 Internationalization**: Multi-language support with i18next
-- **🎮 PWA Ready**: Progressive Web App capabilities
-- **🔒 Secure**: Built-in authentication and secure data handling
 
 ## 🚀 Quick Start
 
@@ -111,7 +108,6 @@ npx cap open ios
 ### UI Framework
 
 - **Tailwind CSS** - Utility-first CSS framework
-- **Radix UI** - Unstyled, accessible UI primitives
 - **Lucide React** - Beautiful icon library
 - **Motion** - Smooth animations
 - **Embla Carousel** - Touch-friendly carousels
@@ -120,7 +116,7 @@ npx cap open ios
 
 - **Electron** - Desktop applications
 - **Capacitor** - Native mobile apps
-- **PWA** - Progressive Web App support
+- **Web** - Web support
 
 ### Data & Networking
 
@@ -140,7 +136,7 @@ npx cap open ios
 
 | Platform    | Status          | Features                         |
 | ----------- | --------------- | -------------------------------- |
-| **Web**     | ✅ Full Support | All features available           |
+| **Web**     | ✅ Partial Support | Most features are available   |
 | **Desktop** | ✅ Full Support | Native desktop app with Electron |
 | **Android** | ✅ Full Support | Native Android app               |
 | **iOS**     | ✅ Full Support | Native iOS app                   |
@@ -151,8 +147,8 @@ npx cap open ios
 
 - Browse trending movies and TV shows
 - Network-specific collections (Netflix, HBO, etc.)
-- Advanced search with filters
-- Personalized recommendations
+- Advanced search with filters (soon)
+- Personalized recommendations (soon)
 
 ### Streaming Experience
 
@@ -213,8 +209,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - 🐛 [Report Bugs](https://github.com/kinnema/frontend/issues)
 - 💡 [Feature Requests](https://github.com/kinnema/frontend/discussions)
-- 📧 [Contact Us](mailto:support@kinnema.app)
-
 ---
 
 <div align="center">
